@@ -1,4 +1,4 @@
-import 'package:atlast_mobile_app/shared/theme.dart';
+import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'app.dart';
 
@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: AppColors.primary,
+        fontFamily: 'Quicksand',
       ),
       home: const App(),
     );
