@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 enum RouteEnum {
   home,
   calendar,
+  create,
   analytics,
   settings,
+  // misc
+  onboarding,
 }
 
 class RouteData {
@@ -12,14 +15,16 @@ class RouteData {
   final String route;
   final String label;
   final IconData icon;
-  final int navbarIdentifier;
+  final int stackOrder;
+  final int? navbarIdentifier;
 
   const RouteData({
     required this.key,
     required this.route,
     required this.label,
     required this.icon,
-    required this.navbarIdentifier,
+    required this.stackOrder,
+    this.navbarIdentifier,
   });
 }
 
@@ -29,6 +34,7 @@ const Map<RouteEnum, RouteData> routes = {
     route: '/home',
     label: 'Home',
     icon: Icons.home,
+    stackOrder: 0,
     navbarIdentifier: 0,
   ),
   RouteEnum.calendar: RouteData(
@@ -36,8 +42,50 @@ const Map<RouteEnum, RouteData> routes = {
     route: '/calendar',
     label: 'Calendar',
     icon: Icons.calendar_month,
+    stackOrder: 1,
     navbarIdentifier: 1,
   ),
+  RouteEnum.create: RouteData(
+    key: RouteEnum.create,
+    route: '/create',
+    label: 'Create',
+    icon: Icons.add,
+    stackOrder: -1,
+    navbarIdentifier: 2,
+  ),
+  RouteEnum.analytics: RouteData(
+    key: RouteEnum.analytics,
+    route: '/analytics',
+    label: 'Analytics',
+    icon: Icons.bar_chart,
+    stackOrder: 2,
+    navbarIdentifier: 3,
+  ),
+  RouteEnum.settings: RouteData(
+    key: RouteEnum.settings,
+    route: '/settings',
+    label: 'Settings',
+    icon: Icons.settings,
+    stackOrder: 3,
+    navbarIdentifier: 4,
+  ),
+  // misc routes
+  // ignore: constant_identifier_names
+  RouteEnum.onboarding: RouteData(
+    key: RouteEnum.onboarding,
+    route: '/onboarding',
+    label: 'Onboarding',
+    icon: Icons.join_full,
+    stackOrder: -1,
+  )
 };
 
-List<RouteEnum> routesInNavBar = routes.keys.toList();
+Map<RouteEnum, RouteData> routesInNavBar = {
+  RouteEnum.home: routes[RouteEnum.home]!,
+  RouteEnum.calendar: routes[RouteEnum.calendar]!,
+  RouteEnum.create: routes[RouteEnum.create]!,
+  RouteEnum.analytics: routes[RouteEnum.analytics]!,
+  RouteEnum.settings: routes[RouteEnum.settings]!,
+};
+
+List<RouteEnum> routesInNavBarEnums = routesInNavBar.keys.toList();
