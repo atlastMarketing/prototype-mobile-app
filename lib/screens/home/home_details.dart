@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:atlast_mobile_app/shared/theme.dart';
+import 'package:atlast_mobile_app/configs/theme.dart';
 import 'widgets/sample_widget.dart';
 
 class HomeDetails extends StatelessWidget {

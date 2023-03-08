@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/services/sample_service.dart';
-import 'home_details.dart';
-import 'home_landing.dart';
+import 'home_dashboard.dart';
+// import 'home_details.dart';
 
 class Home extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  const Home({Key? key, required this.navKey}) : super(key: key);
+
+  const Home({
+    Key? key,
+    required this.navKey,
+  }) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -34,12 +38,8 @@ class _HomeState extends State<Home> {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
-              case '/details':
-                return HomeDetails(
-                  navKey: widget.navKey,
-                );
               default:
-                return HomeLanding(
+                return HomeDashboard(
                   navKey: widget.navKey,
                 );
             }
