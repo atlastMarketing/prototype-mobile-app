@@ -43,9 +43,9 @@ class AppColors {
   };
   static const accent = MaterialColor(0xFF546BE8, _accentColorSwatch);
 
-  static const confirm = Color.fromRGBO(253, 150, 130, 1.0);
+  static const confirm = Color.fromRGBO(154, 205, 214, 1.0);
   static const customize = Color.fromRGBO(214, 192, 244, 1.0);
-  static const cancel = Color.fromRGBO(154, 205, 214, 1.0);
+  static const error = Color.fromRGBO(253, 150, 130, 1.0);
 
   static const black = Colors.black;
   static const light = Colors.grey;
@@ -60,41 +60,41 @@ class AppText {
     // fontWeight: FontWeight.w600,
   );
   static const subtitle = TextStyle(
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: FontWeight.w300,
   );
   // heading
   static const heading = TextStyle(
-    fontSize: 16,
+    fontSize: 36,
     fontWeight: FontWeight.w700,
   );
   static const subheading = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
   );
   // body
   static const bodyLight = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w300,
   );
   static const body = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.normal,
   );
   static const bodyBold = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w700,
   );
   static const bodySemiBold = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
   );
   static const bodyMedium = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w500,
   );
   static const bodyItalic = TextStyle(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.normal,
     fontStyle: FontStyle.italic,
   );
