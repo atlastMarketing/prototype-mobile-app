@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
-import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
@@ -34,7 +33,7 @@ class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-2");
+    widget.navKey.currentState!.pushNamed("/campaign-3");
   }
 
   @override
@@ -51,20 +50,10 @@ class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
+              children: const [
+                Text(
                   "TODO: Media Upload",
                   style: AppText.bodyBold,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 20),
-                  child: CustomFormTextField(
-                    controller: _descriptionController,
-                    placeholderText:
-                        "Ex. Valentines days promotion for \$20 for a dozen roses and free delivery",
-                    vSize: 6,
-                    // TODO: add auto analysis of description to pre-fill other fields
-                  ),
                 ),
               ],
             ),
@@ -73,6 +62,7 @@ class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
           SizedBox(
             width: double.infinity,
             child: CustomButton(
+              disabled: true,
               handlePressed: () {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.

@@ -1,4 +1,4 @@
-
+import 'package:atlast_mobile_app/shared/gradient_text.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -58,10 +58,14 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
               "made easy,",
               style: AppText.title.merge(AppText.blackText),
             ),
-            Text(
-              "atlast",
-              style: AppText.title.merge(AppText.blackText),
-            ),
+            GradientText("atlast",
+                style: AppText.title.merge(AppText.blackText),
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.secondary.withOpacity(0.5),
+                    AppColors.primary,
+                  ],
+                )),
           ],
         ),
       ),

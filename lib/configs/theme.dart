@@ -57,7 +57,7 @@ class AppText {
   // title
   static const title = TextStyle(
     fontFamily: 'Grancino',
-    fontSize: 60,
+    fontSize: 64,
     // fontWeight: FontWeight.w600,
   );
   // heading
