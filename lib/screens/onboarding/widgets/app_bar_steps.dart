@@ -44,7 +44,7 @@ class AppBarSteps extends StatelessWidget {
                       height: 2,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: AppColors.light,
+                          color: AppColors.dark,
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),

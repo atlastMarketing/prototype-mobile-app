@@ -25,7 +25,7 @@ class HomeDetails extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           splashRadius: 20,
           onPressed: goBack,
-          color: AppColors.light,
+          color: AppColors.black,
         ),
         leadingWidth: 60,
         toolbarHeight: 80,

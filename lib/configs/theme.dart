@@ -48,7 +48,8 @@ class AppColors {
   static const error = Color.fromRGBO(253, 150, 130, 1.0);
 
   static const black = Colors.black;
-  static const light = Colors.grey;
+  static const dark = Colors.grey;
+  static const light = Color.fromRGBO(241, 241, 253, 1.0);
   static const white = Colors.white;
 }
 
@@ -59,10 +60,6 @@ class AppText {
     fontSize: 60,
     // fontWeight: FontWeight.w600,
   );
-  static const subtitle = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w300,
-  );
   // heading
   static const heading = TextStyle(
     fontSize: 32,
@@ -71,6 +68,11 @@ class AppText {
   static const subheading = TextStyle(
     fontSize: 22,
     fontWeight: FontWeight.w700,
+  );
+  // buttons
+  static const buttonLargeText = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
   );
   // body
   static const bodyLight = TextStyle(
@@ -104,5 +106,5 @@ class AppText {
 
   static const primaryText = TextStyle(color: AppColors.primary);
   static const blackText = TextStyle(color: AppColors.black);
-  static const whiteText = TextStyle(color: AppColors.black);
+  static const whiteText = TextStyle(color: AppColors.white);
 }
