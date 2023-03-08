@@ -9,7 +9,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
-import './widgets/app_bar_steps.dart';
+import '../../shared/app_bar_steps.dart';
 
 class OnboardingBusiness extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;

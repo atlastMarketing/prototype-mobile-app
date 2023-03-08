@@ -7,7 +7,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
-import './widgets/app_bar_steps.dart';
+import '../../shared/app_bar_steps.dart';
 
 class OnboardingEmail extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -50,7 +50,7 @@ class OnboardingEmail extends StatelessWidget {
                   style: AppText.bodyBold,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  padding: const EdgeInsets.only(top: 10, bottom: 30),
                   child: CustomFormTextField(
                     controller: _emailController,
                     placeholderText: "name@example.com",
