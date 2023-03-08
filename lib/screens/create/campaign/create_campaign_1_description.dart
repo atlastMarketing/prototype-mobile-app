@@ -42,7 +42,6 @@ class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
   }
 
   void _handleContinue() {
-    print("campaign description: ${_descriptionController.text}");
     widget.navKey.currentState!.pushNamed("/campaign-2");
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 
@@ -61,7 +62,8 @@ class CustomFormDatePicker extends StatelessWidget {
         );
 
         if (pickedDate != null) {
-          setDate("2022-05-08");
+          String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+          setDate(formattedDate);
         }
       },
     );

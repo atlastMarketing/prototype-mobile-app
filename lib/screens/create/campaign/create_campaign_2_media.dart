@@ -34,7 +34,6 @@ class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
   }
 
   void _handleContinue() {
-    print("campaign description: ${_descriptionController.text}");
     widget.navKey.currentState!.pushNamed("/campaign-2");
   }
 
@@ -42,7 +41,7 @@ class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 1),
+      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
