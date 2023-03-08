@@ -40,6 +40,8 @@ class _AppState extends State<App> with RouteAware {
 
   bool _isUserLoggedIn = false;
   bool _isUserOnboarded = false;
+  // bool _isUserLoggedIn = true;
+  // bool _isUserOnboarded = true;
 
   final PageController _pageController = PageController(initialPage: 0);
 
@@ -73,7 +75,7 @@ class _AppState extends State<App> with RouteAware {
     } else if (destination == RouteEnum.create) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => SamplePage(navKey: _navkeys[RouteEnum.create]!),
+          builder: (context) => Create(navKey: _navkeys[RouteEnum.create]!),
         ),
       );
     } else {
@@ -127,10 +129,24 @@ class _AppState extends State<App> with RouteAware {
                     physics: const NeverScrollableScrollPhysics(),
                     controller: _pageController,
                     children: [
-                      Home(navKey: _navkeys[RouteEnum.home]!),
-                      SamplePage(navKey: _navkeys[RouteEnum.calendar]!),
-                      SamplePage(navKey: _navkeys[RouteEnum.analytics]!),
-                      SamplePage(navKey: _navkeys[RouteEnum.settings]!),
+                      Home(
+                        navKey: _navkeys[RouteEnum.home]!,
+                        handleCreate: () => _navigateToPage(RouteEnum.create),
+                      ),
+                      Calendar(
+                        navKey: _navkeys[RouteEnum.calendar]!,
+                      ),
+                      Analytics(
+                        navKey: _navkeys[RouteEnum.analytics]!,
+                      ),
+                      Settings(
+                          navKey: _navkeys[RouteEnum.settings]!,
+                          resetOnboarding: () {
+                            setState(() {
+                              _isUserOnboarded = false;
+                              _isUserLoggedIn = false;
+                            });
+                          }),
                     ],
                   ));
         },

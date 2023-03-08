@@ -9,15 +9,13 @@ import 'package:atlast_mobile_app/shared/post_preview.dart';
 
 class HomeDashboard extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;
+  final void Function() handleCreate;
 
   const HomeDashboard({
     Key? key,
     required this.navKey,
+    required this.handleCreate,
   }) : super(key: key);
-
-  void openDetailsPage() {
-    navKey.currentState!.pushNamed('/details');
-  }
 
   Widget _buildSuggestedPosts() {
     return Column(
@@ -86,7 +84,7 @@ class HomeDashboard extends StatelessWidget {
           child: Container(
             height: 100,
             width: double.infinity,
-            color: AppColors.light.withOpacity(0.1),
+            color: AppColors.dark.withOpacity(0.1),
             child: const Center(
               child: Text("There's nothing scheduled!"),
             ),
@@ -120,7 +118,7 @@ class HomeDashboard extends StatelessWidget {
                 width: double.infinity,
                 child: CustomButton(
                   text: 'Create',
-                  handlePressed: openDetailsPage,
+                  handlePressed: handleCreate,
                 ),
               ),
             ],

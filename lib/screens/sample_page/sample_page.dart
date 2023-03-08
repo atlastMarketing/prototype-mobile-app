@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 
 class SamplePage extends StatelessWidget {
-  final GlobalKey<NavigatorState> navKey;
-  const SamplePage({Key? key, required this.navKey}) : super(key: key);
+  const SamplePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: navKey,
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) {
-            switch (settings.name) {
-              default:
-                return Scaffold(
-                  appBar: AppBar(title: const Text('Sample Page')),
-                  body: const Center(child: Text('lalalalalallaal')),
-                  extendBody: false,
-                );
-            }
-          },
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.grey, size: 30),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text("hello"),
+      ),
+      body: const Center(child: Text('SAMPLE LALALA')),
+      extendBody: false,
     );
   }
 }

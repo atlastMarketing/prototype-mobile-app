@@ -1,9 +1,9 @@
-import 'package:atlast_mobile_app/screens/onboarding/create_3_confirm.dart';
+import 'package:atlast_mobile_app/screens/onboarding/signup_3_confirm.dart';
 import 'package:flutter/material.dart';
 
 import './login.dart';
-import './create_1_email.dart';
-import './create_2_business.dart';
+import 'signup_1_email.dart';
+import 'signup_2_business.dart';
 
 class Onboarding extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;

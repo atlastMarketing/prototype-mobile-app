@@ -28,7 +28,7 @@ class BottomNavigation extends StatelessWidget {
                 offset: Offset(0, 0.0),
                 blurRadius: 4.0,
                 spreadRadius: 1.0,
-                color: AppColors.light,
+                color: AppColors.dark,
               ),
             ],
           ),
@@ -38,7 +38,7 @@ class BottomNavigation extends StatelessWidget {
         return Icon(
           route.icon,
           size: 30,
-          color: active ? AppColors.primary : AppColors.light,
+          color: active ? AppColors.primary : AppColors.dark,
         );
     }
   }
@@ -54,12 +54,12 @@ class BottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: AppColors.light.withOpacity(0.5),
+            color: AppColors.light,
             blurRadius: 20,
-            spreadRadius: 0,
+            spreadRadius: 15,
           ),
         ],
       ),

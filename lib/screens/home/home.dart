@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/services/sample_service.dart';
+
 import 'home_dashboard.dart';
-// import 'home_details.dart';
 
 class Home extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
+  final void Function() handleCreate;
 
   const Home({
     Key? key,
     required this.navKey,
+    required this.handleCreate,
   }) : super(key: key);
 
   @override
@@ -41,6 +43,7 @@ class _HomeState extends State<Home> {
               default:
                 return HomeDashboard(
                   navKey: widget.navKey,
+                  handleCreate: widget.handleCreate,
                 );
             }
           },
