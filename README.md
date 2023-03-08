@@ -39,6 +39,7 @@ With the Flutter extension installed, a lot of the flutter commands can be acces
 flutter build apk --split-per-abi
 ```
 - Simply connect android device through USB and run `flutter install -d <DEVICE_ID>`
+    - May need to run `flutter build apk --release` first
 
 ### Building for iOS
 Honestly have never tried it before - can't give good insight into this
