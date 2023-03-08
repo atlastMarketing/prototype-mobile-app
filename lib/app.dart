@@ -133,18 +133,20 @@ class _AppState extends State<App> with RouteAware {
                         navKey: _navkeys[RouteEnum.home]!,
                         handleCreate: () => _navigateToPage(RouteEnum.create),
                       ),
-                      Home(
+                      Calendar(
                         navKey: _navkeys[RouteEnum.calendar]!,
-                        handleCreate: () {},
                       ),
-                      Home(
+                      Analytics(
                         navKey: _navkeys[RouteEnum.analytics]!,
-                        handleCreate: () {},
                       ),
-                      Home(
-                        navKey: _navkeys[RouteEnum.settings]!,
-                        handleCreate: () {},
-                      ),
+                      Settings(
+                          navKey: _navkeys[RouteEnum.settings]!,
+                          resetOnboarding: () {
+                            setState(() {
+                              _isUserOnboarded = false;
+                              _isUserLoggedIn = false;
+                            });
+                          }),
                     ],
                   ));
         },
