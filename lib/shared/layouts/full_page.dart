@@ -36,7 +36,7 @@ class LayoutFullPage extends StatelessWidget {
     }
 
     return AppBar(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.transparent,
       elevation: 0,
       leading: handleBack != null
           ? IconButton(

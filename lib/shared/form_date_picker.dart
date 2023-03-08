@@ -2,36 +2,26 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 
-class CustomFormTextField extends StatelessWidget {
+class CustomFormDatePicker extends StatelessWidget {
+  final TextEditingController controller;
+  final void Function(String) setDate;
+  // date params
   final bool disabled;
   final String placeholderText;
-  //x field options
-  final TextEditingController? controller;
-  final bool autocorrect;
-  final bool enableSuggestions;
-  final bool obscureText;
-  final Color? fillColor;
-  // additional (functional props)
-  final String? Function(String?)? validator;
-  final int vSize;
 
-  const CustomFormTextField({
+  const CustomFormDatePicker({
     Key? key,
+    required this.controller,
+    required this.setDate,
     this.disabled = false,
     this.placeholderText = "",
-    this.controller,
-    this.autocorrect = false,
-    this.enableSuggestions = false,
-    this.obscureText = false,
-    this.fillColor,
-    this.validator,
-    this.vSize = 1,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       enabled: !disabled,
+      readOnly: true,
       controller: controller,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
@@ -59,17 +49,21 @@ class CustomFormTextField extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         errorStyle: const TextStyle(color: AppColors.error),
-        fillColor: fillColor ?? AppColors.white,
-        filled: fillColor != null,
         hintText: placeholderText,
         errorMaxLines: 10,
       ),
-      autocorrect: autocorrect,
-      enableSuggestions: enableSuggestions,
-      obscureText: obscureText,
-      validator: validator,
-      minLines: vSize,
-      maxLines: vSize,
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2101),
+        );
+
+        if (pickedDate != null) {
+          setDate("2022-05-08");
+        }
+      },
     );
   }
 }
