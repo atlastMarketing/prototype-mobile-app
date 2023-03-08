@@ -41,7 +41,7 @@ class _AppState extends State<App> with RouteAware {
   bool _isUserLoggedIn = false;
   bool _isUserOnboarded = false;
 
-  PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 0);
 
   void _handleSuccessfulLogin([bool isNewUser = false]) async {
     // TODO: Add real auth API calls
@@ -124,6 +124,7 @@ class _AppState extends State<App> with RouteAware {
           return MaterialPageRoute(
               settings: settings,
               builder: (BuildContext context) => PageView(
+                    physics: const NeverScrollableScrollPhysics(),
                     controller: _pageController,
                     children: [
                       Home(navKey: _navkeys[RouteEnum.home]!),

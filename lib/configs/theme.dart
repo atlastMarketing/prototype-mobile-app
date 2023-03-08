@@ -65,11 +65,11 @@ class AppText {
   );
   // heading
   static const heading = TextStyle(
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: FontWeight.w700,
   );
   static const subheading = TextStyle(
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: FontWeight.w700,
   );
   // body
@@ -100,9 +100,9 @@ class AppText {
   );
   static const bodySmall = TextStyle(
     fontSize: 12,
-    fontWeight: FontWeight.normal,
   );
 
+  static const primaryText = TextStyle(color: AppColors.primary);
   static const blackText = TextStyle(color: AppColors.black);
   static const whiteText = TextStyle(color: AppColors.black);
 }
