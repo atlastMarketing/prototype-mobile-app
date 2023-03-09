@@ -5,6 +5,7 @@ import 'app.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/main_navigation.dart';
 import 'package:atlast_mobile_app/data/upcoming_posts.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 
 void main() {
   runApp(
@@ -12,6 +13,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => UpcomingPostsModel()),
         ChangeNotifierProvider(create: (context) => MainNavigationModel()),
+        ChangeNotifierProvider(create: (context) => UserModel()),
       ],
       child: const MyApp(),
     ),

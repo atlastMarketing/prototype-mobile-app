@@ -1,18 +1,27 @@
-import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/layout.dart';
+import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 
 class SettingsDashboard extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;
-  final void Function() resetOnboarding;
 
   const SettingsDashboard({
     Key? key,
     required this.navKey,
-    required this.resetOnboarding,
   }) : super(key: key);
+
+  void _resetOnboarding(BuildContext ctx) {
+    Provider.of<UserModel>(ctx, listen: false).setIsOnboarded(false);
+  }
+
+  void _logout(BuildContext ctx) {
+    Provider.of<UserModel>(ctx, listen: false).logout();
+    Provider.of<UserModel>(ctx, listen: false).setIsOnboarded(false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +50,13 @@ class SettingsDashboard extends StatelessWidget {
                           const Padding(
                               padding: EdgeInsets.symmetric(vertical: 5)),
                           FilledButton(
-                            onPressed: resetOnboarding,
+                            onPressed: () => _resetOnboarding(context),
                             child: const Text("Reset Onboarding"),
-                          )
+                          ),
+                          FilledButton(
+                            onPressed: () => _logout(context),
+                            child: const Text("Logout"),
+                          ),
                         ],
                       ),
                     )

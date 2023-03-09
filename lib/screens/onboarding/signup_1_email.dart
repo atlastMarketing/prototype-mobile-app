@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
@@ -25,12 +27,16 @@ class OnboardingEmail extends StatelessWidget {
     navKey.currentState!.pop();
   }
 
-  void _handleContinue() {
+  void _handleContinue(BuildContext ctx) {
     print("email: ${_emailController.text}");
+    Provider.of<UserModel>(ctx, listen: false)
+        .updateUser(email: _emailController.text);
     navKey.currentState!.pushNamed("/creator-2");
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext ctx) {
+    _emailController.text =
+        Provider.of<UserModel>(ctx, listen: false).data.email ?? "";
     return Form(
       key: _formKey,
       child: Column(
@@ -69,7 +75,7 @@ class OnboardingEmail extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: _buildForm(),
+              child: _buildForm(context),
             ),
           ),
           SizedBox(
@@ -79,7 +85,7 @@ class OnboardingEmail extends StatelessWidget {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  _handleContinue();
+                  _handleContinue(context);
                 }
               },
               fillColor: AppColors.primary,

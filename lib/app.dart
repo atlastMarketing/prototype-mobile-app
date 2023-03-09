@@ -5,6 +5,7 @@ import 'routes.dart';
 import 'screens/_index.dart';
 import 'shared/bottom_navigation.dart';
 import 'package:atlast_mobile_app/data/main_navigation.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -38,32 +39,7 @@ class _AppState extends State<App> with RouteAware {
     RouteEnum.onboarding: GlobalKey<NavigatorState>(),
   };
 
-  bool _isUserLoggedIn = false;
-  bool _isUserOnboarded = false;
-  // bool _isUserLoggedIn = true;
-  // bool _isUserOnboarded = true;
-
   final PageController _pageController = PageController(initialPage: 0);
-
-  void _handleSuccessfulLogin([bool isNewUser = false]) async {
-    // TODO: Add real auth API calls
-    // final user = await fetchSelfData();
-    final bool isUserHasExistingData = true;
-
-    // TODO: add smooth page transition
-    setState(() => _isUserLoggedIn = true);
-    if (isUserHasExistingData) _handleSuccessfulLogin();
-  }
-
-  void _handleSuccessfulOnboarding() async {
-    setState(() {
-      _isUserOnboarded = true;
-      _isUserLoggedIn = true;
-      Provider.of<MainNavigationModel>(context, listen: false)
-          .handleNav(RouteEnum.home);
-    });
-    _navigateToPage(RouteEnum.home);
-  }
 
   void _navigateToPage(RouteEnum destination) {
     MainNavigationModel mainNavigationModelProvider =
@@ -111,52 +87,48 @@ class _AppState extends State<App> with RouteAware {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    bool shouldShowOnboarding = !_isUserLoggedIn || !_isUserOnboarded;
-
-    if (shouldShowOnboarding) {
-      return Onboarding(
-        navKey: _navkeys[RouteEnum.onboarding]!,
-        isUserLoggedIn: _isUserLoggedIn,
-        handleSuccessfulLogin: _handleSuccessfulLogin,
-        handleSuccessfulOnboarding: _handleSuccessfulOnboarding,
-      );
-    }
-    return Scaffold(
-      body: Navigator(
-        observers: [rootObserver],
-        key: rootNavKey,
-        onGenerateRoute: (RouteSettings settings) {
-          return MaterialPageRoute(
-              settings: settings,
-              builder: (BuildContext context) => PageView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _pageController,
-                    children: [
-                      Home(
-                        navKey: _navkeys[RouteEnum.home]!,
-                        handleCreate: () => _navigateToPage(RouteEnum.creator),
-                      ),
-                      Calendar(
-                        navKey: _navkeys[RouteEnum.calendar]!,
-                      ),
-                      Analytics(
-                        navKey: _navkeys[RouteEnum.analytics]!,
-                      ),
-                      Settings(
-                          navKey: _navkeys[RouteEnum.settings]!,
-                          resetOnboarding: () {
-                            setState(() {
-                              _isUserOnboarded = false;
-                              _isUserLoggedIn = false;
-                            });
-                          }),
-                    ],
-                  ));
-        },
-      ),
-      bottomNavigationBar: shouldShowOnboarding
-          ? null
-          : BottomNavigation(onNavbarTap: _navigateToPage),
-    );
+    return Consumer<UserModel>(builder: (context, model, child) {
+      print("user id: ${model.data.id}");
+      print("model.isLoggedIn ${model.isLoggedIn}");
+      print("model.isOnboarded ${model.isOnboarded}");
+      return model.isOnboarded && model.isLoggedIn
+          ? Scaffold(
+              body: Navigator(
+                observers: [rootObserver],
+                key: rootNavKey,
+                onGenerateRoute: (RouteSettings settings) {
+                  return MaterialPageRoute(
+                      settings: settings,
+                      builder: (BuildContext context) => PageView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _pageController,
+                            children: [
+                              Home(
+                                navKey: _navkeys[RouteEnum.home]!,
+                                handleCreate: () =>
+                                    _navigateToPage(RouteEnum.creator),
+                              ),
+                              Calendar(
+                                navKey: _navkeys[RouteEnum.calendar]!,
+                              ),
+                              Analytics(
+                                navKey: _navkeys[RouteEnum.analytics]!,
+                              ),
+                              Settings(
+                                navKey: _navkeys[RouteEnum.settings]!,
+                              ),
+                            ],
+                          ));
+                },
+              ),
+              bottomNavigationBar: model.isOnboarded && model.isLoggedIn
+                  ? null
+                  : BottomNavigation(onNavbarTap: _navigateToPage),
+            )
+          : Onboarding(
+              navKey: _navkeys[RouteEnum.onboarding]!,
+              navigateToPage: _navigateToPage,
+            );
+    });
   }
 }

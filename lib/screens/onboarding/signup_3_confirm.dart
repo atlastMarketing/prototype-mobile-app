@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
@@ -9,12 +11,10 @@ import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
 class OnboardingConfirm extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final void Function() handleSuccessfulOnboarding;
 
   const OnboardingConfirm({
     Key? key,
     required this.navKey,
-    required this.handleSuccessfulOnboarding,
   }) : super(key: key);
 
   @override
@@ -27,6 +27,9 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
   @override
   void initState() {
     super.initState();
+
+    UserModel userModelProvider =
+        Provider.of<UserModel>(context, listen: false);
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() => _animationState = 1);
     });
@@ -34,7 +37,10 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
       setState(() => _animationState = 2);
     });
     Future.delayed(const Duration(milliseconds: 8000), () {
-      widget.handleSuccessfulOnboarding();
+      userModelProvider.setIsOnboarded(true);
+      if (!userModelProvider.isLoggedIn) {
+        userModelProvider.login("DEFAULT_USER_ID");
+      }
     });
   }
 
