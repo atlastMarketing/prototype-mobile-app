@@ -160,34 +160,44 @@ class _CreatorState extends State<Creator> {
   @override
   Widget build(BuildContext context) {
     // lazy loading
-    return Scaffold(
-      body: Navigator(
-        key: widget.navKey,
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          return MaterialPageRoute(
-            builder: (context) {
-              switch (settings.name) {
-                case "/post-1":
-                  return const SamplePage();
-                case "/campaign-1":
-                  return CreatorCampaignDescription(
-                    navKey: widget.navKey,
-                  );
-                case "/campaign-2":
-                  return CreatorCampaignMedia(
-                    navKey: widget.navKey,
-                  );
-                case "/ad-1":
-                  return const SamplePage();
-                default:
-                  return _buildCreatorOptions();
-              }
-            },
-          );
-        },
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.navKey.currentState!.canPop()) {
+          widget.navKey.currentState!.pop();
+          return false;
+        }
+
+        return true;
+      },
+      child: Scaffold(
+        body: Navigator(
+          key: widget.navKey,
+          initialRoute: '/',
+          onGenerateRoute: (settings) {
+            return MaterialPageRoute(
+              builder: (context) {
+                switch (settings.name) {
+                  case "/post-1":
+                    return const SamplePage();
+                  case "/campaign-1":
+                    return CreatorCampaignDescription(
+                      navKey: widget.navKey,
+                    );
+                  case "/campaign-2":
+                    return CreatorCampaignMedia(
+                      navKey: widget.navKey,
+                    );
+                  case "/ad-1":
+                    return const SamplePage();
+                  default:
+                    return _buildCreatorOptions();
+                }
+              },
+            );
+          },
+        ),
+        extendBody: false,
       ),
-      extendBody: false,
     );
   }
 }
