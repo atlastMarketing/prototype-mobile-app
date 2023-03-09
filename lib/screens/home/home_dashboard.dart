@@ -23,8 +23,12 @@ class HomeDashboard extends StatelessWidget {
     required this.handleCreate,
   }) : super(key: key);
 
+  void _openSuggestedPost(int postId) {
+    print("Opening suggested post with id $postId");
+  }
+
   void _openUpcomingPost(int postId) {
-    print("Opening upcoming post iwth id $postId");
+    print("Opening upcoming post with id $postId");
   }
 
   Widget _buildSuggestedPosts() {
@@ -55,7 +59,8 @@ class HomeDashboard extends StatelessWidget {
                 itemBuilder: (context, idx) => PostPreview(
                   imageUrl: suggestedPosts[idx]["imageUrl"],
                   size: 120,
-                  handlePressed: () {},
+                  handlePressed: () =>
+                      _openSuggestedPost(suggestedPosts[idx]["id"]),
                 ),
                 separatorBuilder: (context, idx) => const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),

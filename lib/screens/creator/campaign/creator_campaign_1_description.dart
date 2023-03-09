@@ -12,20 +12,21 @@ import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
-class CreateCampaignDescription extends StatefulWidget {
+class CreatorCampaignDescription extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const CreateCampaignDescription({
+  const CreatorCampaignDescription({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreateCampaignDescriptionState createState() =>
-      _CreateCampaignDescriptionState();
+  _CreatorCampaignDescriptionState createState() =>
+      _CreatorCampaignDescriptionState();
 }
 
-class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
+class _CreatorCampaignDescriptionState
+    extends State<CreatorCampaignDescription> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();

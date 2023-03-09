@@ -1,9 +1,9 @@
-import 'package:atlast_mobile_app/shared/gradient_text.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/gradient_text.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
@@ -35,7 +35,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   }
 
   void _handleCreateAccount() {
-    widget.navKey.currentState!.pushNamed("/create-1");
+    widget.navKey.currentState!.pushNamed("/creator-1");
   }
 
   void _handleForgotPassword() {

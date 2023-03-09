@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'routes.dart';
 import 'screens/_index.dart';
 import 'shared/bottom_navigation.dart';
+import 'package:atlast_mobile_app/data/main_navigation.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -24,15 +26,13 @@ final RouteObserver<ModalRoute<void>> rootObserver =
     RouteObserver<ModalRoute<void>>();
 
 class _AppState extends State<App> with RouteAware {
-  RouteEnum _currentRoute = RouteEnum.home;
-
   static final GlobalKey<NavigatorState> rootNavKey =
       GlobalKey<NavigatorState>();
 
   static final Map<RouteEnum, GlobalKey<NavigatorState>> _navkeys = {
     RouteEnum.home: GlobalKey<NavigatorState>(),
     RouteEnum.calendar: GlobalKey<NavigatorState>(),
-    RouteEnum.create: GlobalKey<NavigatorState>(),
+    RouteEnum.creator: GlobalKey<NavigatorState>(),
     RouteEnum.analytics: GlobalKey<NavigatorState>(),
     RouteEnum.settings: GlobalKey<NavigatorState>(),
     RouteEnum.onboarding: GlobalKey<NavigatorState>(),
@@ -59,30 +59,33 @@ class _AppState extends State<App> with RouteAware {
     setState(() {
       _isUserOnboarded = true;
       _isUserLoggedIn = true;
-      _currentRoute = RouteEnum.home;
+      Provider.of<MainNavigationModel>(context, listen: false)
+          .handleNav(RouteEnum.home);
     });
     _navigateToPage(RouteEnum.home);
   }
 
   void _navigateToPage(RouteEnum destination) {
-    if (_currentRoute == destination) {
+    MainNavigationModel mainNavigationModelProvider =
+        Provider.of<MainNavigationModel>(context, listen: false);
+    RouteEnum currentRoute = mainNavigationModelProvider.currentRoute;
+
+    if (currentRoute == destination) {
       // if trying to navigate to the current tab, pop to the first route
-      if (_navkeys[_currentRoute]!.currentState != null) {
-        _navkeys[_currentRoute]!
+      if (_navkeys[currentRoute]!.currentState != null) {
+        _navkeys[currentRoute]!
             .currentState!
             .popUntil((route) => route.isFirst);
       }
-    } else if (destination == RouteEnum.create) {
+    } else if (destination == RouteEnum.creator) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => Create(navKey: _navkeys[RouteEnum.create]!),
+          builder: (context) => Creator(navKey: _navkeys[RouteEnum.creator]!),
         ),
       );
     } else {
       // else, navigate to the new tab
-      setState(() {
-        _currentRoute = destination;
-      });
+      mainNavigationModelProvider.handleNav(destination);
 
       _pageController.animateToPage(
         routes[destination]!.stackOrder,
@@ -131,7 +134,7 @@ class _AppState extends State<App> with RouteAware {
                     children: [
                       Home(
                         navKey: _navkeys[RouteEnum.home]!,
-                        handleCreate: () => _navigateToPage(RouteEnum.create),
+                        handleCreate: () => _navigateToPage(RouteEnum.creator),
                       ),
                       Calendar(
                         navKey: _navkeys[RouteEnum.calendar]!,
@@ -153,10 +156,7 @@ class _AppState extends State<App> with RouteAware {
       ),
       bottomNavigationBar: shouldShowOnboarding
           ? null
-          : BottomNavigation(
-              currentRoute: _currentRoute,
-              onNavbarTap: _navigateToPage,
-            ),
+          : BottomNavigation(onNavbarTap: _navigateToPage),
     );
   }
 }

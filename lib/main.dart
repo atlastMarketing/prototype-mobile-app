@@ -3,15 +3,15 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/main_navigation.dart';
 import 'package:atlast_mobile_app/data/upcoming_posts.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => UpcomingPostsModel(),
-        ),
+        ChangeNotifierProvider(create: (context) => UpcomingPostsModel()),
+        ChangeNotifierProvider(create: (context) => MainNavigationModel()),
       ],
       child: const MyApp(),
     ),

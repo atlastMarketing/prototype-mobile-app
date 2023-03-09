@@ -27,7 +27,7 @@ class OnboardingEmail extends StatelessWidget {
 
   void _handleContinue() {
     print("email: ${_emailController.text}");
-    navKey.currentState!.pushNamed("/create-2");
+    navKey.currentState!.pushNamed("/creator-2");
   }
 
   Widget _buildForm() {

@@ -7,52 +7,52 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/screens/sample_page/sample_page.dart';
 
-import 'campaign/create_campaign_1_description.dart';
-import 'campaign/create_campaign_2_media.dart';
+import 'campaign/creator_campaign_1_description.dart';
+import 'campaign/creator_campaign_2_media.dart';
 
-class Create extends StatefulWidget {
+class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const Create({
+  const Creator({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreateState createState() => _CreateState();
+  _CreatorState createState() => _CreatorState();
 }
 
-class _CreateState extends State<Create> {
-  int _selectedCreateOptionIdx = -1;
+class _CreatorState extends State<Creator> {
+  int _selectedCreatorOptionIdx = -1;
 
-  _exitCreate() {
+  _exitCreator() {
     Navigator.of(context).pop();
   }
 
   _handleInitialContinue() {
-    if (_selectedCreateOptionIdx == 0) {
+    if (_selectedCreatorOptionIdx == 0) {
       // create post
       widget.navKey.currentState!.pushNamed("/post-1");
-    } else if (_selectedCreateOptionIdx == 1) {
+    } else if (_selectedCreatorOptionIdx == 1) {
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");
-    } else if (_selectedCreateOptionIdx == 2) {
+    } else if (_selectedCreatorOptionIdx == 2) {
       // create ad
       widget.navKey.currentState!.pushNamed("/ad-1");
     }
   }
 
-  void _selectCreateOption(int optionIdx) {
-    setState(() => _selectedCreateOptionIdx = optionIdx);
+  void _selectCreatorOption(int optionIdx) {
+    setState(() => _selectedCreatorOptionIdx = optionIdx);
   }
 
-  Widget _buildCreateOptionButton(
+  Widget _buildCreatorOptionButton(
     String title,
     String description,
     IconData iconData,
     int optionIdx,
   ) {
-    final bool isActive = _selectedCreateOptionIdx == optionIdx;
+    final bool isActive = _selectedCreatorOptionIdx == optionIdx;
     return SizedBox(
       height: 130,
       width: double.infinity,
@@ -60,7 +60,7 @@ class _CreateState extends State<Create> {
         color: isActive ? AppColors.secondary : AppColors.light,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
-          onTap: () => _selectCreateOption(optionIdx),
+          onTap: () => _selectCreatorOption(optionIdx),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             child: Column(
@@ -107,10 +107,10 @@ class _CreateState extends State<Create> {
     );
   }
 
-  Widget _buildCreateOptions() {
+  Widget _buildCreatorOptions() {
     return LayoutFullPage(
       squeezeContents: false,
-      handleBack: _exitCreate,
+      handleBack: _exitCreator,
       content: Column(
         children: [
           Expanded(
@@ -119,21 +119,21 @@ class _CreateState extends State<Create> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const HeroHeading(text: "What would you like\nto create?"),
-                _buildCreateOptionButton(
+                _buildCreatorOptionButton(
                   "Create a Post",
                   "This generates a single post. Good for one time promotions.",
                   Icons.campaign,
                   0,
                 ),
                 const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreateOptionButton(
+                _buildCreatorOptionButton(
                   "Create a Campaign",
                   "This generates and schedules multiple posts belonging to the same campaign.",
                   Icons.insert_invitation,
                   1,
                 ),
                 const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreateOptionButton(
+                _buildCreatorOptionButton(
                   "Create an Ad",
                   "Reach more customers with precise targeting and actionable insights.",
                   Icons.ads_click,
@@ -146,8 +146,8 @@ class _CreateState extends State<Create> {
           SizedBox(
             width: double.infinity,
             child: CustomButton(
-              disabled:
-                  _selectedCreateOptionIdx < 0 || _selectedCreateOptionIdx > 2,
+              disabled: _selectedCreatorOptionIdx < 0 ||
+                  _selectedCreatorOptionIdx > 2,
               text: 'Continue',
               handlePressed: _handleInitialContinue,
             ),
@@ -171,17 +171,17 @@ class _CreateState extends State<Create> {
                 case "/post-1":
                   return const SamplePage();
                 case "/campaign-1":
-                  return CreateCampaignDescription(
+                  return CreatorCampaignDescription(
                     navKey: widget.navKey,
                   );
                 case "/campaign-2":
-                  return CreateCampaignMedia(
+                  return CreatorCampaignMedia(
                     navKey: widget.navKey,
                   );
                 case "/ad-1":
                   return const SamplePage();
                 default:
-                  return _buildCreateOptions();
+                  return _buildCreatorOptions();
               }
             },
           );

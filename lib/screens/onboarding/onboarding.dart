@@ -29,16 +29,16 @@ class Onboarding extends StatelessWidget {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
-              case "/create-3":
+              case "/creator-3":
                 return OnboardingConfirm(
                   navKey: navKey,
                   handleSuccessfulOnboarding: handleSuccessfulOnboarding,
                 );
-              case "/create-2":
+              case "/creator-2":
                 return OnboardingBusiness(
                   navKey: navKey,
                 );
-              case "/create-1":
+              case "/creator-1":
                 return OnboardingEmail(navKey: navKey);
               default:
                 return OnboardingLogin(

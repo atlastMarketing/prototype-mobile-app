@@ -43,7 +43,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
     print("Business Name: ${_bNameController.text}");
     print("Business Type: ${_bTypeInput}");
     print("Business Industry: ${_bIndustryInput}");
-    widget.navKey.currentState!.pushNamed("/create-3");
+    widget.navKey.currentState!.pushNamed("/creator-3");
   }
 
   Widget _buildForm() {
