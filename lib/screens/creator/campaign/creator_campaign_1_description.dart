@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
-
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_date_picker.dart';
@@ -10,21 +9,23 @@ import 'package:atlast_mobile_app/shared/form_multiselect_dropdown.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
-class CreateCampaignDescription extends StatefulWidget {
+class CreatorCampaignDescription extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const CreateCampaignDescription({
+  const CreatorCampaignDescription({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreateCampaignDescriptionState createState() =>
-      _CreateCampaignDescriptionState();
+  _CreatorCampaignDescriptionState createState() =>
+      _CreatorCampaignDescriptionState();
 }
 
-class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
+class _CreatorCampaignDescriptionState
+    extends State<CreatorCampaignDescription> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
@@ -115,6 +116,7 @@ class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
                         setDate: (String date) =>
                             setState(() => _startDateController.text = date),
                         placeholderText: "Start date",
+                        startDate: DateTime.now(),
                       ),
                     ),
                     Padding(
@@ -128,6 +130,9 @@ class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
                         setDate: (String date) =>
                             setState(() => _endDateController.text = date),
                         placeholderText: "End date",
+                        startDate: _startDateController.text != ""
+                            ? DateTime.tryParse(_startDateController.text)
+                            : DateTime.now(),
                       ),
                     ),
                   ],
@@ -169,7 +174,7 @@ class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
         children: [
           const HeroHeading(text: "Make a Campaign"),
           Expanded(
-            child: SingleChildScrollView(
+            child: SingleChildScrollBare(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: _buildForm(),

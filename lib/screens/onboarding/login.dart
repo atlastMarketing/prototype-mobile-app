@@ -1,20 +1,20 @@
-import 'package:atlast_mobile_app/shared/gradient_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/gradient_text.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
 class OnboardingLogin extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final void Function() handleLogin;
 
   const OnboardingLogin({
     Key? key,
     required this.navKey,
-    required this.handleLogin,
   }) : super(key: key);
 
   @override
@@ -28,14 +28,21 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _handleLoginClick() {
-    print("email: ${_emailController.text}");
-    print("pass: ${_passwordController.text}");
+    // TODO: Add real auth API calls
     // TODO: check if the signed-in user has completed onboarding
-    widget.handleLogin();
+    // final user = await fetchSelfData();
+
+    // TODO: add smooth page transition
+    Provider.of<UserModel>(context, listen: false).login(
+      "DEFAULT_USER_ID",
+      email: _emailController.text,
+    );
+    // Provider.of<UserModel>(context, listen: false).setIsOnboarded(true);
+    widget.navKey.currentState!.pushNamed("/creator-1");
   }
 
   void _handleCreateAccount() {
-    widget.navKey.currentState!.pushNamed("/create-1");
+    widget.navKey.currentState!.pushNamed("/creator-1");
   }
 
   void _handleForgotPassword() {
@@ -57,14 +64,16 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
             "made easy,",
             style: AppText.title.merge(AppText.blackText),
           ),
-          GradientText("atlast",
-              style: AppText.title.merge(AppText.blackText),
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.secondary.withOpacity(0.5),
-                  AppColors.primary,
-                ],
-              )),
+          GradientText(
+            "atlast",
+            style: AppText.title.merge(AppText.blackText),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.secondary.withOpacity(0.5),
+                AppColors.primary,
+              ],
+            ),
+          ),
         ],
       ),
     );

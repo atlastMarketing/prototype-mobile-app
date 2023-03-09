@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './analytics_dashboard.dart';
+import 'analytics_dashboard.dart';
 
 class Analytics extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/business_info.dart';
-import 'package:atlast_mobile_app/utils/form_validations.dart';
-
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_dropdown.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+import 'package:atlast_mobile_app/utils/form_validations.dart';
 
 class OnboardingBusiness extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -38,17 +40,22 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
     widget.navKey.currentState!.pop();
   }
 
-  void _handleContinue() {
+  void _handleContinue(BuildContext ctx) {
     print("Business Name: ${_bNameController.text}");
     print("Business Type: ${_bTypeInput}");
     print("Business Industry: ${_bIndustryInput}");
-    widget.navKey.currentState!.pushNamed("/create-3");
+    Provider.of<UserModel>(ctx, listen: false).updateUser(
+      businessName: _bNameController.text,
+      businessType: _bTypeInput,
+      businessIndustry: _bIndustryInput,
+    );
+    widget.navKey.currentState!.pushNamed("/creator-3");
   }
 
   Widget _buildForm() {
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
+      child: SingleChildScrollBare(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -120,7 +127,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  _handleContinue();
+                  _handleContinue(context);
                 }
               },
               fillColor: AppColors.primary,

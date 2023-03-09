@@ -1,22 +1,19 @@
-import 'package:atlast_mobile_app/screens/onboarding/signup_3_confirm.dart';
 import 'package:flutter/material.dart';
 
-import './login.dart';
+import 'login.dart';
 import 'signup_1_email.dart';
 import 'signup_2_business.dart';
+import 'signup_3_confirm.dart';
+import 'package:atlast_mobile_app/routes.dart';
 
 class Onboarding extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;
-  final bool isUserLoggedIn;
-  final void Function() handleSuccessfulLogin;
-  final void Function() handleSuccessfulOnboarding;
+  final void Function(RouteEnum) navigateToPage;
 
   const Onboarding({
     Key? key,
     required this.navKey,
-    required this.isUserLoggedIn,
-    required this.handleSuccessfulLogin,
-    required this.handleSuccessfulOnboarding,
+    required this.navigateToPage,
   }) : super(key: key);
 
   @override
@@ -29,21 +26,21 @@ class Onboarding extends StatelessWidget {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
-              case "/create-3":
+              case "/creator-3":
                 return OnboardingConfirm(
                   navKey: navKey,
-                  handleSuccessfulOnboarding: handleSuccessfulOnboarding,
                 );
-              case "/create-2":
+              case "/creator-2":
                 return OnboardingBusiness(
                   navKey: navKey,
                 );
-              case "/create-1":
-                return OnboardingEmail(navKey: navKey);
+              case "/creator-1":
+                return OnboardingEmail(
+                  navKey: navKey,
+                );
               default:
                 return OnboardingLogin(
                   navKey: navKey,
-                  handleLogin: handleSuccessfulLogin,
                 );
             }
           },

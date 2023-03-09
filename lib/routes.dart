@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum RouteEnum {
   home,
   calendar,
-  create,
+  creator,
   analytics,
   settings,
   // misc
@@ -45,10 +45,10 @@ const Map<RouteEnum, RouteData> routes = {
     stackOrder: 1,
     navbarIdentifier: 1,
   ),
-  RouteEnum.create: RouteData(
-    key: RouteEnum.create,
-    route: '/create',
-    label: 'Create',
+  RouteEnum.creator: RouteData(
+    key: RouteEnum.creator,
+    route: '/creator',
+    label: 'Creator',
     icon: Icons.add,
     stackOrder: -1,
     navbarIdentifier: 2,
@@ -83,7 +83,7 @@ const Map<RouteEnum, RouteData> routes = {
 Map<RouteEnum, RouteData> routesInNavBar = {
   RouteEnum.home: routes[RouteEnum.home]!,
   RouteEnum.calendar: routes[RouteEnum.calendar]!,
-  RouteEnum.create: routes[RouteEnum.create]!,
+  RouteEnum.creator: routes[RouteEnum.creator]!,
   RouteEnum.analytics: routes[RouteEnum.analytics]!,
   RouteEnum.settings: routes[RouteEnum.settings]!,
 };

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:atlast_mobile_app/configs/theme.dart';
 
 class AnimatedCheck extends StatefulWidget {

@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
-
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
-class CreateCampaignMedia extends StatefulWidget {
+class CreatorCampaignMedia extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const CreateCampaignMedia({
+  const CreatorCampaignMedia({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreateCampaignMediaState createState() => _CreateCampaignMediaState();
+  _CreatorCampaignMediaState createState() => _CreatorCampaignMediaState();
 }
 
-class _CreateCampaignMediaState extends State<CreateCampaignMedia> {
+class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();

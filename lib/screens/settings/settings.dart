@@ -4,12 +4,10 @@ import 'settings_dashboard.dart';
 
 class Settings extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final void Function() resetOnboarding;
 
   const Settings({
     Key? key,
     required this.navKey,
-    required this.resetOnboarding,
   }) : super(key: key);
 
   @override
@@ -28,10 +26,7 @@ class _SettingsState extends State<Settings> {
           builder: (context) {
             switch (settings.name) {
               default:
-                return SettingsDashboard(
-                  navKey: widget.navKey,
-                  resetOnboarding: widget.resetOnboarding,
-                );
+                return SettingsDashboard(navKey: widget.navKey);
             }
           },
         );

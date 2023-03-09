@@ -1,21 +1,21 @@
-import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/main_navigation.dart';
 import 'package:atlast_mobile_app/routes.dart';
 
 class BottomNavigation extends StatelessWidget {
-  final RouteEnum currentRoute;
   final ValueChanged<RouteEnum> onNavbarTap;
 
   const BottomNavigation({
     Key? key,
-    required this.currentRoute,
     required this.onNavbarTap,
   }) : super(key: key);
 
   Widget _buildNavigatorButton(RouteData route, bool active) {
     switch (route.key) {
-      case RouteEnum.create: // special button for "create"
+      case RouteEnum.creator: // special button for "create"
         return Container(
           width: 60,
           height: 60,
@@ -53,27 +53,29 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.light,
-            blurRadius: 20,
-            spreadRadius: 15,
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: routesInNavBar.values
-            .map((route) => _buildNavigationItem(route))
-            .toList(),
-        currentIndex: routes[currentRoute]!.navbarIdentifier!,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (int navbarIdentifier) => {
-          onNavbarTap(routesInNavBarEnums[navbarIdentifier]),
-        },
+    return Consumer<MainNavigationModel>(
+      builder: (context, model, child) => Container(
+        decoration: const BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.light,
+              blurRadius: 20,
+              spreadRadius: 15,
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: routesInNavBar.values
+              .map((route) => _buildNavigationItem(route))
+              .toList(),
+          currentIndex: routes[model.currentRoute]!.navbarIdentifier!,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: (int navbarIdentifier) => {
+            onNavbarTap(routesInNavBarEnums[navbarIdentifier]),
+          },
+        ),
       ),
     );
   }
