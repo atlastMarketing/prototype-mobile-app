@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
@@ -64,7 +65,7 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
   @override
   Widget build(BuildContext context) {
     return LayoutFullPage(
-      child: Center(child: _buildAnimationWidget()),
+      content: Center(child: _buildAnimationWidget()),
     );
   }
 }

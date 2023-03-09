@@ -42,40 +42,46 @@ class _CustomFormMultiselectDropdownState
               Radius.circular(10),
             ),
           ),
-          child: ExpansionTile(
-            iconColor: AppColors.dark,
-            title: Text(widget.listOfSelectedOptions.isEmpty
-                ? widget.placeholder
-                : widget.listOfSelectedOptions.join(", ")),
-            children: <Widget>[
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: widget.listOfOptions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                    child: _ViewItem(
-                      item: widget.listOfOptions[index],
-                      selected: (val) {
-                        selectedText = val;
-                        List<String> newListOfSelectedOptions =
-                            widget.listOfSelectedOptions;
-                        if (widget.listOfSelectedOptions.contains(val)) {
-                          newListOfSelectedOptions.remove(val);
-                        } else {
-                          newListOfSelectedOptions.add(val);
-                        }
-                        widget
-                            .setListOfSelectedOptions(newListOfSelectedOptions);
-                      },
-                      itemSelected: widget.listOfSelectedOptions
-                          .contains(widget.listOfOptions[index]),
-                    ),
-                  );
-                },
-              ),
-            ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height,
+              maxWidth: MediaQuery.of(context).size.width,
+            ),
+            child: ExpansionTile(
+              iconColor: AppColors.dark,
+              title: Text(widget.listOfSelectedOptions.isEmpty
+                  ? widget.placeholder
+                  : widget.listOfSelectedOptions.join(", ")),
+              children: <Widget>[
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: widget.listOfOptions.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      child: _ViewItem(
+                        item: widget.listOfOptions[index],
+                        selected: (val) {
+                          selectedText = val;
+                          List<String> newListOfSelectedOptions =
+                              widget.listOfSelectedOptions;
+                          if (widget.listOfSelectedOptions.contains(val)) {
+                            newListOfSelectedOptions.remove(val);
+                          } else {
+                            newListOfSelectedOptions.add(val);
+                          }
+                          widget.setListOfSelectedOptions(
+                              newListOfSelectedOptions);
+                        },
+                        itemSelected: widget.listOfSelectedOptions
+                            .contains(widget.listOfOptions[index]),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         widget.hasError

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/business_info.dart';
+import 'package:atlast_mobile_app/utils/form_validations.dart';
+
+import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_dropdown.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/utils/form_validations.dart';
-
-import '../../shared/app_bar_steps.dart';
 
 class OnboardingBusiness extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -45,67 +45,74 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
     widget.navKey.currentState!.pushNamed("/create-3");
   }
 
+  Widget _buildForm() {
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "What is the name of your business?",
+              style: AppText.bodyBold,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              child: CustomFormTextField(
+                controller: _bNameController,
+                placeholderText: "Ex. Starbucks",
+                validator: (String? val) {
+                  if (!isValidName(val)) {
+                    return 'Business name cannot be empty or contain special characters!';
+                  }
+                },
+              ),
+            ),
+            const Text(
+              "What types of products or services does your business sell/offer?",
+              style: AppText.bodyBold,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              child: CustomFormTextDropdown(
+                value: _bTypeInput,
+                handleChanged: _setBTypeInput,
+                items: businessTypes,
+              ),
+            ),
+            const Text(
+              "What industry reflects your business?",
+              style: AppText.bodyBold,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              child: CustomFormTextDropdown(
+                value: _bIndustryInput,
+                handleChanged: _setBIndustryInput,
+                items: businessIndustries,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
       appBarContent: const AppBarSteps(totalSteps: 2, currStep: 2),
-      child: Column(
+      content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const HeroHeading(text: "Tell us about you"),
-          const Padding(padding: EdgeInsets.only(bottom: 5)),
-          Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "What is the name of your business?",
-                    style: AppText.bodyBold,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: CustomFormTextField(
-                      controller: _bNameController,
-                      placeholderText: "Ex. Starbucks",
-                      validator: (String? val) {
-                        if (!isValidName(val)) {
-                          return 'Business name cannot be empty or contain special characters!';
-                        }
-                      },
-                    ),
-                  ),
-                  const Text(
-                    "What types of products or services does your business sell/offer?",
-                    style: AppText.bodyBold,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: CustomFormTextDropdown(
-                      value: _bTypeInput,
-                      handleChanged: _setBTypeInput,
-                      items: businessTypes,
-                    ),
-                  ),
-                  const Text(
-                    "What industry reflects your business?",
-                    style: AppText.bodyBold,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: CustomFormTextDropdown(
-                      value: _bIndustryInput,
-                      handleChanged: _setBIndustryInput,
-                      items: businessIndustries,
-                    ),
-                  ),
-                ],
-              ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: _buildForm(),
             ),
           ),
-          const Spacer(),
           SizedBox(
             width: double.infinity,
             child: CustomButton(

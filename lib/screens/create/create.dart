@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
+
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/screens/sample_page/sample_page.dart';
 
 import 'campaign/create_campaign_1_description.dart';
 import 'campaign/create_campaign_2_media.dart';
-import 'package:atlast_mobile_app/screens/sample_page/sample_page.dart';
 
 class Create extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -110,8 +111,9 @@ class _CreateState extends State<Create> {
 
   Widget _buildCreateOptions() {
     return LayoutFullPage(
+      squeezeContents: false,
       handleBack: _exitCreate,
-      child: Column(
+      content: Column(
         children: [
           Expanded(
             child: Column(

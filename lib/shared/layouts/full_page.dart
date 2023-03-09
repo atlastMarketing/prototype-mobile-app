@@ -2,20 +2,23 @@ import "package:flutter/material.dart";
 
 import "package:atlast_mobile_app/configs/layout.dart";
 import "package:atlast_mobile_app/configs/theme.dart";
-import "package:atlast_mobile_app/shared/scroll_behavior_empty.dart";
 
 class LayoutFullPage extends StatelessWidget {
-  final Widget child;
+  final Widget content;
   final Function()? handleBack;
   final String? appBarTitleText;
   final Widget? appBarContent;
+  final bool squeezeContents;
 
   const LayoutFullPage({
     Key? key,
-    required this.child,
+    required this.content,
     this.handleBack,
     this.appBarTitleText,
     this.appBarContent,
+    // fancy aesthetic stuff (not necessary)
+    // if any of the pages break because of overflows, this is the first thing to turn off.
+    this.squeezeContents = false,
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
@@ -50,26 +53,35 @@ class LayoutFullPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      // remove scroll glow
-      behavior: CustomScrollBehaviorEmpty(),
-      child: SingleChildScrollView(
-        // physics: const NeverScrollableScrollPhysics(),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-            minHeight: MediaQuery.of(context).size.height,
-          ),
-          child: IntrinsicHeight(
-            child: SafeArea(
-              child: Scaffold(
-                appBar: _buildAppBar(),
-                body: Padding(padding: pagePadding, child: child),
-                extendBody: false,
-              ),
-            ),
-          ),
-        ),
+    PreferredSizeWidget? appBar = _buildAppBar();
+    double maxHeight = MediaQuery.of(context).size.height;
+    // minus safearea
+    maxHeight -= MediaQuery.of(context).padding.top;
+    maxHeight -= MediaQuery.of(context).padding.bottom;
+    // minus appbar
+    maxHeight -= appBar != null ? appBar.preferredSize.height : 0;
+
+    return SafeArea(
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: LayoutBuilder(builder:
+            (BuildContext context, BoxConstraints viewportConstraints) {
+          return squeezeContents
+              ? SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: viewportConstraints.maxHeight,
+                      maxHeight: maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Padding(padding: pagePadding, child: content),
+                    ),
+                  ),
+                )
+              : Padding(padding: pagePadding, child: content);
+        }),
+        resizeToAvoidBottomInset: true,
+        extendBody: false,
       ),
     );
   }
