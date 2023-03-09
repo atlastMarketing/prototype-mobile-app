@@ -9,6 +9,8 @@ class CustomFormDatePicker extends StatelessWidget {
   // date params
   final bool disabled;
   final String placeholderText;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   const CustomFormDatePicker({
     Key? key,
@@ -16,6 +18,8 @@ class CustomFormDatePicker extends StatelessWidget {
     required this.setDate,
     this.disabled = false,
     this.placeholderText = "",
+    this.startDate,
+    this.endDate,
   }) : super(key: key);
 
   @override
@@ -56,9 +60,9 @@ class CustomFormDatePicker extends StatelessWidget {
       onTap: () async {
         DateTime? pickedDate = await showDatePicker(
           context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2101),
+          initialDate: startDate ?? DateTime.now(),
+          firstDate: startDate ?? DateTime.now(),
+          lastDate: endDate ?? DateTime(2101),
         );
 
         if (pickedDate != null) {

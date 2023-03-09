@@ -117,6 +117,7 @@ class _CreatorCampaignDescriptionState
                         setDate: (String date) =>
                             setState(() => _startDateController.text = date),
                         placeholderText: "Start date",
+                        startDate: DateTime.now(),
                       ),
                     ),
                     Padding(
@@ -130,6 +131,9 @@ class _CreatorCampaignDescriptionState
                         setDate: (String date) =>
                             setState(() => _endDateController.text = date),
                         placeholderText: "End date",
+                        startDate: _startDateController.text != ""
+                            ? DateTime.tryParse(_startDateController.text)
+                            : DateTime.now(),
                       ),
                     ),
                   ],
