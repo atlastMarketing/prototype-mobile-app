@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
-
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/screens/sample_page/sample_page.dart';
+import 'package:atlast_mobile_app/shared/sample_page.dart';
 
 import 'campaign/creator_campaign_1_description.dart';
 import 'campaign/creator_campaign_2_media.dart';

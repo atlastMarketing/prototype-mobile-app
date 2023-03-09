@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/upcoming_posts.dart';
-
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';

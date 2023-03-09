@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'routes.dart';
+import 'data/main_navigation.dart';
+import 'data/user.dart';
 import 'screens/_index.dart';
 import 'shared/bottom_navigation.dart';
-import 'package:atlast_mobile_app/data/main_navigation.dart';
-import 'package:atlast_mobile_app/data/user.dart';
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);

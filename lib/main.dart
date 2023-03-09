@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'app.dart';
 
-import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/data/main_navigation.dart';
-import 'package:atlast_mobile_app/data/upcoming_posts.dart';
-import 'package:atlast_mobile_app/data/user.dart';
+import 'app.dart';
+import 'configs/theme.dart';
+import 'data/main_navigation.dart';
+import 'data/upcoming_posts.dart';
+import 'data/user.dart';
 
 void main() {
   runApp(

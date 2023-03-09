@@ -3,13 +3,12 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
-import 'package:atlast_mobile_app/utils/form_validations.dart';
-
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/utils/form_validations.dart';
 
 class OnboardingEmail extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;

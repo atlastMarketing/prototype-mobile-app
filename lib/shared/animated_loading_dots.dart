@@ -1,5 +1,6 @@
-import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:flutter/material.dart';
+
+import 'package:atlast_mobile_app/configs/theme.dart';
 
 class DrawDot extends StatelessWidget {
   final double width;

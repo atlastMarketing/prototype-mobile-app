@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './calendar_dashboard.dart';
+import 'calendar_dashboard.dart';
 
 class Calendar extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
