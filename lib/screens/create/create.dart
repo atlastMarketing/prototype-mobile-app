@@ -60,9 +60,7 @@ class _CreateState extends State<Create> {
         color: isActive ? AppColors.secondary : AppColors.light,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
-          onTap: () {
-            _selectCreateOption(optionIdx);
-          },
+          onTap: () => _selectCreateOption(optionIdx),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
             child: Column(

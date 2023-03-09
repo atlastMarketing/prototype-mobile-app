@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -48,7 +49,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   Widget _buildForm() {
     return Form(
       key: _formKey,
-      child: SingleChildScrollView(
+      child: SingleChildScrollBare(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

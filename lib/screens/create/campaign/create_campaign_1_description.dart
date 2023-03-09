@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -169,7 +170,7 @@ class _CreateCampaignDescriptionState extends State<CreateCampaignDescription> {
         children: [
           const HeroHeading(text: "Make a Campaign"),
           Expanded(
-            child: SingleChildScrollView(
+            child: SingleChildScrollBare(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: _buildForm(),
