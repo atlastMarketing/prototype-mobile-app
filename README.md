@@ -17,12 +17,17 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Development
 
+**Requirements**
+- [Flutter SDK](https://docs.flutter.dev/development/tools/sdk/releases)
+- [Android Studio](https://developer.android.com/studio/)
+- Xcode + [iOS Simulator](https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/Introduction/Introduction.html) (for Apple machines)
+
 **Local Repository Setup**
 - After cloning, install all the packages into the repository by running `flutter pub get`
 
 **Local Development**
-- Find available devices by running `flutter devices`
-- Use one of the available devices to run the flutter application by running `flutter run -d <DEVICE_ID>`
+- Find available devices by running `flutter devices` (if using offline simulators, make sure they are running first).
+- Use one of the available devices to run the flutter application by running `flutter run -d <DEVICE_ID>`. This process is automated using the `run.sh` script
 
 **Other Useful CLI Commands**
 - `flutter doctor`
@@ -34,13 +39,17 @@ With the Flutter extension installed, a lot of the flutter commands can be acces
 
 ## Build
 ### Building for Android
-- Export to `.apk` file
-```
-flutter build apk --split-per-abi
-```
+- Run the `build.sh` file
+
+Other manual method:
 - Simply connect android device through USB and run `flutter install -d <DEVICE_ID>`
     - May need to run `flutter build apk --release` first
 
+Additional Refs:
+- https://developer.android.com/studio/build/build-variants
+
 ### Building for iOS
+- Run the `build.sh` file
+
 Honestly have never tried it before - can't give good insight into this
 Resource: https://medium.com/front-end-weekly/how-to-test-your-flutter-ios-app-on-your-ios-device-75924bfd75a8
