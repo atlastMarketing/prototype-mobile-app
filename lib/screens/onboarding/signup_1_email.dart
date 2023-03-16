@@ -28,14 +28,14 @@ class OnboardingEmail extends StatelessWidget {
 
   void _handleContinue(BuildContext ctx) {
     print("email: ${_emailController.text}");
-    Provider.of<UserModel>(ctx, listen: false)
+    Provider.of<UserStore>(ctx, listen: false)
         .updateUser(email: _emailController.text);
     navKey.currentState!.pushNamed("/creator-2");
   }
 
   Widget _buildForm(BuildContext ctx) {
     _emailController.text =
-        Provider.of<UserModel>(ctx, listen: false).data.email ?? "";
+        Provider.of<UserStore>(ctx, listen: false).data.email ?? "";
     return Form(
       key: _formKey,
       child: Column(

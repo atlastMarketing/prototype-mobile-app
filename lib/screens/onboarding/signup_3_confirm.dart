@@ -27,8 +27,8 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
   void initState() {
     super.initState();
 
-    UserModel userModelProvider =
-        Provider.of<UserModel>(context, listen: false);
+    UserStore userModelProvider =
+        Provider.of<UserStore>(context, listen: false);
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() => _animationState = 1);
     });

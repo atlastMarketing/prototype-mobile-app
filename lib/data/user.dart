@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
 
-class User {
-  String id;
-  String? email;
-  String? businessName;
-  String? businessType;
-  String? businessIndustry;
+import 'package:atlast_mobile_app/models/user_model.dart';
 
-  User({
-    required this.id,
-    this.email,
-    this.businessName,
-    this.businessType,
-    this.businessIndustry,
-  });
-}
-
-class UserModel extends ChangeNotifier {
+class UserStore extends ChangeNotifier {
   /// Private state
   String _id = "";
   String _email = "";
@@ -30,7 +16,7 @@ class UserModel extends ChangeNotifier {
   bool get isLoggedIn => _id != "";
   bool get isOnboarded => _isOnboarded;
 
-  User get data => User(
+  UserModel get data => UserModel(
         id: _id,
         email: _email,
         businessName: _businessName,

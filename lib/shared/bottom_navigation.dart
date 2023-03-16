@@ -53,7 +53,7 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MainNavigationModel>(
+    return Consumer<MainNavigationStore>(
       builder: (context, model, child) => Container(
         decoration: const BoxDecoration(
           boxShadow: [

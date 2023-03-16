@@ -42,8 +42,8 @@ class _AppState extends State<App> with RouteAware {
   final PageController _pageController = PageController(initialPage: 0);
 
   void _navigateToPage(RouteEnum destination) {
-    MainNavigationModel mainNavigationModelProvider =
-        Provider.of<MainNavigationModel>(context, listen: false);
+    MainNavigationStore mainNavigationModelProvider =
+        Provider.of<MainNavigationStore>(context, listen: false);
     RouteEnum currentRoute = mainNavigationModelProvider.currentRoute;
 
     if (currentRoute == destination) {
@@ -87,7 +87,7 @@ class _AppState extends State<App> with RouteAware {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    return Consumer<UserModel>(builder: (context, model, child) {
+    return Consumer<UserStore>(builder: (context, model, child) {
       print("user id: ${model.data.id}");
       print("model.isLoggedIn ${model.isLoggedIn}");
       print("model.isOnboarded ${model.isOnboarded}");

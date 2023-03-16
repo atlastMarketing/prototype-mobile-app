@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/routes.dart';
 
-class MainNavigationModel extends ChangeNotifier {
+class MainNavigationStore extends ChangeNotifier {
   /// Private state
   RouteEnum _currRoute = RouteEnum.home;
 
