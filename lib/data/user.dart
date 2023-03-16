@@ -9,6 +9,7 @@ class UserStore extends ChangeNotifier {
   String _businessName = "";
   String _businessType = "";
   String _businessIndustry = "";
+  String _businessDescription = "";
 
   bool _isOnboarded = false;
 
@@ -22,6 +23,7 @@ class UserStore extends ChangeNotifier {
         businessName: _businessName,
         businessType: _businessType,
         businessIndustry: _businessIndustry,
+        businessDescription: _businessDescription,
       );
 
   /// Setters
