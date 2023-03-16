@@ -11,24 +11,23 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
-class CreatorCampaignDescription extends StatefulWidget {
+class CreatorCampaignCatalyst extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const CreatorCampaignDescription({
+  const CreatorCampaignCatalyst({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreatorCampaignDescriptionState createState() =>
-      _CreatorCampaignDescriptionState();
+  _CreatorCampaignCatalystState createState() =>
+      _CreatorCampaignCatalystState();
 }
 
-class _CreatorCampaignDescriptionState
-    extends State<CreatorCampaignDescription> {
+class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _catalystController = TextEditingController();
   List<String> _listOfSelectedPlatforms = [];
   bool _listOfSelectedPlatformsHasError = false;
   final TextEditingController _startDateController = TextEditingController();
@@ -60,11 +59,11 @@ class _CreatorCampaignDescriptionState
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 30),
             child: CustomFormTextField(
-              controller: _descriptionController,
+              controller: _catalystController,
               placeholderText:
                   "Ex. Valentines days promotion for \$20 for a dozen roses and free delivery",
               vSize: 6,
-              // TODO: add auto analysis of description to pre-fill other fields
+              // TODO: add auto analysis of full prompt to pre-fill other fields
             ),
           ),
           const Text(
