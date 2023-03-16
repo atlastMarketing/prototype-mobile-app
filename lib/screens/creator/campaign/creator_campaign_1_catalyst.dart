@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
@@ -27,15 +28,19 @@ class CreatorCampaignCatalyst extends StatefulWidget {
 class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _catalystController = TextEditingController();
-  List<String> _listOfSelectedPlatforms = [];
+  final TextEditingController _catalystInputController =
+      TextEditingController();
+  List<SocialMediaPlatforms> _listOfSelectedPlatforms = [];
   bool _listOfSelectedPlatformsHasError = false;
   final TextEditingController _startDateController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
 
-  void _setListOfSelectedPlatforms(List<String> newList) {
-    setState(() => _listOfSelectedPlatforms = newList);
+  void _setListOfSelectedPlatforms(List<dynamic> newList) {
+    setState(
+        () => _listOfSelectedPlatforms = newList as List<SocialMediaPlatforms>);
   }
 
   void _handleBack() {
@@ -59,7 +64,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 30),
             child: CustomFormTextField(
-              controller: _catalystController,
+              controller: _catalystInputController,
               placeholderText:
                   "Ex. Valentines days promotion for \$20 for a dozen roses and free delivery",
               vSize: 6,
@@ -75,7 +80,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
             child: Column(
               children: [
                 CustomFormMultiselectDropdown(
-                  listOfOptions: socialMediaPlatforms,
+                  listOfOptions: socialMediaPlatformsOptions,
                   listOfSelectedOptions: _listOfSelectedPlatforms,
                   setListOfSelectedOptions: _setListOfSelectedPlatforms,
                   placeholder: "Select platform(s)",
@@ -112,9 +117,19 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                     Flexible(
                       child: CustomFormDatePicker(
                         controller: _startDateController,
-                        setDate: (String date) =>
-                            setState(() => _startDateController.text = date),
+                        setDate: (DateTime date, String formattedDate) =>
+                            setState(() {
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd').format(date);
+                          _startDateController.text = formattedDate;
+                          _startDate = date;
+                          if (_endDate != null && _endDate!.isBefore(date)) {
+                            _endDateController.text = "";
+                            _endDate = null;
+                          }
+                        }),
                         placeholderText: "Start date",
+                        currDate: _startDate,
                         startDate: DateTime.now(),
                       ),
                     ),
@@ -126,12 +141,14 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                     Flexible(
                       child: CustomFormDatePicker(
                         controller: _endDateController,
-                        setDate: (String date) =>
-                            setState(() => _endDateController.text = date),
+                        setDate: (DateTime date, String formattedDate) =>
+                            setState(() {
+                          _endDateController.text = formattedDate;
+                          _endDate = date;
+                        }),
                         placeholderText: "End date",
-                        startDate: _startDateController.text != ""
-                            ? DateTime.tryParse(_startDateController.text)
-                            : DateTime.now(),
+                        currDate: _endDate,
+                        startDate: _startDate ?? DateTime.now(),
                       ),
                     ),
                   ],
