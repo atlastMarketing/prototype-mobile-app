@@ -6,7 +6,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
 
-import 'campaign/creator_campaign_1_description.dart';
+import 'campaign/creator_campaign_1_prompt.dart';
 import 'campaign/creator_campaign_2_media.dart';
 
 class Creator extends StatefulWidget {
@@ -179,7 +179,7 @@ class _CreatorState extends State<Creator> {
                   case "/post-1":
                     return const SamplePage();
                   case "/campaign-1":
-                    return CreatorCampaignDescription(
+                    return CreatorCampaignPrompt(
                       navKey: widget.navKey,
                     );
                   case "/campaign-2":
