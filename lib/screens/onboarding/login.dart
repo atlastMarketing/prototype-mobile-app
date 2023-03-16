@@ -37,8 +37,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
       "DEFAULT_USER_ID",
       email: _emailController.text,
     );
-    // Provider.of<UserModel>(context, listen: false).setIsOnboarded(true);
-    widget.navKey.currentState!.pushNamed("/creator-1");
+    widget.navKey.currentState!.pushNamed("/creator-2");
   }
 
   void _handleCreateAccount() {
