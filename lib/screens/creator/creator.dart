@@ -1,13 +1,19 @@
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
 
-import 'campaign/creator_campaign_1_prompt.dart';
+import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_media.dart';
+import 'social_media_post/creator_social_media_post_1_prompt.dart';
+import 'social_media_post/creator_social_media_post_3_results.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -22,6 +28,8 @@ class Creator extends StatefulWidget {
 }
 
 class _CreatorState extends State<Creator> {
+  CatalystBreakdown? _catalyst;
+  // TODO: break down prompt details
   int _selectedCreatorOptionIdx = -1;
 
   _exitCreator() {
@@ -43,6 +51,28 @@ class _CreatorState extends State<Creator> {
 
   void _selectCreatorOption(int optionIdx) {
     setState(() => _selectedCreatorOptionIdx = optionIdx);
+  }
+
+  Future<void> _analyzeCatalyst(
+    String catalyst, {
+    CatalystOutputTypes type = CatalystOutputTypes.singlePost,
+  }) async {
+    CatalystBreakdown breakdown = CatalystBreakdown(
+      catalyst: catalyst,
+      derived_output_type: type,
+      derived_prompt: catalyst,
+      // remove hardcoding here
+      derived_post_date: type == CatalystOutputTypes.singlePost
+          ? DateTime.now().add(const Duration(minutes: 10))
+          : null,
+      derived_start_date:
+          type == CatalystOutputTypes.singlePost ? null : DateTime.now(),
+      derived_end_date: type == CatalystOutputTypes.singlePost
+          ? null
+          : DateTime.now().add(const Duration(days: 30)),
+      derived_platforms: [SocialMediaPlatforms.instagram],
+    );
+    setState(() => _catalyst = breakdown);
   }
 
   Widget _buildCreatorOptionButton(
@@ -177,9 +207,17 @@ class _CreatorState extends State<Creator> {
               builder: (context) {
                 switch (settings.name) {
                   case "/post-1":
-                    return const SamplePage();
+                    return CreatorSocialMediaPostPrompt(
+                      navKey: widget.navKey,
+                      analyzeCatalyst: _analyzeCatalyst,
+                    );
+                  case "/post-results":
+                    return CreatorSocialMediaPostResults(
+                      navKey: widget.navKey,
+                      catalyst: _catalyst,
+                    );
                   case "/campaign-1":
-                    return CreatorCampaignPrompt(
+                    return CreatorCampaignCatalyst(
                       navKey: widget.navKey,
                     );
                   case "/campaign-2":

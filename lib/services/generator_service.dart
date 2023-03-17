@@ -8,14 +8,15 @@ import 'package:atlast_mobile_app/models/user_model.dart';
 const String API_URL = String.fromEnvironment('API_URL', defaultValue: '');
 
 class GeneratorService {
-  Future<http.Response> fetchCaption(
+  static Future<List<String>> fetchCaptions(
     prompt, {
     required String platform,
     String voice = "",
     required UserModel userData,
     int generationNum = 1,
+    required String catalyst,
   }) async {
-    final body = {
+    final requestBody = {
       'prompt': prompt,
       'prompt_info': {
         'voice': voice,
@@ -32,14 +33,22 @@ class GeneratorService {
       },
       'meta_prompt': {
         'generation_num': generationNum,
+        'full_catalyst': catalyst,
       },
     };
-    final jsonBody = json.encode(body);
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
-    return await http.post(
+    final response = await http.post(
       Uri.parse('$API_URL/ml/caption'),
       headers: headers,
-      body: jsonBody,
+      body: json.encode(requestBody),
     );
+    // TODO: error handling
+    final Map<String, dynamic> responseBody = json.decode(response.body);
+    // TODO: address bug here
+    List<dynamic> extractedCaptions1 =
+        responseBody['choices'].map((e) => e['text'].toString()).toList();
+    List<String> extractedCaptions =
+        extractedCaptions1.map((e) => e.toString()).toList();
+    return extractedCaptions;
   }
 }

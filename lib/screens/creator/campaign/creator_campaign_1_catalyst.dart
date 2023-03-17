@@ -66,7 +66,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
             child: CustomFormTextField(
               controller: _catalystInputController,
               placeholderText:
-                  "Ex. Valentines days promotion for \$20 for a dozen roses and free delivery",
+                  "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
               vSize: 6,
               // TODO: add auto analysis of full prompt to pre-fill other fields
             ),
