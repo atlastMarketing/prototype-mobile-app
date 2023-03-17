@@ -15,12 +15,12 @@ class SettingsDashboard extends StatelessWidget {
   }) : super(key: key);
 
   void _resetOnboarding(BuildContext ctx) {
-    Provider.of<UserModel>(ctx, listen: false).setIsOnboarded(false);
+    Provider.of<UserStore>(ctx, listen: false).setIsOnboarded(false);
   }
 
   void _logout(BuildContext ctx) {
-    Provider.of<UserModel>(ctx, listen: false).logout();
-    Provider.of<UserModel>(ctx, listen: false).setIsOnboarded(false);
+    Provider.of<UserStore>(ctx, listen: false).logout();
+    Provider.of<UserStore>(ctx, listen: false).setIsOnboarded(false);
   }
 
   @override

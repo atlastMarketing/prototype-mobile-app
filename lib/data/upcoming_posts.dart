@@ -1,44 +1,19 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 
-class UpcomingPostData {
-  String? dateTime;
-  String? caption;
-  String? imageUrl;
+import 'package:atlast_mobile_app/models/content_model.dart';
 
-  UpcomingPostData({
-    this.dateTime,
-    this.caption,
-    this.imageUrl,
-  });
-}
-
-class UpcomingPost extends UpcomingPostData {
-  int id;
-
-  UpcomingPost({
-    required this.id,
-    dateTime,
-    caption,
-    imageUrl,
-  }) : super(
-          dateTime: dateTime,
-          caption: caption,
-          imageUrl: imageUrl,
-        );
-}
-
-class UpcomingPostsModel extends ChangeNotifier {
+class UpcomingPostsStore extends ChangeNotifier {
   /// Private state
-  final Map<int, UpcomingPost> _posts = {
-    0: UpcomingPost(
+  final Map<int, PostContent> _posts = {
+    0: PostContent(
       id: 0,
       dateTime: "2023-05-11T19:00:00-08:00",
       caption:
           "Looking for a way to brighten up your day? ☀️ Check out Picard’s Flowers where we have a wide variety of beautiful flowers lorem ipsum lorem ipsum lorem ipsum",
       imageUrl: "https://i.imgur.com/eHnCdZi.png",
     ),
-    1: UpcomingPost(
+    1: PostContent(
       id: 1,
       dateTime: "2023-05-12T19:00:00-08:00",
       caption:
@@ -49,15 +24,15 @@ class UpcomingPostsModel extends ChangeNotifier {
   int _runningId = 0;
 
   /// Getters
-  UnmodifiableListView<UpcomingPost> get posts =>
+  UnmodifiableListView<PostContent> get posts =>
       UnmodifiableListView(_posts.values);
 
   /// Setters
-  void add(UpcomingPostData postData) {
+  void add(ContentData contentData) {
     _runningId += 1;
-    UpcomingPost newPost = UpcomingPost(
+    PostContent newPost = PostContent(
       id: _runningId,
-      dateTime: postData.dateTime,
+      dateTime: contentData.dateTime,
     );
     _posts.addAll({_runningId: newPost});
     notifyListeners();

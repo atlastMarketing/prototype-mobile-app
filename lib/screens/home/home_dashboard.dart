@@ -73,7 +73,7 @@ class HomeDashboard extends StatelessWidget {
   }
 
   Widget _buildUpcomingPosts() {
-    return Consumer<UpcomingPostsModel>(
+    return Consumer<UpcomingPostsStore>(
       builder: (context, model, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

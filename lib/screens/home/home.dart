@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:atlast_mobile_app/services/sample_service.dart';
-
 import 'home_dashboard.dart';
 
 class Home extends StatefulWidget {
@@ -22,8 +20,8 @@ class _HomeState extends State<Home> {
   late String data;
 
   Future<void> _getData() async {
-    SampleService serviceWorker = SampleService();
-    await serviceWorker.getData();
+    // SampleService serviceWorker = SampleService();
+    // await serviceWorker.getData();
 
     setState(() {
       data = 'results here';

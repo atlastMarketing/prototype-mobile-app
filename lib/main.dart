@@ -11,9 +11,9 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UpcomingPostsModel()),
-        ChangeNotifierProvider(create: (context) => MainNavigationModel()),
-        ChangeNotifierProvider(create: (context) => UserModel()),
+        ChangeNotifierProvider(create: (context) => UpcomingPostsStore()),
+        ChangeNotifierProvider(create: (context) => MainNavigationStore()),
+        ChangeNotifierProvider(create: (context) => UserStore()),
       ],
       child: const MyApp(),
     ),

@@ -5,10 +5,11 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 
 class CustomFormDatePicker extends StatelessWidget {
   final TextEditingController controller;
-  final void Function(String) setDate;
+  final void Function(DateTime, String) setDate;
   // date params
   final bool disabled;
   final String placeholderText;
+  final DateTime? currDate;
   final DateTime? startDate;
   final DateTime? endDate;
 
@@ -18,6 +19,7 @@ class CustomFormDatePicker extends StatelessWidget {
     required this.setDate,
     this.disabled = false,
     this.placeholderText = "",
+    this.currDate,
     this.startDate,
     this.endDate,
   }) : super(key: key);
@@ -60,14 +62,15 @@ class CustomFormDatePicker extends StatelessWidget {
       onTap: () async {
         DateTime? pickedDate = await showDatePicker(
           context: context,
-          initialDate: startDate ?? DateTime.now(),
+          initialDate: currDate ?? startDate ?? DateTime.now(),
+          currentDate: currDate,
           firstDate: startDate ?? DateTime.now(),
           lastDate: endDate ?? DateTime(2101),
         );
 
         if (pickedDate != null) {
           String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-          setDate(formattedDate);
+          setDate(pickedDate, formattedDate);
         }
       },
     );

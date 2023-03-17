@@ -33,12 +33,11 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     // final user = await fetchSelfData();
 
     // TODO: add smooth page transition
-    Provider.of<UserModel>(context, listen: false).login(
+    Provider.of<UserStore>(context, listen: false).login(
       "DEFAULT_USER_ID",
       email: _emailController.text,
     );
-    // Provider.of<UserModel>(context, listen: false).setIsOnboarded(true);
-    widget.navKey.currentState!.pushNamed("/creator-1");
+    widget.navKey.currentState!.pushNamed("/creator-2");
   }
 
   void _handleCreateAccount() {

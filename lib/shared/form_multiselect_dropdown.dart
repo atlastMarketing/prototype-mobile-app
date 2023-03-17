@@ -4,9 +4,9 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 
 class CustomFormMultiselectDropdown extends StatefulWidget {
   final String placeholder;
-  final List<String> listOfOptions;
-  final List<String> listOfSelectedOptions;
-  final void Function(List<String>) setListOfSelectedOptions;
+  final Map<dynamic, String> listOfOptions;
+  final List<dynamic> listOfSelectedOptions;
+  final void Function(List<dynamic>) setListOfSelectedOptions;
   final bool hasError;
   final String validationMsg;
 
@@ -27,10 +27,13 @@ class CustomFormMultiselectDropdown extends StatefulWidget {
 
 class _CustomFormMultiselectDropdownState
     extends State<CustomFormMultiselectDropdown> {
-  String selectedText = "";
-
   @override
   Widget build(BuildContext context) {
+    List<String> listOfSelectedOptionsString = widget.listOfSelectedOptions
+        .map((e) => widget.listOfOptions[e]!)
+        .toList();
+    List<dynamic> listOfOptionsKeys = widget.listOfOptions.keys.toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -49,9 +52,9 @@ class _CustomFormMultiselectDropdownState
             ),
             child: ExpansionTile(
               iconColor: AppColors.dark,
-              title: Text(widget.listOfSelectedOptions.isEmpty
+              title: Text(listOfSelectedOptionsString.isEmpty
                   ? widget.placeholder
-                  : widget.listOfSelectedOptions.join(", ")),
+                  : listOfSelectedOptionsString.join(", ")),
               children: <Widget>[
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -61,10 +64,11 @@ class _CustomFormMultiselectDropdownState
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8.0),
                       child: _ViewItem(
-                        item: widget.listOfOptions[index],
+                        value: listOfOptionsKeys[index],
+                        display:
+                            widget.listOfOptions[listOfOptionsKeys[index]]!,
                         selected: (val) {
-                          selectedText = val;
-                          List<String> newListOfSelectedOptions =
+                          List<dynamic> newListOfSelectedOptions =
                               widget.listOfSelectedOptions;
                           if (widget.listOfSelectedOptions.contains(val)) {
                             newListOfSelectedOptions.remove(val);
@@ -75,7 +79,7 @@ class _CustomFormMultiselectDropdownState
                               newListOfSelectedOptions);
                         },
                         itemSelected: widget.listOfSelectedOptions
-                            .contains(widget.listOfOptions[index]),
+                            .contains(listOfOptionsKeys[index]),
                       ),
                     );
                   },
@@ -96,12 +100,14 @@ class _CustomFormMultiselectDropdownState
 }
 
 class _ViewItem extends StatelessWidget {
-  String item;
+  dynamic value;
+  String display;
   bool itemSelected;
-  final Function(String) selected;
+  final Function(dynamic) selected;
 
   _ViewItem({
-    required this.item,
+    required this.value,
+    required this.display,
     required this.itemSelected,
     required this.selected,
   });
@@ -120,12 +126,12 @@ class _ViewItem extends StatelessWidget {
             child: Checkbox(
               value: itemSelected,
               onChanged: (val) {
-                selected(item);
+                selected(value);
               },
             ),
           ),
           SizedBox(width: size.width * .025),
-          Text(item),
+          Text(display),
         ],
       ),
     );

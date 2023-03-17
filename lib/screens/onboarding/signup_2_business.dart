@@ -44,7 +44,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
     print("Business Name: ${_bNameController.text}");
     print("Business Type: ${_bTypeInput}");
     print("Business Industry: ${_bIndustryInput}");
-    Provider.of<UserModel>(ctx, listen: false).updateUser(
+    Provider.of<UserStore>(ctx, listen: false).updateUser(
       businessName: _bNameController.text,
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,
