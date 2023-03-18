@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class CreatorSocialMediaPostResults extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final CatalystBreakdown? catalyst;
+  final CatalystBreakdown catalyst;
 
   const CreatorSocialMediaPostResults({
     Key? key,
@@ -55,12 +55,12 @@ class _CreatorSocialMediaPostResultsState
     }
 
     final response = await GeneratorService.fetchCaptions(
-      widget.catalyst!.catalyst,
-      platform: widget.catalyst!.derivedPlatforms[0].toString(),
+      widget.catalyst.derivedPrompt,
+      platform: widget.catalyst.derivedPlatforms[0].toString(),
       // voice: <>,
       userData: Provider.of<UserStore>(ctx, listen: false).data,
       generationNum: _numGenerations + 1,
-      catalyst: widget.catalyst!.catalyst,
+      catalyst: widget.catalyst.catalyst,
     );
     // final List<String> test = response.map((e) => e.toString()).toList();
     setState(() {

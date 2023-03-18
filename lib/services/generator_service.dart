@@ -44,6 +44,7 @@ class GeneratorService {
     );
     // TODO: error handling
     final Map<String, dynamic> responseBody = json.decode(response.body);
+    print(responseBody);
     // TODO: address bug here
     List<dynamic> extractedCaptions1 =
         responseBody['choices'].map((e) => e['text'].toString()).toList();

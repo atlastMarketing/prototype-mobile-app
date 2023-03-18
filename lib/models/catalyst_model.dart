@@ -6,18 +6,18 @@ class CatalystBreakdown {
 
   String derivedPrompt;
   CatalystOutputTypes derivedOutputType;
-  DateTime? derivedPostDate;
-  DateTime? derivedStartDate;
-  DateTime? derivedEndDate;
+  int? derivedPostTimestamp;
+  int? derivedStartTimestamp;
+  int? derivedEndTimestamp;
   List<SocialMediaPlatforms> derivedPlatforms;
 
   CatalystBreakdown({
     required this.catalyst,
     required this.derivedPrompt,
     required this.derivedOutputType,
-    this.derivedPostDate,
-    this.derivedStartDate,
-    this.derivedEndDate,
+    this.derivedPostTimestamp,
+    this.derivedStartTimestamp,
+    this.derivedEndTimestamp,
     this.derivedPlatforms = const [],
   }) : super();
 }

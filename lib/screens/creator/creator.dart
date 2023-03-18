@@ -1,14 +1,16 @@
-import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
+import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
-import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
+import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_media.dart';
@@ -28,9 +30,12 @@ class Creator extends StatefulWidget {
 }
 
 class _CreatorState extends State<Creator> {
-  CatalystBreakdown? _catalyst;
+  CatalystBreakdown? _catalystDetails;
   // TODO: break down prompt details
   int _selectedCreatorOptionIdx = -1;
+
+  final entityExtractor =
+      EntityExtractor(language: EntityExtractorLanguage.english);
 
   _exitCreator() {
     Navigator.of(context).pop();
@@ -38,9 +43,19 @@ class _CreatorState extends State<Creator> {
 
   _handleInitialContinue() {
     if (_selectedCreatorOptionIdx == 0) {
+      setState(() => _catalystDetails = CatalystBreakdown(
+            catalyst: "",
+            derivedPrompt: "",
+            derivedOutputType: CatalystOutputTypes.singlePost,
+          ));
       // create post
       widget.navKey.currentState!.pushNamed("/post-1");
     } else if (_selectedCreatorOptionIdx == 1) {
+      setState(() => _catalystDetails = CatalystBreakdown(
+            catalyst: "",
+            derivedPrompt: "",
+            derivedOutputType: CatalystOutputTypes.campaign,
+          ));
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");
     } else if (_selectedCreatorOptionIdx == 2) {
@@ -57,22 +72,48 @@ class _CreatorState extends State<Creator> {
     String catalyst, {
     CatalystOutputTypes type = CatalystOutputTypes.singlePost,
   }) async {
-    CatalystBreakdown breakdown = CatalystBreakdown(
-      catalyst: catalyst,
-      derived_output_type: type,
-      derived_prompt: catalyst,
-      // remove hardcoding here
-      derived_post_date: type == CatalystOutputTypes.singlePost
-          ? DateTime.now().add(const Duration(minutes: 10))
-          : null,
-      derived_start_date:
-          type == CatalystOutputTypes.singlePost ? null : DateTime.now(),
-      derived_end_date: type == CatalystOutputTypes.singlePost
-          ? null
-          : DateTime.now().add(const Duration(days: 30)),
-      derived_platforms: [SocialMediaPlatforms.instagram],
+    final List<EntityAnnotation> annotations =
+        await entityExtractor.annotateText(
+      catalyst,
+      // TODO: don't hardcode this
+      preferredLocale: 'en-US',
+      referenceTimeZone: 'America/Vancouver',
     );
-    setState(() => _catalyst = breakdown);
+
+    String _derivedPrompt = catalyst;
+    int? _postTimestamp = null;
+
+    // TODO: FURTHER CLEANING
+    if (annotations.isNotEmpty) {
+      final EntityAnnotation? annotatedDate = annotations.firstWhereOrNull(
+        (ant) => ant.entities
+            .where((ent) => ent.type == EntityType.dateTime)
+            .isNotEmpty,
+      );
+
+      if (annotatedDate != null) {
+        final NERRegexExpandedDate extractedDate =
+            extractDateBuffersFromCatalyst(
+          catalyst,
+          annotatedDate.start,
+          annotatedDate.end,
+          annotatedDate.entities
+                  .firstWhere((e) => e.type == EntityType.dateTime)
+              as DateTimeEntity,
+        );
+
+        _derivedPrompt = extractedDate.matched;
+        _postTimestamp = extractedDate.timestamp;
+      }
+    }
+
+    setState(() {
+      _catalystDetails!.catalyst = catalyst;
+      _catalystDetails!.derivedPrompt = _derivedPrompt;
+      _catalystDetails!.derivedPostTimestamp = _postTimestamp;
+      // remove hardcoding here
+      _catalystDetails!.derivedPlatforms = [SocialMediaPlatforms.instagram];
+    });
   }
 
   Widget _buildCreatorOptionButton(
@@ -210,11 +251,12 @@ class _CreatorState extends State<Creator> {
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
+                      catalyst: _catalystDetails,
                     );
                   case "/post-results":
                     return CreatorSocialMediaPostResults(
                       navKey: widget.navKey,
-                      catalyst: _catalyst,
+                      catalyst: _catalystDetails!,
                     );
                   case "/campaign-1":
                     return CreatorCampaignCatalyst(

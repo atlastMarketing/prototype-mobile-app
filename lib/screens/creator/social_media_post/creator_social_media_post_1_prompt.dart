@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
@@ -11,15 +12,17 @@ import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class CreatorSocialMediaPostPrompt extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  Future<void> Function(
+  final Future<void> Function(
     String catalyst, {
     CatalystOutputTypes type,
   }) analyzeCatalyst;
+  final CatalystBreakdown? catalyst;
 
-  CreatorSocialMediaPostPrompt({
+  const CreatorSocialMediaPostPrompt({
     Key? key,
     required this.navKey,
     required this.analyzeCatalyst,
+    required this.catalyst,
   }) : super(key: key);
 
   @override
@@ -42,6 +45,40 @@ class _CreatorSocialMediaPostPromptState
     widget.navKey.currentState!.pushNamed("/post-results");
   }
 
+  void _handleChange() {
+    widget.analyzeCatalyst(
+      _catalystInputController.text,
+      type: CatalystOutputTypes.singlePost,
+    );
+  }
+
+  Widget _buildDate() {
+    if (widget.catalyst == null ||
+        widget.catalyst!.derivedPostTimestamp == null) {
+      return const SizedBox(height: 0, width: 0);
+    }
+
+    String date = DateTime.fromMillisecondsSinceEpoch(
+            widget.catalyst!.derivedPostTimestamp!)
+        .toIso8601String();
+    return Row(
+      children: [
+        const Text("Date: "),
+        Text(widget.catalyst!.derivedPostTimestamp.toString()),
+        const Text(" ---- "),
+        Text(date),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // listen for changes to autofill
+    _catalystInputController.addListener(_handleChange);
+  }
+
   Widget _buildForm() {
     return Form(
       key: _formKey,
@@ -58,7 +95,7 @@ class _CreatorSocialMediaPostPromptState
               controller: _catalystInputController,
               placeholderText:
                   // "Ex. Instagram post on Valentines day about promoting a discount of \$20 for a dozen roses and free delivery",
-                  "Ex. Post in the morning of January 14 about a Valentine's day promotion of \$20 for a dozen roses and free delivery",
+                  "Ex. Post on February 13 at 9pm about a Valentine's day promotion of \$20 for a dozen roses and free delivery",
               vSize: 6,
               // TODO: add auto analysis of description to pre-fill other fields
               validator: (String? val) {
@@ -69,6 +106,12 @@ class _CreatorSocialMediaPostPromptState
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 30),
+            child: Column(children: [
+              _buildDate(),
+            ]),
+          )
         ],
       ),
     );
@@ -112,6 +155,7 @@ class _CreatorSocialMediaPostPromptState
 
   @override
   void dispose() {
+    _catalystInputController.removeListener(_handleChange);
     _catalystInputController.dispose();
     super.dispose();
   }
