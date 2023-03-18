@@ -39,10 +39,6 @@ class _CreatorSocialMediaPostPromptState
   }
 
   void _handleContinue() {
-    widget.analyzeCatalyst(
-      _catalystInputController.text,
-      type: CatalystOutputTypes.singlePost,
-    );
     widget.navKey.currentState!.pushNamed("/post-results");
   }
 
@@ -62,7 +58,7 @@ class _CreatorSocialMediaPostPromptState
               controller: _catalystInputController,
               placeholderText:
                   // "Ex. Instagram post on Valentines day about promoting a discount of \$20 for a dozen roses and free delivery",
-                  "Ex. Valentines day promotion of \$20 for a dozen roses and free delivery",
+                  "Ex. Post in the morning of January 14 about a Valentine's day promotion of \$20 for a dozen roses and free delivery",
               vSize: 6,
               // TODO: add auto analysis of description to pre-fill other fields
               validator: (String? val) {
@@ -112,5 +108,11 @@ class _CreatorSocialMediaPostPromptState
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _catalystInputController.dispose();
+    super.dispose();
   }
 }

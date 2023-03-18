@@ -85,4 +85,10 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
 }

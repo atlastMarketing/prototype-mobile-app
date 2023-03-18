@@ -138,4 +138,10 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _bNameController.dispose();
+    super.dispose();
+  }
 }

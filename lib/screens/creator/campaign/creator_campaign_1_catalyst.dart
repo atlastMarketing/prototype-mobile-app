@@ -228,4 +228,12 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _catalystInputController.dispose();
+    _startDateController.dispose();
+    _endDateController.dispose();
+    super.dispose();
+  }
 }
