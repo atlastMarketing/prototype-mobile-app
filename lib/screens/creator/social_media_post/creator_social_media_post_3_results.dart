@@ -56,7 +56,7 @@ class _CreatorSocialMediaPostResultsState
 
     final response = await GeneratorService.fetchCaptions(
       widget.catalyst!.catalyst,
-      platform: widget.catalyst!.derived_platforms[0].toString(),
+      platform: widget.catalyst!.derivedPlatforms[0].toString(),
       // voice: <>,
       userData: Provider.of<UserStore>(ctx, listen: false).data,
       generationNum: _numGenerations + 1,
