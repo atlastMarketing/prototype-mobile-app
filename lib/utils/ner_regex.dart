@@ -55,9 +55,9 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   int fEnd = end;
   String matched = catalyst.substring(start, end);
 
-  RegExpMatch? match =
-      RegExp(r"((in|on|at|and) )?(" + matched + r")", caseSensitive: false)
-          .firstMatch(catalyst);
+  RegExpMatch? match = RegExp(r"((in|on|at|and|from|to) )?(" + matched + r")",
+          caseSensitive: false)
+      .firstMatch(catalyst);
 
   if (match != null) {
     // get rid of leading whitespace

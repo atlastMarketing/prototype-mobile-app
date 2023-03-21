@@ -36,6 +36,9 @@ class GeneratorService {
         'full_catalyst': catalyst,
       },
     };
+    print(
+        "** sending POST request to '/ml/caption' with the following body: $requestBody");
+
     final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
     final response = await http.post(
       Uri.parse('$API_URL/ml/caption'),

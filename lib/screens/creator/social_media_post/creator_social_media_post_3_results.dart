@@ -47,7 +47,6 @@ class _CreatorSocialMediaPostResultsState
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {
-    if (widget.catalyst == null) return;
     if (_numGenerations == 0) {
       setState(() => _captionsLoaded = false);
     } else {

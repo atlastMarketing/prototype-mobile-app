@@ -21,12 +21,6 @@ class CreatorCampaignMedia extends StatefulWidget {
 class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
-  List<String> _listOfSelectedPlatforms = [];
-
-  void _setListOfSelectedPlatforms(List<String> newList) {
-    setState(() => _listOfSelectedPlatforms = newList);
-  }
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -88,7 +82,6 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
 
   @override
   void dispose() {
-    _descriptionController.dispose();
     super.dispose();
   }
 }

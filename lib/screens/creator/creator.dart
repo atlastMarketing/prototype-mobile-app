@@ -5,6 +5,7 @@ import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.da
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/constants/unique_char.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
@@ -31,7 +32,7 @@ class Creator extends StatefulWidget {
 }
 
 class _CreatorState extends State<Creator> {
-  CatalystBreakdown? _catalystDetails;
+  late CatalystBreakdown _catalystDetails;
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
 
@@ -96,10 +97,15 @@ class _CreatorState extends State<Creator> {
     String __derivedPrompt = catalyst;
     List<SocialMediaPlatforms> __derivedPlatforms = [];
     List<int> __postTimestamps = [];
+    int? __startTimestamp;
+    int? __endTimestamp;
     List<DateAnnotation> __dateAnnotations = [];
     List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
 
     for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
+      __derivedPrompt = __derivedPrompt.replaceRange(
+          match.start, match.end, UNIQUE_CHAR * match.matched.length);
+
       __derivedPlatforms.add(match.platform);
       __socialMediaPlatformAnnotations.add(SocialMediaPlatformAnnotation(
         range: TextRange(
@@ -126,16 +132,22 @@ class _CreatorState extends State<Creator> {
           .toList();
 
       for (EntityAnnotation annotatedDate in annotatedDates) {
+        DateTimeEntity ent = annotatedDate.entities
+            .firstWhere((e) => e.type == EntityType.dateTime) as DateTimeEntity;
+        // skip if date selected is before today
+        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp * 1000)
+            .isBefore(DateTime.now())) continue;
+
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
           annotatedDate.start,
           annotatedDate.end,
-          annotatedDate.entities
-                  .firstWhere((e) => e.type == EntityType.dateTime)
-              as DateTimeEntity,
+          ent,
         );
 
-        __postTimestamps.add(_extractedDate.timestamp);
+        __derivedPrompt = __derivedPrompt.replaceRange(_extractedDate.start,
+            _extractedDate.end, UNIQUE_CHAR * _extractedDate.matched.length);
+
         __dateAnnotations.add(DateAnnotation(
           range: TextRange(
             start: _extractedDate.start + 1,
@@ -146,6 +158,35 @@ class _CreatorState extends State<Creator> {
             backgroundColor: AppColors.confirm,
           )),
         ));
+
+        if (type == CatalystOutputTypes.singlePost) {
+          __postTimestamps.add(_extractedDate.timestamp);
+          break;
+        } else if (type == CatalystOutputTypes.campaign) {
+          if (__startTimestamp == null && __endTimestamp == null) {
+            if (_extractedDate.matched.contains('from')) {
+              __startTimestamp = _extractedDate.timestamp;
+            } else {
+              __endTimestamp = _extractedDate.timestamp;
+            }
+          } else if (__startTimestamp == null && __endTimestamp != null) {
+            __startTimestamp = _extractedDate.timestamp < __endTimestamp
+                ? _extractedDate.timestamp
+                : __endTimestamp;
+            __endTimestamp = _extractedDate.timestamp < __endTimestamp
+                ? __endTimestamp
+                : _extractedDate.timestamp;
+            break;
+          } else if (__startTimestamp != null && __endTimestamp == null) {
+            __endTimestamp = _extractedDate.timestamp >= __startTimestamp
+                ? _extractedDate.timestamp
+                : __startTimestamp;
+            __startTimestamp = _extractedDate.timestamp >= __startTimestamp
+                ? __startTimestamp
+                : _extractedDate.timestamp;
+            break;
+          }
+        }
       }
     }
 
@@ -153,14 +194,41 @@ class _CreatorState extends State<Creator> {
     // SAVING
     // ------
     setState(() {
-      _catalystDetails!.catalyst = catalyst;
-      _catalystDetails!.derivedPrompt = __derivedPrompt;
-      _catalystDetails!.derivedPostTimestamps = __postTimestamps;
+      _catalystDetails.catalyst = catalyst;
+      _catalystDetails.derivedPrompt =
+          __derivedPrompt.replaceAll(UNIQUE_CHAR, "");
+      _catalystDetails.derivedPostTimestamps = __postTimestamps;
+      _catalystDetails.derivedStartTimestamp = __startTimestamp;
+      _catalystDetails.derivedEndTimestamp = __endTimestamp;
       // remove hardcoding here
-      _catalystDetails!.derivedPlatforms = __derivedPlatforms;
+      _catalystDetails.derivedPlatforms = __derivedPlatforms;
       _dateAnnotations = __dateAnnotations;
       _socialMediaPlatformAnnotations = __socialMediaPlatformAnnotations;
     });
+  }
+
+  void _updateCatalyst({
+    List<int>? postTimestamps,
+    int? startTimestamp,
+    int? endTimestamp,
+    List<SocialMediaPlatforms>? platforms,
+  }) {
+    if (postTimestamps != null) {
+      _dateAnnotations = [];
+      _catalystDetails.derivedPostTimestamps = postTimestamps;
+    }
+    if (startTimestamp != null || endTimestamp != null) {
+      _dateAnnotations = [];
+      _catalystDetails.derivedStartTimestamp =
+          startTimestamp ?? _catalystDetails.derivedStartTimestamp;
+      _catalystDetails.derivedEndTimestamp =
+          endTimestamp ?? _catalystDetails.derivedEndTimestamp;
+    }
+    if (platforms != null) {
+      _socialMediaPlatformAnnotations = [];
+      _catalystDetails.derivedPlatforms = platforms;
+    }
+    setState(() {});
   }
 
   Widget _buildCreatorOptionButton(
@@ -295,28 +363,39 @@ class _CreatorState extends State<Creator> {
               builder: (context) {
                 switch (settings.name) {
                   case "/post-1":
-                    // TODO: only one post, instead of multiple
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
+                      updateCatalyst: _updateCatalyst,
+                      catalyst: _catalystDetails,
+                      dateAnnotation: _dateAnnotations.firstOrNull,
+                      socialMediaPlatformAnnotation:
+                          _socialMediaPlatformAnnotations.firstOrNull,
+                    );
+                  case "/post-results":
+                    return CreatorSocialMediaPostResults(
+                      navKey: widget.navKey,
+                      catalyst: _catalystDetails,
+                    );
+                  case "/campaign-1":
+                    return CreatorCampaignCatalyst(
+                      navKey: widget.navKey,
+                      analyzeCatalyst: _analyzeCatalyst,
+                      updateCatalyst: _updateCatalyst,
                       catalyst: _catalystDetails,
                       dateAnnotations: _dateAnnotations,
                       socialMediaPlatformAnnotations:
                           _socialMediaPlatformAnnotations,
                     );
-                  case "/post-results":
-                    return CreatorSocialMediaPostResults(
-                      navKey: widget.navKey,
-                      catalyst: _catalystDetails!,
-                    );
-                  case "/campaign-1":
-                    return CreatorCampaignCatalyst(
-                      navKey: widget.navKey,
-                    );
                   case "/campaign-2":
                     return CreatorCampaignMedia(
                       navKey: widget.navKey,
                     );
+                  // case "/campaign-results":
+                  //   return CreatorCampaignResults(
+                  //     navKey: widget.navKey,
+                  //     catalyst: _catalystDetails,
+                  //   );
                   case "/ad-1":
                     return const SamplePage();
                   default:

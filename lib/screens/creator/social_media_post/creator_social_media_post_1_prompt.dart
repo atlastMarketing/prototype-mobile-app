@@ -1,17 +1,17 @@
-import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
-import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
-import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
+import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
-import 'package:intl/intl.dart';
 
 class CreatorSocialMediaPostPrompt extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -19,17 +19,24 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     String catalyst, {
     CatalystOutputTypes type,
   }) analyzeCatalyst;
-  final CatalystBreakdown? catalyst;
-  final List<DateAnnotation> dateAnnotations;
-  final List<SocialMediaPlatformAnnotation> socialMediaPlatformAnnotations;
+  final void Function({
+    List<int>? postTimestamps,
+    int? startTimestamp,
+    int? endTimestamp,
+    List<SocialMediaPlatforms>? platforms,
+  }) updateCatalyst;
+  final CatalystBreakdown catalyst;
+  final DateAnnotation? dateAnnotation;
+  final SocialMediaPlatformAnnotation? socialMediaPlatformAnnotation;
 
   const CreatorSocialMediaPostPrompt({
     Key? key,
     required this.navKey,
     required this.analyzeCatalyst,
+    required this.updateCatalyst,
     required this.catalyst,
-    required this.dateAnnotations,
-    required this.socialMediaPlatformAnnotations,
+    required this.dateAnnotation,
+    required this.socialMediaPlatformAnnotation,
   }) : super(key: key);
 
   @override
@@ -41,8 +48,7 @@ class _CreatorSocialMediaPostPromptState
     extends State<CreatorSocialMediaPostPrompt> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  // final TextEditingController _catalystInputController =
-  //     TextEditingController();
+  String _catalystPrev = "";
   final AnnotatedTextController _catalystInputController =
       AnnotatedTextController();
 
@@ -54,16 +60,18 @@ class _CreatorSocialMediaPostPromptState
     widget.navKey.currentState!.pushNamed("/post-results");
   }
 
-  void _handleChange() {
-    widget.analyzeCatalyst(
+  void _handleChangeCatalyst() async {
+    if (_catalystPrev == _catalystInputController.text) return;
+    _catalystPrev = _catalystInputController.text;
+
+    await widget.analyzeCatalyst(
       _catalystInputController.text,
       type: CatalystOutputTypes.singlePost,
     );
   }
 
   Widget _buildDate() {
-    if (widget.catalyst == null ||
-        widget.catalyst!.derivedPostTimestamps.isEmpty) {
+    if (widget.catalyst.derivedPostTimestamps.isEmpty) {
       return const SizedBox(height: 0, width: 0);
     }
 
@@ -71,7 +79,7 @@ class _CreatorSocialMediaPostPromptState
       children: [
         const Text("Dates: ", style: AppText.bodyBold),
         Column(
-            children: widget.catalyst!.derivedPostTimestamps.map((timestamp) {
+            children: widget.catalyst.derivedPostTimestamps.map((timestamp) {
           DateTime date =
               DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
           return Text(
@@ -82,7 +90,7 @@ class _CreatorSocialMediaPostPromptState
   }
 
   Widget _buildPlatforms() {
-    if (widget.socialMediaPlatformAnnotations.isEmpty) {
+    if (widget.socialMediaPlatformAnnotation == null) {
       return const SizedBox(height: 0, width: 0);
     }
 
@@ -90,12 +98,8 @@ class _CreatorSocialMediaPostPromptState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Platforms: ", style: AppText.bodyBold),
-        Column(
-          children: widget.socialMediaPlatformAnnotations
-              .map(
-                  (annot) => Text(socialMediaPlatformsOptions[annot.platform]!))
-              .toList(),
-        ),
+        Text(socialMediaPlatformsOptions[
+            widget.socialMediaPlatformAnnotation!.platform]!),
       ],
     );
   }
@@ -105,23 +109,23 @@ class _CreatorSocialMediaPostPromptState
     super.initState();
 
     // listen for changes to autofill
-    _catalystInputController.addListener(_handleChange);
+    _catalystInputController.addListener(_handleChangeCatalyst);
   }
 
   Widget _buildForm() {
     List<Annotation> textAnnotations = [];
-    textAnnotations.addAll(widget.dateAnnotations.map(
-      (annot) => Annotation(
-        range: annot.range,
-        style: annot.style,
-      ),
-    ));
-    textAnnotations.addAll(widget.socialMediaPlatformAnnotations.map(
-      (annot) => Annotation(
-        range: annot.range,
-        style: annot.style,
-      ),
-    ));
+    if (widget.dateAnnotation != null) {
+      textAnnotations.add(Annotation(
+        range: widget.dateAnnotation!.range,
+        style: widget.dateAnnotation!.style,
+      ));
+    }
+    if (widget.socialMediaPlatformAnnotation != null) {
+      textAnnotations.add(Annotation(
+        range: widget.socialMediaPlatformAnnotation!.range,
+        style: widget.socialMediaPlatformAnnotation!.style,
+      ));
+    }
     _catalystInputController.annotations = textAnnotations;
 
     return Form(
@@ -238,7 +242,7 @@ class _CreatorSocialMediaPostPromptState
 
   @override
   void dispose() {
-    _catalystInputController.removeListener(_handleChange);
+    _catalystInputController.removeListener(_handleChangeCatalyst);
     _catalystInputController.dispose();
     super.dispose();
   }
