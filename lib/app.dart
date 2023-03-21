@@ -122,8 +122,8 @@ class _AppState extends State<App> with RouteAware {
                 },
               ),
               bottomNavigationBar: model.isOnboarded && model.isLoggedIn
-                  ? null
-                  : BottomNavigation(onNavbarTap: _navigateToPage),
+                  ? BottomNavigation(onNavbarTap: _navigateToPage)
+                  : null,
             )
           : Onboarding(
               navKey: _navkeys[RouteEnum.onboarding]!,
