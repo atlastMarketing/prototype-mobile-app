@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
   }) analyzeCatalyst;
   final CatalystBreakdown? catalyst;
   final DateAnnotation? dateAnnotation;
+  final List<SocialMediaPlatformAnnotation> socialMediaPlatformAnnotations;
 
   const CreatorSocialMediaPostPrompt({
     Key? key,
@@ -27,6 +29,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     required this.analyzeCatalyst,
     required this.catalyst,
     required this.dateAnnotation,
+    required this.socialMediaPlatformAnnotations,
   }) : super(key: key);
 
   @override
@@ -78,6 +81,25 @@ class _CreatorSocialMediaPostPromptState
     );
   }
 
+  Widget _buildPlatforms() {
+    if (widget.socialMediaPlatformAnnotations.isEmpty) {
+      return const SizedBox(height: 0, width: 0);
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Platforms: ", style: AppText.bodyBold),
+        Column(
+          children: widget.socialMediaPlatformAnnotations
+              .map(
+                  (annot) => Text(socialMediaPlatformsOptions[annot.platform]!))
+              .toList(),
+        ),
+      ],
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -87,14 +109,20 @@ class _CreatorSocialMediaPostPromptState
   }
 
   Widget _buildForm() {
-    _catalystInputController.annotations = widget.dateAnnotation != null
-        ? [
-            Annotation(
-              range: widget.dateAnnotation!.range,
-              style: widget.dateAnnotation!.style,
-            )
-          ]
-        : [];
+    List<Annotation> textAnnotations = [];
+    if (widget.dateAnnotation != null) {
+      textAnnotations.add(Annotation(
+        range: widget.dateAnnotation!.range,
+        style: widget.dateAnnotation!.style,
+      ));
+    }
+    textAnnotations.addAll(widget.socialMediaPlatformAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    _catalystInputController.annotations = textAnnotations;
 
     return Form(
       key: _formKey,
@@ -156,11 +184,17 @@ class _CreatorSocialMediaPostPromptState
           //   ),
           // ),
           Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 30),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: Column(children: [
               _buildDate(),
             ]),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(children: [
+              _buildPlatforms(),
+            ]),
+          ),
         ],
       ),
     );

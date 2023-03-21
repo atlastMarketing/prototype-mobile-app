@@ -1,6 +1,7 @@
 // ((make|create)( \w )?)?( a )?((campaign)|(marketing campaign))
 
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 
 class NERRegexRange {
   int start;
@@ -19,6 +20,21 @@ class NERRegexRangeDate extends NERRegexRange {
 
   NERRegexRangeDate({
     required this.timestamp,
+    required start,
+    required end,
+    required matched,
+  }) : super(
+          start: start,
+          end: end,
+          matched: matched,
+        );
+}
+
+class NERRegexRangeSocialMediaPlatform extends NERRegexRange {
+  final SocialMediaPlatforms platform;
+
+  NERRegexRangeSocialMediaPlatform({
+    required this.platform,
     required start,
     required end,
     required matched,
@@ -59,4 +75,29 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
     end: fEnd,
     matched: matched,
   );
+}
+
+List<NERRegexRangeSocialMediaPlatform> extractSocialMediaPlatformsFromCatalyst(
+  String catalyst,
+) {
+  List<RegExpMatch> matches =
+      RegExp(r"(facebook)|(instagram)", caseSensitive: false)
+          .allMatches(catalyst)
+          .toList();
+
+  return matches.map((match) {
+    String matched = catalyst.substring(match.start, match.end);
+
+    SocialMediaPlatforms platform = SocialMediaPlatforms.instagram;
+    if (matched.toLowerCase() == "facebook") {
+      platform = SocialMediaPlatforms.facebook;
+    }
+
+    return NERRegexRangeSocialMediaPlatform(
+      start: match.start,
+      end: match.end,
+      matched: matched,
+      platform: platform,
+    );
+  }).toList();
 }

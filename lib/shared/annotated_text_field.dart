@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+
 class DateAnnotation extends Annotation {
   int timestamp;
 
@@ -7,6 +9,19 @@ class DateAnnotation extends Annotation {
     required range,
     style,
     required this.timestamp,
+  }) : super(
+          range: range,
+          style: style,
+        );
+}
+
+class SocialMediaPlatformAnnotation extends Annotation {
+  SocialMediaPlatforms platform;
+
+  SocialMediaPlatformAnnotation({
+    required range,
+    style,
+    required this.platform,
   }) : super(
           range: range,
           style: style,

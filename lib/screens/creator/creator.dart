@@ -32,7 +32,8 @@ class Creator extends StatefulWidget {
 
 class _CreatorState extends State<Creator> {
   CatalystBreakdown? _catalystDetails;
-  DateAnnotation? _dateAnnotation;
+  List<DateAnnotation> _dateAnnotations = [];
+  List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
 
   // TODO: break down prompt details
   int _selectedCreatorOptionIdx = -1;
@@ -75,6 +76,9 @@ class _CreatorState extends State<Creator> {
     String catalyst, {
     CatalystOutputTypes type = CatalystOutputTypes.singlePost,
   }) async {
+    // ------
+    // ANNOTATION EXTRACTION
+    // ------
     final List<EntityAnnotation> annotations =
         await entityExtractor.annotateText(
       catalyst,
@@ -83,10 +87,34 @@ class _CreatorState extends State<Creator> {
       referenceTimeZone: 'America/Vancouver',
     );
 
-    String __derivedPrompt = catalyst;
-    int? __postTimestamp;
-    DateAnnotation? __dateAnnotation;
+    final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
+        extractSocialMediaPlatformsFromCatalyst(catalyst);
 
+    // ------
+    // DATA MANIPULATION OF MANUAL NER
+    // ------
+    String __derivedPrompt = catalyst;
+    List<SocialMediaPlatforms> __derivedPlatforms = [];
+    int? __postTimestamp;
+    List<DateAnnotation> __dateAnnotations = [];
+    List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
+
+    for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
+      __socialMediaPlatformAnnotations.add(SocialMediaPlatformAnnotation(
+        range: TextRange(
+          start: match.start,
+          end: match.end,
+        ),
+        platform: match.platform,
+        style: AppText.bodyBold.merge(const TextStyle(
+          backgroundColor: AppColors.customize,
+        )),
+      ));
+    }
+
+    // ------
+    // FURTHER DATA MANIPULATION OF GOOGLE NER
+    // ------
     if (annotations.isNotEmpty) {
       final EntityAnnotation? annotatedDate = annotations.firstWhereOrNull(
         (ant) => ant.entities
@@ -106,26 +134,30 @@ class _CreatorState extends State<Creator> {
 
         __derivedPrompt = _extractedDate.matched;
         __postTimestamp = _extractedDate.timestamp;
-        __dateAnnotation = DateAnnotation(
+        __dateAnnotations.add(DateAnnotation(
           range: TextRange(
             start: _extractedDate.start + 1,
             end: _extractedDate.end,
           ),
           timestamp: _extractedDate.timestamp,
-          style: AppText.whiteText.merge(const TextStyle(
-            backgroundColor: AppColors.secondary,
+          style: AppText.bodyBold.merge(const TextStyle(
+            backgroundColor: AppColors.confirm,
           )),
-        );
+        ));
       }
     }
 
+    // ------
+    // SAVING
+    // ------
     setState(() {
       _catalystDetails!.catalyst = catalyst;
       _catalystDetails!.derivedPrompt = __derivedPrompt;
       _catalystDetails!.derivedPostTimestamp = __postTimestamp;
       // remove hardcoding here
-      _catalystDetails!.derivedPlatforms = [SocialMediaPlatforms.instagram];
-      _dateAnnotation = __dateAnnotation;
+      _catalystDetails!.derivedPlatforms = __derivedPlatforms;
+      _dateAnnotations = __dateAnnotations;
+      _socialMediaPlatformAnnotations = __socialMediaPlatformAnnotations;
     });
   }
 
@@ -265,7 +297,9 @@ class _CreatorState extends State<Creator> {
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
                       catalyst: _catalystDetails,
-                      dateAnnotation: _dateAnnotation,
+                      dateAnnotation: _dateAnnotations.firstOrNull,
+                      socialMediaPlatformAnnotations:
+                          _socialMediaPlatformAnnotations,
                     );
                   case "/post-results":
                     return CreatorSocialMediaPostResults(
