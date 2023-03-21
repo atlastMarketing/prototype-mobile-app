@@ -95,11 +95,12 @@ class _CreatorState extends State<Creator> {
     // ------
     String __derivedPrompt = catalyst;
     List<SocialMediaPlatforms> __derivedPlatforms = [];
-    int? __postTimestamp;
+    List<int> __postTimestamps = [];
     List<DateAnnotation> __dateAnnotations = [];
     List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
 
     for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
+      __derivedPlatforms.add(match.platform);
       __socialMediaPlatformAnnotations.add(SocialMediaPlatformAnnotation(
         range: TextRange(
           start: match.start,
@@ -116,13 +117,15 @@ class _CreatorState extends State<Creator> {
     // FURTHER DATA MANIPULATION OF GOOGLE NER
     // ------
     if (annotations.isNotEmpty) {
-      final EntityAnnotation? annotatedDate = annotations.firstWhereOrNull(
-        (ant) => ant.entities
-            .where((ent) => ent.type == EntityType.dateTime)
-            .isNotEmpty,
-      );
+      final List<EntityAnnotation> annotatedDates = annotations
+          .where(
+            (ant) => ant.entities
+                .where((ent) => ent.type == EntityType.dateTime)
+                .isNotEmpty,
+          )
+          .toList();
 
-      if (annotatedDate != null) {
+      for (EntityAnnotation annotatedDate in annotatedDates) {
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
           annotatedDate.start,
@@ -132,8 +135,7 @@ class _CreatorState extends State<Creator> {
               as DateTimeEntity,
         );
 
-        __derivedPrompt = _extractedDate.matched;
-        __postTimestamp = _extractedDate.timestamp;
+        __postTimestamps.add(_extractedDate.timestamp);
         __dateAnnotations.add(DateAnnotation(
           range: TextRange(
             start: _extractedDate.start + 1,
@@ -153,7 +155,7 @@ class _CreatorState extends State<Creator> {
     setState(() {
       _catalystDetails!.catalyst = catalyst;
       _catalystDetails!.derivedPrompt = __derivedPrompt;
-      _catalystDetails!.derivedPostTimestamp = __postTimestamp;
+      _catalystDetails!.derivedPostTimestamps = __postTimestamps;
       // remove hardcoding here
       _catalystDetails!.derivedPlatforms = __derivedPlatforms;
       _dateAnnotations = __dateAnnotations;
@@ -293,11 +295,12 @@ class _CreatorState extends State<Creator> {
               builder: (context) {
                 switch (settings.name) {
                   case "/post-1":
+                    // TODO: only one post, instead of multiple
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
                       catalyst: _catalystDetails,
-                      dateAnnotation: _dateAnnotations.firstOrNull,
+                      dateAnnotations: _dateAnnotations,
                       socialMediaPlatformAnnotations:
                           _socialMediaPlatformAnnotations,
                     );

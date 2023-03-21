@@ -56,7 +56,7 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   String matched = catalyst.substring(start, end);
 
   RegExpMatch? match =
-      RegExp(r"((in|on|at) )?(" + matched + r")", caseSensitive: false)
+      RegExp(r"((in|on|at|and) )?(" + matched + r")", caseSensitive: false)
           .firstMatch(catalyst);
 
   if (match != null) {
@@ -93,9 +93,22 @@ List<NERRegexRangeSocialMediaPlatform> extractSocialMediaPlatformsFromCatalyst(
       platform = SocialMediaPlatforms.facebook;
     }
 
+    RegExpMatch? bufferMatch =
+        RegExp(r"((in|on|at|and) )?(" + matched + r")", caseSensitive: false)
+            .firstMatch(catalyst);
+
+    int fStart = match.start;
+    int fEnd = match.end;
+
+    if (bufferMatch != null) {
+      fStart = bufferMatch.start;
+      fEnd = bufferMatch.end;
+      matched = catalyst.substring(fStart, fEnd);
+    }
+
     return NERRegexRangeSocialMediaPlatform(
-      start: match.start,
-      end: match.end,
+      start: fStart,
+      end: fEnd,
       matched: matched,
       platform: platform,
     );

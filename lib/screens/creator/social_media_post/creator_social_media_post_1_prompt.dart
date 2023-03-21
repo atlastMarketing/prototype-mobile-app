@@ -20,7 +20,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     CatalystOutputTypes type,
   }) analyzeCatalyst;
   final CatalystBreakdown? catalyst;
-  final DateAnnotation? dateAnnotation;
+  final List<DateAnnotation> dateAnnotations;
   final List<SocialMediaPlatformAnnotation> socialMediaPlatformAnnotations;
 
   const CreatorSocialMediaPostPrompt({
@@ -28,7 +28,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     required this.navKey,
     required this.analyzeCatalyst,
     required this.catalyst,
-    required this.dateAnnotation,
+    required this.dateAnnotations,
     required this.socialMediaPlatformAnnotations,
   }) : super(key: key);
 
@@ -63,20 +63,20 @@ class _CreatorSocialMediaPostPromptState
 
   Widget _buildDate() {
     if (widget.catalyst == null ||
-        widget.catalyst!.derivedPostTimestamp == null) {
+        widget.catalyst!.derivedPostTimestamps.isEmpty) {
       return const SizedBox(height: 0, width: 0);
     }
 
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(
-            widget.catalyst!.derivedPostTimestamp!)
-        .toLocal();
     return Row(
       children: [
-        const Text("Date: ", style: AppText.bodyBold),
-        // Text(widget.catalyst!.derivedPostTimestamp.toString()),
-        // const Text(" ---- "),
-        Text(
-            "${DateFormat.yMMMMd().format(date)} ${DateFormat.jms().format(date)}"),
+        const Text("Dates: ", style: AppText.bodyBold),
+        Column(
+            children: widget.catalyst!.derivedPostTimestamps.map((timestamp) {
+          DateTime date =
+              DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
+          return Text(
+              "${DateFormat.yMMMMd().format(date)} ${DateFormat.jms().format(date)}");
+        }).toList()),
       ],
     );
   }
@@ -110,12 +110,12 @@ class _CreatorSocialMediaPostPromptState
 
   Widget _buildForm() {
     List<Annotation> textAnnotations = [];
-    if (widget.dateAnnotation != null) {
-      textAnnotations.add(Annotation(
-        range: widget.dateAnnotation!.range,
-        style: widget.dateAnnotation!.style,
-      ));
-    }
+    textAnnotations.addAll(widget.dateAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
     textAnnotations.addAll(widget.socialMediaPlatformAnnotations.map(
       (annot) => Annotation(
         range: annot.range,
