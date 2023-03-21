@@ -21,19 +21,13 @@ class CreatorCampaignMedia extends StatefulWidget {
 class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
-  List<String> _listOfSelectedPlatforms = [];
-
-  void _setListOfSelectedPlatforms(List<String> newList) {
-    setState(() => _listOfSelectedPlatforms = newList);
-  }
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-3");
+    widget.navKey.currentState!.pushNamed("/campaign-results");
   }
 
   Widget _buildForm() {
@@ -69,7 +63,6 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
           SizedBox(
             width: double.infinity,
             child: CustomButton(
-              disabled: true,
               handlePressed: () {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
@@ -84,5 +77,10 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

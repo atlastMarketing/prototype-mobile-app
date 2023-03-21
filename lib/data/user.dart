@@ -11,6 +11,7 @@ class UserStore extends ChangeNotifier {
   String _businessIndustry = "";
   String _businessDescription = "";
 
+  // TODO: move app logic settings elswhere
   bool _isOnboarded = false;
 
   /// Getters

@@ -107,7 +107,7 @@ class HomeDashboard extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: SizedBox(
-                        height: 100,
+                        height: 110,
                         width: double.infinity,
                         child: Material(
                           color: AppColors.light,

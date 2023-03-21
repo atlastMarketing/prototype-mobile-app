@@ -10,7 +10,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
-class OnboardingEmail extends StatelessWidget {
+class OnboardingEmail extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
   OnboardingEmail({
@@ -18,19 +18,23 @@ class OnboardingEmail extends StatelessWidget {
     required this.navKey,
   }) : super(key: key);
 
+  @override
+  _OnboardingEmailState createState() => _OnboardingEmailState();
+}
+
+class _OnboardingEmailState extends State<OnboardingEmail> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
 
   void _handleBack() {
-    navKey.currentState!.pop();
+    widget.navKey.currentState!.pop();
   }
 
   void _handleContinue(BuildContext ctx) {
-    print("email: ${_emailController.text}");
     Provider.of<UserStore>(ctx, listen: false)
         .updateUser(email: _emailController.text);
-    navKey.currentState!.pushNamed("/creator-2");
+    widget.navKey.currentState!.pushNamed("/creator-2");
   }
 
   Widget _buildForm(BuildContext ctx) {
@@ -94,5 +98,11 @@ class OnboardingEmail extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 }

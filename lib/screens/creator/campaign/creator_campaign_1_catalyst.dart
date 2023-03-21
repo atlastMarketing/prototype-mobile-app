@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_date_picker.dart';
@@ -14,10 +17,28 @@ import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class CreatorCampaignCatalyst extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
+  final Future<void> Function(
+    String catalyst, {
+    CatalystOutputTypes type,
+  }) analyzeCatalyst;
+  final void Function({
+    List<int>? postTimestamps,
+    int? startTimestamp,
+    int? endTimestamp,
+    List<SocialMediaPlatforms>? platforms,
+  }) updateCatalyst;
+  final CatalystBreakdown catalyst;
+  final List<DateAnnotation> dateAnnotations;
+  final List<SocialMediaPlatformAnnotation> socialMediaPlatformAnnotations;
 
   const CreatorCampaignCatalyst({
     Key? key,
     required this.navKey,
+    required this.analyzeCatalyst,
+    required this.updateCatalyst,
+    required this.catalyst,
+    required this.dateAnnotations,
+    required this.socialMediaPlatformAnnotations,
   }) : super(key: key);
 
   @override
@@ -28,8 +49,10 @@ class CreatorCampaignCatalyst extends StatefulWidget {
 class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _catalystInputController =
-      TextEditingController();
+  String _catalystPrev = "";
+  final AnnotatedTextController _catalystInputController =
+      AnnotatedTextController();
+
   List<SocialMediaPlatforms> _listOfSelectedPlatforms = [];
   bool _listOfSelectedPlatformsHasError = false;
   final TextEditingController _startDateController = TextEditingController();
@@ -37,11 +60,6 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   DateTime? _endDate;
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
-
-  void _setListOfSelectedPlatforms(List<dynamic> newList) {
-    setState(
-        () => _listOfSelectedPlatforms = newList as List<SocialMediaPlatforms>);
-  }
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -51,7 +69,81 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
     widget.navKey.currentState!.pushNamed("/campaign-2");
   }
 
+  void _handleChangeCatalyst() async {
+    if (_catalystPrev == _catalystInputController.text) return;
+    _catalystPrev = _catalystInputController.text;
+
+    await widget.analyzeCatalyst(
+      _catalystInputController.text,
+      type: CatalystOutputTypes.campaign,
+    );
+
+    setState(() {
+      if (widget.catalyst.derivedStartTimestamp != null) {
+        _startDate = DateTime.fromMillisecondsSinceEpoch(
+            widget.catalyst.derivedStartTimestamp!);
+        _startDateController.text =
+            DateFormat('yyyy-MM-dd').format(_startDate!);
+      }
+      if (widget.catalyst.derivedEndTimestamp != null) {
+        _endDate = DateTime.fromMillisecondsSinceEpoch(
+            widget.catalyst.derivedEndTimestamp!);
+        _endDateController.text = DateFormat('yyyy-MM-dd').format(_endDate!);
+      }
+      _listOfSelectedPlatforms = widget.catalyst.derivedPlatforms;
+    });
+  }
+
+  void _handleChangeSelectedPlatforms(List<dynamic> newList) {
+    widget.updateCatalyst(platforms: newList as List<SocialMediaPlatforms>);
+    setState(() => _listOfSelectedPlatforms = newList);
+  }
+
+  void _handleChangeStartDate(DateTime date, String formattedDate) {
+    widget.updateCatalyst(startTimestamp: date.millisecondsSinceEpoch);
+    setState(() {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      _startDateController.text = formattedDate;
+      _startDate = date;
+      if (_endDate != null && _endDate!.isBefore(date)) {
+        _endDateController.text = "";
+        _endDate = null;
+      }
+    });
+  }
+
+  void _handleChangeEndDate(DateTime date, String formattedDate) {
+    widget.updateCatalyst(endTimestamp: date.millisecondsSinceEpoch);
+    setState(() {
+      _endDateController.text = formattedDate;
+      _endDate = date;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // listen for changes to autofill
+    _catalystInputController.addListener(_handleChangeCatalyst);
+  }
+
   Widget _buildForm() {
+    List<Annotation> textAnnotations = [];
+    textAnnotations.addAll(widget.dateAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    textAnnotations.addAll(widget.socialMediaPlatformAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    _catalystInputController.annotations = textAnnotations;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -82,7 +174,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                 CustomFormMultiselectDropdown(
                   listOfOptions: socialMediaPlatformsOptions,
                   listOfSelectedOptions: _listOfSelectedPlatforms,
-                  setListOfSelectedOptions: _setListOfSelectedPlatforms,
+                  setListOfSelectedOptions: _handleChangeSelectedPlatforms,
                   placeholder: "Select platform(s)",
                   hasError: _listOfSelectedPlatformsHasError,
                   validationMsg: "Must select at least one platform",
@@ -117,17 +209,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                     Flexible(
                       child: CustomFormDatePicker(
                         controller: _startDateController,
-                        setDate: (DateTime date, String formattedDate) =>
-                            setState(() {
-                          String formattedDate =
-                              DateFormat('yyyy-MM-dd').format(date);
-                          _startDateController.text = formattedDate;
-                          _startDate = date;
-                          if (_endDate != null && _endDate!.isBefore(date)) {
-                            _endDateController.text = "";
-                            _endDate = null;
-                          }
-                        }),
+                        setDate: _handleChangeStartDate,
                         placeholderText: "Start date",
                         currDate: _startDate,
                         startDate: DateTime.now(),
@@ -141,11 +223,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                     Flexible(
                       child: CustomFormDatePicker(
                         controller: _endDateController,
-                        setDate: (DateTime date, String formattedDate) =>
-                            setState(() {
-                          _endDateController.text = formattedDate;
-                          _endDate = date;
-                        }),
+                        setDate: _handleChangeEndDate,
                         placeholderText: "End date",
                         currDate: _endDate,
                         startDate: _startDate ?? DateTime.now(),
@@ -227,5 +305,14 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _catalystInputController.removeListener(_handleChangeCatalyst);
+    _catalystInputController.dispose();
+    _startDateController.dispose();
+    _endDateController.dispose();
+    super.dispose();
   }
 }
