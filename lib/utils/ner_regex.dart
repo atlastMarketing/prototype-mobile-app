@@ -2,22 +2,22 @@
 
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 
-class NERRegexExpanded {
+class NERRegexRange {
   int start;
   int end;
   String matched;
 
-  NERRegexExpanded({
+  NERRegexRange({
     required this.start,
     required this.end,
     required this.matched,
   });
 }
 
-class NERRegexExpandedDate extends NERRegexExpanded {
+class NERRegexRangeDate extends NERRegexRange {
   final int timestamp;
 
-  NERRegexExpandedDate({
+  NERRegexRangeDate({
     required this.timestamp,
     required start,
     required end,
@@ -29,7 +29,7 @@ class NERRegexExpandedDate extends NERRegexExpanded {
         );
 }
 
-NERRegexExpandedDate extractDateBuffersFromCatalyst(
+NERRegexRangeDate extractDateBuffersFromCatalyst(
   String catalyst,
   int start,
   int end,
@@ -53,7 +53,7 @@ NERRegexExpandedDate extractDateBuffersFromCatalyst(
     fEnd = match.end;
     matched = catalyst.substring(fStart, fEnd);
   }
-  return NERRegexExpandedDate(
+  return NERRegexRangeDate(
     timestamp: entity.timestamp * 1000,
     start: fStart,
     end: fEnd,

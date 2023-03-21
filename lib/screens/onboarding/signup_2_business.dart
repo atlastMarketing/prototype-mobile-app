@@ -41,9 +41,6 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   }
 
   void _handleContinue(BuildContext ctx) {
-    print("Business Name: ${_bNameController.text}");
-    print("Business Type: ${_bTypeInput}");
-    print("Business Industry: ${_bIndustryInput}");
     Provider.of<UserStore>(ctx, listen: false).updateUser(
       businessName: _bNameController.text,
       businessType: _bTypeInput,

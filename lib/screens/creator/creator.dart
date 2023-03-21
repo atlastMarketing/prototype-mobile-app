@@ -6,6 +6,7 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
@@ -31,6 +32,8 @@ class Creator extends StatefulWidget {
 
 class _CreatorState extends State<Creator> {
   CatalystBreakdown? _catalystDetails;
+  DateAnnotation? _dateAnnotation;
+
   // TODO: break down prompt details
   int _selectedCreatorOptionIdx = -1;
 
@@ -75,15 +78,15 @@ class _CreatorState extends State<Creator> {
     final List<EntityAnnotation> annotations =
         await entityExtractor.annotateText(
       catalyst,
-      // TODO: don't hardcode this
-      preferredLocale: 'en-US',
+      // TODO: don't hardcode these params
+      // preferredLocale: 'en-US',
       referenceTimeZone: 'America/Vancouver',
     );
 
-    String _derivedPrompt = catalyst;
-    int? _postTimestamp = null;
+    String __derivedPrompt = catalyst;
+    int? __postTimestamp;
+    DateAnnotation? __dateAnnotation;
 
-    // TODO: FURTHER CLEANING
     if (annotations.isNotEmpty) {
       final EntityAnnotation? annotatedDate = annotations.firstWhereOrNull(
         (ant) => ant.entities
@@ -92,8 +95,7 @@ class _CreatorState extends State<Creator> {
       );
 
       if (annotatedDate != null) {
-        final NERRegexExpandedDate extractedDate =
-            extractDateBuffersFromCatalyst(
+        final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
           annotatedDate.start,
           annotatedDate.end,
@@ -102,17 +104,28 @@ class _CreatorState extends State<Creator> {
               as DateTimeEntity,
         );
 
-        _derivedPrompt = extractedDate.matched;
-        _postTimestamp = extractedDate.timestamp;
+        __derivedPrompt = _extractedDate.matched;
+        __postTimestamp = _extractedDate.timestamp;
+        __dateAnnotation = DateAnnotation(
+          range: TextRange(
+            start: _extractedDate.start + 1,
+            end: _extractedDate.end,
+          ),
+          timestamp: _extractedDate.timestamp,
+          style: AppText.whiteText.merge(const TextStyle(
+            backgroundColor: AppColors.secondary,
+          )),
+        );
       }
     }
 
     setState(() {
       _catalystDetails!.catalyst = catalyst;
-      _catalystDetails!.derivedPrompt = _derivedPrompt;
-      _catalystDetails!.derivedPostTimestamp = _postTimestamp;
+      _catalystDetails!.derivedPrompt = __derivedPrompt;
+      _catalystDetails!.derivedPostTimestamp = __postTimestamp;
       // remove hardcoding here
       _catalystDetails!.derivedPlatforms = [SocialMediaPlatforms.instagram];
+      _dateAnnotation = __dateAnnotation;
     });
   }
 
@@ -252,6 +265,7 @@ class _CreatorState extends State<Creator> {
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
                       catalyst: _catalystDetails,
+                      dateAnnotation: _dateAnnotation,
                     );
                   case "/post-results":
                     return CreatorSocialMediaPostResults(

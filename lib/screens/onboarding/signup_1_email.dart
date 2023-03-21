@@ -32,7 +32,6 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
   }
 
   void _handleContinue(BuildContext ctx) {
-    print("email: ${_emailController.text}");
     Provider.of<UserStore>(ctx, listen: false)
         .updateUser(email: _emailController.text);
     widget.navKey.currentState!.pushNamed("/creator-2");

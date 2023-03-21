@@ -1,3 +1,5 @@
+import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
+import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -5,10 +7,10 @@ import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
-import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+import 'package:intl/intl.dart';
 
 class CreatorSocialMediaPostPrompt extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -17,12 +19,14 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     CatalystOutputTypes type,
   }) analyzeCatalyst;
   final CatalystBreakdown? catalyst;
+  final DateAnnotation? dateAnnotation;
 
   const CreatorSocialMediaPostPrompt({
     Key? key,
     required this.navKey,
     required this.analyzeCatalyst,
     required this.catalyst,
+    required this.dateAnnotation,
   }) : super(key: key);
 
   @override
@@ -34,8 +38,10 @@ class _CreatorSocialMediaPostPromptState
     extends State<CreatorSocialMediaPostPrompt> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _catalystInputController =
-      TextEditingController();
+  // final TextEditingController _catalystInputController =
+  //     TextEditingController();
+  final AnnotatedTextController _catalystInputController =
+      AnnotatedTextController();
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -58,15 +64,16 @@ class _CreatorSocialMediaPostPromptState
       return const SizedBox(height: 0, width: 0);
     }
 
-    String date = DateTime.fromMillisecondsSinceEpoch(
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
             widget.catalyst!.derivedPostTimestamp!)
-        .toIso8601String();
+        .toLocal();
     return Row(
       children: [
-        const Text("Date: "),
-        Text(widget.catalyst!.derivedPostTimestamp.toString()),
-        const Text(" ---- "),
-        Text(date),
+        const Text("Date: ", style: AppText.bodyBold),
+        // Text(widget.catalyst!.derivedPostTimestamp.toString()),
+        // const Text(" ---- "),
+        Text(
+            "${DateFormat.yMMMMd().format(date)} ${DateFormat.jms().format(date)}"),
       ],
     );
   }
@@ -80,6 +87,15 @@ class _CreatorSocialMediaPostPromptState
   }
 
   Widget _buildForm() {
+    _catalystInputController.annotations = widget.dateAnnotation != null
+        ? [
+            Annotation(
+              range: widget.dateAnnotation!.range,
+              style: widget.dateAnnotation!.style,
+            )
+          ]
+        : [];
+
     return Form(
       key: _formKey,
       child: Column(
@@ -106,6 +122,39 @@ class _CreatorSocialMediaPostPromptState
               },
             ),
           ),
+          // Padding(
+          //   padding: const EdgeInsets.only(top: 10, bottom: 30),
+          //   child: Container(
+          //     width: double.infinity,
+          //     height: 200,
+          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          //     decoration: BoxDecoration(
+          //       border: Border.all(color: AppColors.black),
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     child: AnnotatedEditableText(
+          //       controller: _catalystInputController,
+          //       // placeholderText:
+          //       //     // "Ex. Instagram post on Valentines day about promoting a discount of \$20 for a dozen roses and free delivery",
+          //       //     "Ex. Post on February 13 at 9pm about a Valentine's day promotion of \$20 for a dozen roses and free delivery",
+          //       vSize: 6,
+          //       focusNode: FocusNode(onKeyEvent: (FocusNode node, KeyEvent e) {
+          //         print("hasFocus: ${node.hasFocus}");
+          //         print("hasPrimaryFocus: ${node.hasPrimaryFocus}");
+          //         // _handleFormFocus
+          //         return KeyEventResult.handled;
+          //       }),
+          //       annotations: widget.dateAnnotation != null
+          //           ? [
+          //               Annotation(
+          //                 range: widget.dateAnnotation!.range,
+          //                 style: widget.dateAnnotation!.style,
+          //               )
+          //             ]
+          //           : [],
+          //     ),
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 30),
             child: Column(children: [
