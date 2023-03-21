@@ -27,7 +27,7 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-3");
+    widget.navKey.currentState!.pushNamed("/campaign-results");
   }
 
   Widget _buildForm() {
@@ -63,7 +63,6 @@ class _CreatorCampaignMediaState extends State<CreatorCampaignMedia> {
           SizedBox(
             width: double.infinity,
             child: CustomButton(
-              disabled: true,
               handlePressed: () {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.

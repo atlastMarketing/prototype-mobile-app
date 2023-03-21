@@ -11,32 +11,33 @@ import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class CreatorSocialMediaPostResults extends StatefulWidget {
+class CreatorCampaignResults extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
 
-  const CreatorSocialMediaPostResults({
+  const CreatorCampaignResults({
     Key? key,
     required this.navKey,
     required this.catalyst,
   }) : super(key: key);
 
   @override
-  _CreatorSocialMediaPostResultsState createState() =>
-      _CreatorSocialMediaPostResultsState();
+  _CreatorCampaignResultsState createState() => _CreatorCampaignResultsState();
 }
 
-class _CreatorSocialMediaPostResultsState
-    extends State<CreatorSocialMediaPostResults> {
+class _CreatorCampaignResultsState extends State<CreatorCampaignResults> {
+  bool _campaignDatesLoaded = false;
+  bool _campaignDatesRegenerating = false;
+  List<int> _campaignDates = [];
+  int _numDateGenerations = 0;
+
   bool _captionsLoaded = false;
   bool _captionsRegenerating = false;
   List<String> _captions = [];
   int _numCaptionGenerations = 0;
-
-  // form variables
-  final _formKey = GlobalKey<FormState>();
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -44,6 +45,33 @@ class _CreatorSocialMediaPostResultsState
 
   void _handleContinue() {
     widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+  }
+
+  Future<void> _fetchCampaignDates(BuildContext ctx) async {
+    if (_numDateGenerations == 0) {
+      setState(() => _campaignDatesLoaded = false);
+    } else {
+      setState(() => _campaignDatesRegenerating = true);
+    }
+
+    final response = await GeneratorService.fetchRegularCampaignDates(
+      widget.catalyst.derivedPrompt,
+      widget.catalyst.derivedStartTimestamp ??
+          DateTime.now().millisecondsSinceEpoch,
+      endDate: widget.catalyst.derivedEndTimestamp,
+      platform: widget.catalyst.derivedPlatforms[0].toString(),
+      // voice: <>,
+      userData: Provider.of<UserStore>(ctx, listen: false).data,
+      generationNum: _numDateGenerations + 1,
+      catalyst: widget.catalyst.catalyst,
+    );
+
+    setState(() {
+      _campaignDates = response;
+      _campaignDatesLoaded = true;
+      _campaignDatesRegenerating = false;
+      _numDateGenerations += 1;
+    });
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {
@@ -74,7 +102,8 @@ class _CreatorSocialMediaPostResultsState
   void initState() {
     super.initState();
 
-    _fetchCaptions(context);
+    _fetchCampaignDates(context);
+    // _fetchCaptions(context);
   }
 
   Widget _buildLoadingAnims() {
@@ -85,7 +114,7 @@ class _CreatorSocialMediaPostResultsState
         children: [
           const AnimatedLoadingDots(size: 75),
           AnimatedBlinkText(
-            text: "Generating your captions",
+            text: "Generating your campaign",
             textStyle: AppText.bodyBold
                 .merge(const TextStyle(color: AppColors.primary)),
             width: 200,
@@ -96,18 +125,11 @@ class _CreatorSocialMediaPostResultsState
     );
   }
 
-  Widget _buildNoCaptions() {
+  Widget _buildNoCampaignDates() {
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Prompt could not be found. Please retry.",
-            style: AppText.heading
-                .merge(const TextStyle(color: AppColors.primary)),
-          )
-        ],
+      child: Text(
+        "Dates could not be generated. Please retry.",
+        style: AppText.heading.merge(const TextStyle(color: AppColors.primary)),
       ),
     );
   }
@@ -116,24 +138,33 @@ class _CreatorSocialMediaPostResultsState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          height: 400,
-          child: _captionsRegenerating
-              ? const Center(child: AnimatedLoadingDots(size: 75))
-              : ListView.separated(
-                  itemCount: _captions.length,
-                  itemBuilder: (BuildContext ctx, int idx) =>
-                      Text(_captions[idx], style: AppText.bodyBold),
-                  separatorBuilder: (BuildContext ctx, int idx) =>
-                      const Divider(),
-                ),
-        ),
+        _campaignDates.isEmpty
+            ? _buildNoCampaignDates()
+            : SizedBox(
+                height: 400,
+                child: _campaignDatesRegenerating
+                    ? const Center(child: AnimatedLoadingDots(size: 75))
+                    : ListView.separated(
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: _campaignDates.length,
+                        itemBuilder: (BuildContext ctx, int idx) {
+                          DateTime date = DateTime.fromMillisecondsSinceEpoch(
+                              _campaignDates[idx]);
+                          return Text(
+                            "${DateFormat.yMMMMd().format(date)} ${DateFormat.jms().format(date)}",
+                            style: AppText.bodyBold,
+                          );
+                        },
+                        separatorBuilder: (BuildContext ctx, int idx) =>
+                            const Divider(),
+                      ),
+              ),
         Center(
           child: CustomButton(
-            handlePressed: () => _fetchCaptions(context),
+            handlePressed: () => _fetchCampaignDates(context),
             fillColor: AppColors.primary,
-            text: 'Regenerate captions',
-            disabled: _captionsRegenerating,
+            text: 'Regenerate dates',
+            disabled: _campaignDatesRegenerating,
           ),
         ),
       ],
@@ -144,14 +175,15 @@ class _CreatorSocialMediaPostResultsState
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 3, currStep: 3),
+      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 4),
       content: () {
-        if (!_captionsLoaded) return _buildLoadingAnims();
-        if (_captions.isEmpty) return _buildNoCaptions();
+        if (!_captionsLoaded && !_campaignDatesLoaded) {
+          return _buildLoadingAnims();
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const HeroHeading(text: "Choose a Caption"),
+            const HeroHeading(text: "Posting Schedule"),
             Expanded(
               child: SingleChildScrollBare(
                 child: Padding(
@@ -163,15 +195,9 @@ class _CreatorSocialMediaPostResultsState
             SizedBox(
               width: double.infinity,
               child: CustomButton(
-                handlePressed: () {
-                  _formKey.currentState!.save();
-                  // Validate returns true if the form is valid, or false otherwise.
-                  if (_formKey.currentState!.validate()) {
-                    _handleContinue();
-                  }
-                },
+                handlePressed: _handleContinue,
                 fillColor: AppColors.primary,
-                text: 'Continue',
+                text: 'Schedule Campaign',
               ),
             ),
           ],
