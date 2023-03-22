@@ -1,5 +1,6 @@
 // ((make|create)( \w )?)?( a )?((campaign)|(marketing campaign))
 
+import 'package:atlast_mobile_app/constants/unique_char.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 
@@ -54,10 +55,13 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   int fStart = start;
   int fEnd = end;
   String matched = catalyst.substring(start, end);
+  String matcher = UNIQUE_CHAR * matched.length;
+  String matchedHelper =
+      catalyst.replaceRange(start, end, UNIQUE_CHAR * matched.length);
 
-  RegExpMatch? match = RegExp(r"((in|on|at|and|from|to) )?(" + matched + r")",
+  RegExpMatch? match = RegExp(r"((in|on|at|and|from|to) )?(" + matcher + r")",
           caseSensitive: false)
-      .firstMatch(catalyst);
+      .firstMatch(matchedHelper);
 
   if (match != null) {
     // get rid of leading whitespace
