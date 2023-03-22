@@ -213,6 +213,8 @@ class _CreatorState extends State<Creator> {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
+    CatalystCampaignOutputTypes? campaignType,
+    int? maximumPosts,
   }) {
     if (postTimestamps != null) {
       _dateAnnotations = [];
@@ -228,6 +230,12 @@ class _CreatorState extends State<Creator> {
     if (platforms != null) {
       _socialMediaPlatformAnnotations = [];
       _catalystDetails.derivedPlatforms = platforms;
+    }
+    if (campaignType != null) {
+      _catalystDetails.campaignOutputType = campaignType;
+    }
+    if (maximumPosts != null) {
+      _catalystDetails.maximumPosts = maximumPosts;
     }
     setState(() {});
   }

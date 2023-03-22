@@ -27,6 +27,8 @@ class CreatorCampaignCatalyst extends StatefulWidget {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
+    CatalystCampaignOutputTypes? campaignType,
+    int? maximumPosts,
   }) updateCatalyst;
   final CatalystBreakdown catalyst;
   final List<DateAnnotation> dateAnnotations;
@@ -131,7 +133,18 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   }
 
   void _handleChangeCampaignOutputType(CatalystCampaignOutputTypes? newType) {
-    if (newType != null) setState(() => _campaignOutputType = newType);
+    CatalystCampaignOutputTypes newTypeFinal =
+        newType ?? CatalystCampaignOutputTypes.event;
+    setState(() => _campaignOutputType = newTypeFinal);
+    widget.updateCatalyst(campaignType: newTypeFinal);
+  }
+
+  void _handleChangeCampaignSize() {
+    if (_campaignSizeController.text != "") {
+      widget.updateCatalyst(
+        maximumPosts: int.parse(_campaignSizeController.text),
+      );
+    }
   }
 
   @override
@@ -140,6 +153,10 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
 
     // listen for changes to autofill
     _catalystInputController.addListener(_handleChangeCatalyst);
+    _campaignSizeController.addListener(_handleChangeCampaignSize);
+
+    // default options
+    widget.updateCatalyst(campaignType: CatalystCampaignOutputTypes.event);
   }
 
   Widget _buildForm() {
