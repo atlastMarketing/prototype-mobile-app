@@ -197,7 +197,7 @@ class _CreatorState extends State<Creator> {
     setState(() {
       _catalystDetails.catalyst = catalyst;
       _catalystDetails.derivedPrompt =
-          __derivedPrompt.replaceAll(UNIQUE_CHAR, "");
+          __derivedPrompt.replaceAll(UNIQUE_CHAR, "").trim();
       _catalystDetails.derivedPostTimestamps = __postTimestamps;
       _catalystDetails.derivedStartTimestamp = __startTimestamp;
       _catalystDetails.derivedEndTimestamp = __endTimestamp;

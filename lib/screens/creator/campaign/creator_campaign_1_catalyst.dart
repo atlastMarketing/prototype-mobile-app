@@ -14,6 +14,7 @@ import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+import 'package:atlast_mobile_app/shared/smart_autofill_text.dart';
 
 class CreatorCampaignCatalyst extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -52,7 +53,6 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   String _catalystPrev = "";
   final AnnotatedTextController _catalystInputController =
       AnnotatedTextController();
-
   List<SocialMediaPlatforms> _listOfSelectedPlatforms = [];
   bool _listOfSelectedPlatformsHasError = false;
   final TextEditingController _startDateController = TextEditingController();
@@ -60,6 +60,16 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   DateTime? _endDate;
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
+  CatalystCampaignOutputTypes _campaignOutputType =
+      CatalystCampaignOutputTypes.event;
+
+  // form advanced options
+  bool _isAdvancedOptionsOpen = false;
+  final TextEditingController _campaignSizeController = TextEditingController();
+
+  void _toggleAdvancedOptionsOpen() {
+    setState(() => _isAdvancedOptionsOpen = !_isAdvancedOptionsOpen);
+  }
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -120,6 +130,10 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
     });
   }
 
+  void _handleChangeCampaignOutputType(CatalystCampaignOutputTypes? newType) {
+    if (newType != null) setState(() => _campaignOutputType = newType);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -160,7 +174,14 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
               placeholderText:
                   "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
               vSize: 6,
-              // TODO: add auto analysis of full prompt to pre-fill other fields
+              validator: (String? val) {
+                // TODO: remove validator
+                if (val == null ||
+                    val == "" ||
+                    widget.catalyst.derivedPrompt == "") {
+                  return 'Enter a more detailed description of your campaign!';
+                }
+              },
             ),
           ),
           const Text(
@@ -179,19 +200,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                   hasError: _listOfSelectedPlatformsHasError,
                   validationMsg: "Must select at least one platform",
                 ),
-                Row(
-                  children: [
-                    const Icon(Icons.auto_awesome,
-                        size: 10, color: AppColors.primary),
-                    const Padding(padding: EdgeInsets.only(right: 5)),
-                    Text(
-                      "Auto-filled using Atlast smart suggestions",
-                      style: AppText.bodySemiBold
-                          .merge(AppText.primaryText)
-                          .merge(AppText.bodySmall),
-                    ),
-                  ],
-                ),
+                const SmartAutofillText()
               ],
             ),
           ),
@@ -237,22 +246,68 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                         style: TextStyle(color: AppColors.error),
                       )
                     : const SizedBox(height: 0),
-                Row(
-                  children: [
-                    const Icon(Icons.auto_awesome,
-                        size: 10, color: AppColors.primary),
-                    const Padding(padding: EdgeInsets.only(right: 5)),
-                    Text(
-                      "Auto-filled using Atlast smart suggestions",
-                      style: AppText.bodySemiBold
-                          .merge(AppText.primaryText)
-                          .merge(AppText.bodySmall),
-                    ),
-                  ],
-                ),
+                const SmartAutofillText()
               ],
             ),
           ),
+          SizedBox(
+            width: double.infinity,
+            child: TextButton.icon(
+              icon: Icon(
+                _isAdvancedOptionsOpen
+                    ? Icons.arrow_drop_up
+                    : Icons.arrow_drop_down,
+                color: AppColors.black, //for icon color
+              ),
+              label: Text(
+                _isAdvancedOptionsOpen
+                    ? 'Hide advanced options'
+                    : 'Show advanced options',
+                style: const TextStyle(color: AppColors.black),
+              ),
+              onPressed: _toggleAdvancedOptionsOpen,
+            ),
+          ),
+          Visibility(
+            visible: _isAdvancedOptionsOpen,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "What type of campaign is this?",
+                    style: AppText.bodyBold,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 30),
+                    child: DropdownButtonFormField(
+                      items: catalystCampaignOutputOptions.entries
+                          .map((e) => DropdownMenuItem(
+                              value: e.key, child: Text(e.value)))
+                          .toList(),
+                      onChanged: _handleChangeCampaignOutputType,
+                      value: _campaignOutputType,
+                    ),
+                  ),
+                  const Text(
+                    "Maximum number of posts in campaign?",
+                    style: AppText.bodyBold,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 30),
+                    child: CustomFormTextField(
+                      keyboardType: TextInputType.number,
+                      controller: _campaignSizeController,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
