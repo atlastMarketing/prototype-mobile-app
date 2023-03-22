@@ -74,7 +74,8 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
     matched = catalyst.substring(fStart, fEnd);
   }
   return NERRegexRangeDate(
-    timestamp: entity.timestamp * 1000,
+    // timestamp: entity.timestamp * 1000,
+    timestamp: entity.timestamp,
     start: fStart,
     end: fEnd,
     matched: matched,
