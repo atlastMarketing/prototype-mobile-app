@@ -14,6 +14,7 @@ class CustomFormTextField extends StatelessWidget {
   // additional (functional props)
   final String? Function(String?)? validator;
   final int vSize;
+  final TextInputType keyboardType;
 
   const CustomFormTextField({
     Key? key,
@@ -26,6 +27,7 @@ class CustomFormTextField extends StatelessWidget {
     this.fillColor,
     this.validator,
     this.vSize = 1,
+    this.keyboardType = TextInputType.text,
   }) : super(key: key);
 
   @override
@@ -70,6 +72,7 @@ class CustomFormTextField extends StatelessWidget {
       validator: validator,
       minLines: vSize,
       maxLines: vSize,
+      keyboardType: keyboardType,
     );
   }
 }
