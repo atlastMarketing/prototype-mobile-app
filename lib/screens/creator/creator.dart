@@ -19,6 +19,7 @@ import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_schedule.dart';
 import 'social_media_post/creator_social_media_post_1_prompt.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
+import 'social_media_post/creator_social_media_post_image.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -65,7 +66,7 @@ class _CreatorState extends State<Creator> {
             derivedOutputType: CatalystOutputTypes.singlePost,
           ));
       // create post
-      widget.navKey.currentState!.pushNamed("/post-1");
+      widget.navKey.currentState!.pushNamed("/post-image");
     } else if (_selectedCreatorOptionIdx == 1) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
@@ -386,6 +387,10 @@ class _CreatorState extends State<Creator> {
             return MaterialPageRoute(
               builder: (context) {
                 switch (settings.name) {
+                  case "/post-image":
+                    return CreatorSocialMediaPostImage(
+                      navKey: widget.navKey,
+                    );
                   case "/post-1":
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
