@@ -7,6 +7,7 @@ import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/constants/unique_char.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
@@ -15,7 +16,7 @@ import 'package:atlast_mobile_app/shared/sample_page.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
-import 'campaign/creator_campaign_2_media.dart';
+import 'campaign/creator_campaign_2_single_post_edit.dart';
 import 'campaign/creator_campaign_2_schedule.dart';
 import 'social_media_post/creator_social_media_post_1_prompt.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
@@ -33,15 +34,28 @@ class Creator extends StatefulWidget {
 }
 
 class _CreatorState extends State<Creator> {
+  final entityExtractor =
+      EntityExtractor(language: EntityExtractorLanguage.english);
+
+  // ------
+  // STATES
+  // ------
+
+  // navigations states
+  int _selectedCreatorOptionIdx = -1;
+
+  // prompt analysis
   late CatalystBreakdown _catalystDetails;
+  // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
 
-  // TODO: break down prompt details
-  int _selectedCreatorOptionIdx = -1;
+  // campaign
+  List<PostContent> _draftPosts = [];
 
-  final entityExtractor =
-      EntityExtractor(language: EntityExtractorLanguage.english);
+  // ------
+  // NAVIGATION FUNCTIONS
+  // ------
 
   _exitCreator() {
     Navigator.of(context).pop();
@@ -75,13 +89,15 @@ class _CreatorState extends State<Creator> {
     setState(() => _selectedCreatorOptionIdx = optionIdx);
   }
 
+  // ------
+  // CATALYST ANALYZERS
+  // ------
+
   Future<void> _analyzeCatalyst(
     String catalyst, {
     CatalystOutputTypes type = CatalystOutputTypes.singlePost,
   }) async {
-    // ------
     // ANNOTATION EXTRACTION
-    // ------
     final List<EntityAnnotation> annotations =
         await entityExtractor.annotateText(
       catalyst,
@@ -93,9 +109,7 @@ class _CreatorState extends State<Creator> {
     final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
         extractSocialMediaPlatformsFromCatalyst(catalyst);
 
-    // ------
     // DATA MANIPULATION OF MANUAL NER
-    // ------
     String __derivedPrompt = catalyst;
     List<SocialMediaPlatforms> __derivedPlatforms = [];
     List<int> __postTimestamps = [];
@@ -121,9 +135,7 @@ class _CreatorState extends State<Creator> {
       ));
     }
 
-    // ------
     // FURTHER DATA MANIPULATION OF GOOGLE NER
-    // ------
     if (annotations.isNotEmpty) {
       final List<EntityAnnotation> annotatedDates = annotations
           .where(
@@ -192,9 +204,7 @@ class _CreatorState extends State<Creator> {
       }
     }
 
-    // ------
     // SAVING
-    // ------
     setState(() {
       _catalystDetails.catalyst = catalyst;
       _catalystDetails.derivedPrompt =
@@ -240,6 +250,14 @@ class _CreatorState extends State<Creator> {
     }
     setState(() {});
   }
+
+  void _saveDraftPosts(List<PostContent> posts) {
+    setState(() => _draftPosts = posts);
+  }
+
+  // ------
+  // WIDGET BUILDERS
+  // ------
 
   Widget _buildCreatorOptionButton(
     String title,
@@ -351,6 +369,10 @@ class _CreatorState extends State<Creator> {
       ),
     );
   }
+
+  // ------
+  // BUILD
+  // ------
 
   @override
   Widget build(BuildContext context) {
