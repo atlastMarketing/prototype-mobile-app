@@ -1,7 +1,7 @@
-import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
@@ -65,6 +65,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             widget.catalyst.derivedPrompt,
             widget.catalyst.derivedStartTimestamp ??
                 DateTime.now().millisecondsSinceEpoch,
+            widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
@@ -82,6 +83,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             widget.catalyst.derivedPrompt,
             widget.catalyst.derivedStartTimestamp ??
                 DateTime.now().millisecondsSinceEpoch,
+            widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
@@ -99,6 +101,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             widget.catalyst.derivedPrompt,
             widget.catalyst.derivedStartTimestamp ??
                 DateTime.now().millisecondsSinceEpoch,
+            widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
@@ -112,10 +115,12 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
 
       default:
         {
-          response = await GeneratorService.fetchRegularCampaignDates(
+          response = await GeneratorService.fetchIrregularCampaignDates(
             widget.catalyst.derivedPrompt,
             widget.catalyst.derivedStartTimestamp ??
                 DateTime.now().millisecondsSinceEpoch,
+            widget.catalyst.campaignOutputType ??
+                CatalystCampaignOutputTypes.event,
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,

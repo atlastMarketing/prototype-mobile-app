@@ -63,7 +63,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
   CatalystCampaignOutputTypes _campaignOutputType =
-      CatalystCampaignOutputTypes.event;
+      CatalystCampaignOutputTypes.daily;
 
   // form advanced options
   bool _isAdvancedOptionsOpen = false;
@@ -134,7 +134,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
 
   void _handleChangeCampaignOutputType(CatalystCampaignOutputTypes? newType) {
     CatalystCampaignOutputTypes newTypeFinal =
-        newType ?? CatalystCampaignOutputTypes.event;
+        newType ?? CatalystCampaignOutputTypes.daily;
     setState(() => _campaignOutputType = newTypeFinal);
     widget.updateCatalyst(campaignType: newTypeFinal);
   }
@@ -189,7 +189,6 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                   "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
               vSize: 6,
               validator: (String? val) {
-                // TODO: remove validator
                 if (val == null ||
                     val == "" ||
                     widget.catalyst.derivedPrompt == "") {
@@ -313,6 +312,11 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                     child: CustomFormTextField(
                       keyboardType: TextInputType.number,
                       controller: _campaignSizeController,
+                      validator: (String? val) {
+                        if (val != null && val != "" && int.parse(val) <= 0) {
+                          return 'Maximum number of posts must be greater than zero';
+                        }
+                      },
                     ),
                   ),
                   const Padding(
