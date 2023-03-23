@@ -8,7 +8,7 @@ class UpcomingPostsStore extends ChangeNotifier {
   /// Private state
   final Map<int, PostContent> _posts = {
     0: PostContent(
-      id: 0,
+      id: "0",
       dateTime: 1683860400000,
       caption:
           "Looking for a way to brighten up your day? ☀️ Check out Picard’s Flowers where we have a wide variety of beautiful flowers lorem ipsum lorem ipsum lorem ipsum",
@@ -16,7 +16,7 @@ class UpcomingPostsStore extends ChangeNotifier {
       platform: SocialMediaPlatforms.instagram,
     ),
     1: PostContent(
-      id: 1,
+      id: "1",
       dateTime: 1683946800000,
       caption:
           "Have you seen the new blossoms in store? Come and indulge in a floral paradise that will take your breath away 🌸🌺...",
@@ -37,7 +37,7 @@ class UpcomingPostsStore extends ChangeNotifier {
   }) {
     _runningId += 1;
     PostContent newPost = PostContent(
-      id: _runningId,
+      id: _runningId.toString(),
       dateTime: contentData.dateTime,
       caption: contentData.caption,
       imageUrl: contentData.imageUrl,

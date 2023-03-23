@@ -13,7 +13,7 @@ class ContentData {
 }
 
 class PostContent extends ContentData {
-  int id;
+  String id;
   SocialMediaPlatforms platform;
 
   PostContent({

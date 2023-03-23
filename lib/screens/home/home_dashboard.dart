@@ -22,11 +22,11 @@ class HomeDashboard extends StatelessWidget {
     required this.handleCreate,
   }) : super(key: key);
 
-  void _openSuggestedPost(int postId) {
+  void _openSuggestedPost(String postId) {
     print("Opening suggested post with id $postId");
   }
 
-  void _openUpcomingPost(int postId) {
+  void _openUpcomingPost(String postId) {
     print("Opening upcoming post with id $postId");
   }
 
