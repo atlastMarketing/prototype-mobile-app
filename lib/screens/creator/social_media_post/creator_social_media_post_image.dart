@@ -5,20 +5,21 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 
-class CreatorSocialMediaImage extends StatefulWidget {
+class CreatorSocialMediaPostImage extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const CreatorSocialMediaImage({
+  const CreatorSocialMediaPostImage({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _CreatorSocialMediaImageState createState() =>
-      _CreatorSocialMediaImageState();
+  _CreatorSocialMediaPostImageState createState() =>
+      _CreatorSocialMediaPostImageState();
 }
 
-class _CreatorSocialMediaImageState extends State<CreatorSocialMediaImage> {
+class _CreatorSocialMediaPostImageState
+    extends State<CreatorSocialMediaPostImage> {
   File? imageFile;
   String? imageUrl;
 
@@ -34,6 +35,7 @@ class _CreatorSocialMediaImageState extends State<CreatorSocialMediaImage> {
           await ImageUploadingService.uploadImage(File(pickedFile!.path));
     });
     Navigator.pop(context);
+    widget.navKey.currentState!.pushNamed("/post-1");
   }
 
   @override
