@@ -29,12 +29,13 @@ class _CreatorSocialMediaPostImageState
       maxHeight: 1080,
       maxWidth: 1080,
     );
-    setState(() async {
+    String url =
+        await ImageUploadingService.uploadImage(File(pickedFile!.path));
+    setState(() {
       imageFile = File(pickedFile!.path);
-      imageUrl =
-          await ImageUploadingService.uploadImage(File(pickedFile!.path));
+      imageUrl = url;
     });
-    Navigator.pop(context);
+    // Navigator.pop(context);
     widget.navKey.currentState!.pushNamed("/post-1");
   }
 
