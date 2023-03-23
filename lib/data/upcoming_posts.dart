@@ -32,17 +32,10 @@ class UpcomingPostsStore extends ChangeNotifier {
 
   /// Setters
   void add(
-    ContentData contentData, {
+    PostContent newPost, {
     required SocialMediaPlatforms platform,
   }) {
     _runningId += 1;
-    PostContent newPost = PostContent(
-      id: _runningId.toString(),
-      dateTime: contentData.dateTime,
-      caption: contentData.caption,
-      imageUrl: contentData.imageUrl,
-      platform: platform,
-    );
     _posts.addAll({_runningId: newPost});
     notifyListeners();
   }
