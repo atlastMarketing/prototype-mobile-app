@@ -50,18 +50,15 @@ class _CreatorState extends State<Creator> {
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
 
-  // campaign
-  List<PostContent> _draftPosts = [];
-
   // ------
   // NAVIGATION FUNCTIONS
   // ------
 
-  _exitCreator() {
+  void _exitCreator() {
     Navigator.of(context).pop();
   }
 
-  _handleInitialContinue() {
+  void _handleInitialContinue() {
     if (_selectedCreatorOptionIdx == 0) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
@@ -249,10 +246,6 @@ class _CreatorState extends State<Creator> {
       _catalystDetails.maximumPosts = maximumPosts;
     }
     setState(() {});
-  }
-
-  void _saveDraftPosts(List<PostContent> posts) {
-    setState(() => _draftPosts = posts);
   }
 
   // ------

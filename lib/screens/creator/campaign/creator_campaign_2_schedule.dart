@@ -1,28 +1,35 @@
+import 'dart:math';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
+import 'package:atlast_mobile_app/shared/calendar.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class CreatorCampaignSchedule extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
+  // final List<PostContent> draftPosts;
+  // final void Function(List<PostContent>) saveDraftPosts;
 
   const CreatorCampaignSchedule({
     Key? key,
     required this.navKey,
     required this.catalyst,
+    // required this.draftPosts,
+    // required this.saveDraftPosts,
   }) : super(key: key);
 
   @override
@@ -31,30 +38,31 @@ class CreatorCampaignSchedule extends StatefulWidget {
 }
 
 class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
-  bool _campaignDatesLoaded = false;
-  bool _campaignDatesRegenerating = false;
+  // state and status
+  bool _campaignDatesFetched = false;
+  bool _campaignDatesIsLoading = false;
   List<int> _campaignDates = [];
   int _numDateGenerations = 0;
+  bool _captionsIsLoading = false;
+  bool _campaignDatesApproved = false;
 
-  bool _captionsLoaded = false;
-  bool _captionsRegenerating = false;
-  List<String> _captions = [];
-  int _numCaptionGenerations = 0;
+  // generated stuff
+  List<PostContent> _draftPosts = [];
+  List<String> _generatedCaptions = [];
+
+  // misc
+  final MAX_CAPTION_REQUESTS_AT_ONCE = 5;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-3");
+    widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
   }
 
-  Future<void> _fetchCampaignDates(BuildContext ctx) async {
-    if (_numDateGenerations == 0) {
-      setState(() => _campaignDatesLoaded = false);
-    } else {
-      setState(() => _campaignDatesRegenerating = true);
-    }
+  Future<void> _fetchCampaignDates() async {
+    setState(() => _campaignDatesIsLoading = true);
 
     late List<int> response;
 
@@ -69,7 +77,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
-            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
             catalyst: widget.catalyst.catalyst,
             maxPosts: widget.catalyst.maximumPosts,
@@ -87,7 +95,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
-            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
             catalyst: widget.catalyst.catalyst,
             maxPosts: widget.catalyst.maximumPosts,
@@ -105,7 +113,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
-            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
             catalyst: widget.catalyst.catalyst,
             maxPosts: widget.catalyst.maximumPosts,
@@ -124,7 +132,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             endDate: widget.catalyst.derivedEndTimestamp,
             platform: widget.catalyst.derivedPlatforms[0].toString(),
             // voice: <>,
-            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
             catalyst: widget.catalyst.catalyst,
             maxPosts: widget.catalyst.maximumPosts,
@@ -133,44 +141,65 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         break;
     }
 
+    List<PostContent> drafts = response
+        .asMap()
+        .entries
+        .map(
+          (e) => PostContent(
+              id: e.key.toString(),
+              dateTime: e.value,
+              caption: "",
+              platform: widget.catalyst.derivedPlatforms[0]),
+        )
+        .toList();
+
     setState(() {
+      _draftPosts = drafts;
       _campaignDates = response;
-      _campaignDatesLoaded = true;
-      _campaignDatesRegenerating = false;
+      _campaignDatesFetched = true;
+      _campaignDatesIsLoading = false;
       _numDateGenerations += 1;
     });
   }
 
-  Future<void> _fetchCaptions(BuildContext ctx) async {
-    if (_numCaptionGenerations == 0) {
-      setState(() => _captionsLoaded = false);
-    } else {
-      setState(() => _captionsRegenerating = true);
-    }
+  Future<void> _fetchCaptionsForCampaign({
+    SocialMediaPlatforms? platform,
+    required int numCaptions,
+  }) async {
+    setState(() => _captionsIsLoading = true);
 
+    SocialMediaPlatforms p = platform ?? widget.catalyst.derivedPlatforms[0];
     final response = await GeneratorService.fetchCaptions(
       widget.catalyst.derivedPrompt,
-      platform: widget.catalyst.derivedPlatforms[0].toString(),
+      platform: p.toString(),
       // voice: <>,
-      userData: Provider.of<UserStore>(ctx, listen: false).data,
-      generationNum: _numCaptionGenerations + 1,
+      userData: Provider.of<UserStore>(context, listen: false).data,
+      generationNum: 0,
       catalyst: widget.catalyst.catalyst,
+      // TODO: remove this cap
+      numOptions: min(MAX_CAPTION_REQUESTS_AT_ONCE, numCaptions),
     );
-    // final List<String> test = response.map((e) => e.toString()).toList();
+
     setState(() {
-      _captions = response;
-      _captionsLoaded = true;
-      _captionsRegenerating = false;
-      _numCaptionGenerations += 1;
+      _captionsIsLoading = false;
+      _generatedCaptions = response;
+      // TODO: don't cheat like this, but have a "lazy loading" of sorts for caption generation during campaign creation
+      for (var i = 0; i < _draftPosts.length; i++) {
+        _draftPosts[i].caption = response[i % response.length];
+      }
     });
+  }
+
+  void _approveCampaignDates() {
+    setState(() => _campaignDatesApproved = true);
+    _fetchCaptionsForCampaign(numCaptions: _draftPosts.length);
   }
 
   @override
   void initState() {
     super.initState();
 
-    _fetchCampaignDates(context);
-    // _fetchCaptions(context);
+    _fetchCampaignDates();
   }
 
   Widget _buildLoadingAnims() {
@@ -201,37 +230,24 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     );
   }
 
-  Widget _buildResults() {
+  Widget _buildRegenerationAndApprovalButtons() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _campaignDates.isEmpty
-            ? _buildNoCampaignDates()
-            : SizedBox(
-                height: 400,
-                child: _campaignDatesRegenerating
-                    ? const Center(child: AnimatedLoadingDots(size: 75))
-                    : ListView.separated(
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: _campaignDates.length,
-                        itemBuilder: (BuildContext ctx, int idx) {
-                          DateTime date = DateTime.fromMillisecondsSinceEpoch(
-                              _campaignDates[idx]);
-                          return Text(
-                            "${DateFormat.yMMMMd().format(date)} ${DateFormat.jms().format(date)}",
-                            style: AppText.bodyBold,
-                          );
-                        },
-                        separatorBuilder: (BuildContext ctx, int idx) =>
-                            const Divider(),
-                      ),
-              ),
-        Center(
+        SizedBox(
+          width: double.infinity,
           child: CustomButton(
-            handlePressed: () => _fetchCampaignDates(context),
+            handlePressed: _fetchCampaignDates,
+            fillColor: AppColors.error,
+            text: 'Regenerate Campaign',
+          ),
+        ),
+        const Padding(padding: EdgeInsets.only(bottom: 10)),
+        SizedBox(
+          width: double.infinity,
+          child: CustomButton(
+            handlePressed: _approveCampaignDates,
             fillColor: AppColors.primary,
-            text: 'Regenerate dates',
-            disabled: _campaignDatesRegenerating,
+            text: 'Use Campaign',
           ),
         ),
       ],
@@ -242,33 +258,39 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 2),
+      appBarContent: const AppBarSteps(totalSteps: 2, currStep: 2),
       content: () {
-        if (!_captionsLoaded && !_campaignDatesLoaded) {
-          return _buildLoadingAnims();
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const HeroHeading(text: "Posting Schedule"),
-            Expanded(
-              child: SingleChildScrollBare(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: _buildResults(),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: CustomButton(
-                handlePressed: _handleContinue,
-                fillColor: AppColors.primary,
-                text: 'Schedule Campaign',
-              ),
-            ),
-          ],
-        );
+        if (!_campaignDatesFetched) return _buildLoadingAnims();
+
+        return _campaignDates.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const HeroHeading(text: "Posting Schedule"),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: CustomCalendar(
+                        disableSelection: true,
+                        // isLoading:
+                        //     _campaignDatesIsLoading || _captionsIsLoading,
+                        initialPosts: _draftPosts,
+                      ),
+                    ),
+                  ),
+                  _campaignDatesApproved
+                      ? SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            handlePressed: _handleContinue,
+                            fillColor: AppColors.primary,
+                            text: 'Schedule Campaign',
+                          ),
+                        )
+                      : _buildRegenerationAndApprovalButtons(),
+                ],
+              )
+            : _buildNoCampaignDates();
       }(),
     );
   }
