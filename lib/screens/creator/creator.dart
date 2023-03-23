@@ -61,6 +61,7 @@ class _CreatorState extends State<Creator> {
             catalyst: "",
             derivedPrompt: "",
             derivedOutputType: CatalystOutputTypes.campaign,
+            campaignOutputType: CatalystCampaignOutputTypes.event,
           ));
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");

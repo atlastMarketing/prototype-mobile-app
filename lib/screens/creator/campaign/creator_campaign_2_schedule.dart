@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -55,17 +56,77 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       setState(() => _campaignDatesRegenerating = true);
     }
 
-    final response = await GeneratorService.fetchRegularCampaignDates(
-      widget.catalyst.derivedPrompt,
-      widget.catalyst.derivedStartTimestamp ??
-          DateTime.now().millisecondsSinceEpoch,
-      endDate: widget.catalyst.derivedEndTimestamp,
-      platform: widget.catalyst.derivedPlatforms[0].toString(),
-      // voice: <>,
-      userData: Provider.of<UserStore>(ctx, listen: false).data,
-      generationNum: _numDateGenerations + 1,
-      catalyst: widget.catalyst.catalyst,
-    );
+    late List<int> response;
+
+    switch (widget.catalyst.campaignOutputType) {
+      case CatalystCampaignOutputTypes.daily:
+        {
+          response = await GeneratorService.fetchRegularCampaignDates(
+            widget.catalyst.derivedPrompt,
+            widget.catalyst.derivedStartTimestamp ??
+                DateTime.now().millisecondsSinceEpoch,
+            endDate: widget.catalyst.derivedEndTimestamp,
+            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            // voice: <>,
+            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            generationNum: _numDateGenerations + 1,
+            catalyst: widget.catalyst.catalyst,
+            maxPosts: widget.catalyst.maximumPosts,
+          );
+        }
+        break;
+
+      case CatalystCampaignOutputTypes.monthly:
+        {
+          response = await GeneratorService.fetchRegularCampaignDates(
+            widget.catalyst.derivedPrompt,
+            widget.catalyst.derivedStartTimestamp ??
+                DateTime.now().millisecondsSinceEpoch,
+            endDate: widget.catalyst.derivedEndTimestamp,
+            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            // voice: <>,
+            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            generationNum: _numDateGenerations + 1,
+            catalyst: widget.catalyst.catalyst,
+            maxPosts: widget.catalyst.maximumPosts,
+          );
+        }
+        break;
+
+      case CatalystCampaignOutputTypes.weekly:
+        {
+          response = await GeneratorService.fetchRegularCampaignDates(
+            widget.catalyst.derivedPrompt,
+            widget.catalyst.derivedStartTimestamp ??
+                DateTime.now().millisecondsSinceEpoch,
+            endDate: widget.catalyst.derivedEndTimestamp,
+            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            // voice: <>,
+            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            generationNum: _numDateGenerations + 1,
+            catalyst: widget.catalyst.catalyst,
+            maxPosts: widget.catalyst.maximumPosts,
+          );
+        }
+        break;
+
+      default:
+        {
+          response = await GeneratorService.fetchRegularCampaignDates(
+            widget.catalyst.derivedPrompt,
+            widget.catalyst.derivedStartTimestamp ??
+                DateTime.now().millisecondsSinceEpoch,
+            endDate: widget.catalyst.derivedEndTimestamp,
+            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            // voice: <>,
+            userData: Provider.of<UserStore>(ctx, listen: false).data,
+            generationNum: _numDateGenerations + 1,
+            catalyst: widget.catalyst.catalyst,
+            maxPosts: widget.catalyst.maximumPosts,
+          );
+        }
+        break;
+    }
 
     setState(() {
       _campaignDates = response;
@@ -176,7 +237,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 4),
+      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 2),
       content: () {
         if (!_captionsLoaded && !_campaignDatesLoaded) {
           return _buildLoadingAnims();

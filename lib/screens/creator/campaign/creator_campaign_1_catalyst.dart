@@ -154,9 +154,6 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
     // listen for changes to autofill
     _catalystInputController.addListener(_handleChangeCatalyst);
     _campaignSizeController.addListener(_handleChangeCampaignSize);
-
-    // default options
-    widget.updateCatalyst(campaignType: CatalystCampaignOutputTypes.event);
   }
 
   Widget _buildForm() {
@@ -383,6 +380,8 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   void dispose() {
     _catalystInputController.removeListener(_handleChangeCatalyst);
     _catalystInputController.dispose();
+    _campaignSizeController.removeListener(_handleChangeCampaignSize);
+    _campaignSizeController.dispose;
     _startDateController.dispose();
     _endDateController.dispose();
     super.dispose();
