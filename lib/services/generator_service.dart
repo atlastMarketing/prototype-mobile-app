@@ -17,6 +17,7 @@ class GeneratorService {
     required UserModel userData,
     int generationNum = 1,
     required String catalyst,
+    int? numOptions,
   }) async {
     late http.Response response;
 
@@ -26,6 +27,7 @@ class GeneratorService {
         'prompt_info': {
           'voice': voice,
           'platform': platform,
+          'num_options': numOptions,
         },
         'meta_user': {
           'user_id': userData.id,
