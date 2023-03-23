@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/models/content_model.dart';
@@ -8,17 +9,19 @@ class UpcomingPostsStore extends ChangeNotifier {
   final Map<int, PostContent> _posts = {
     0: PostContent(
       id: 0,
-      dateTime: "2023-05-11T19:00:00-08:00",
+      dateTime: 1683860400000,
       caption:
           "Looking for a way to brighten up your day? ☀️ Check out Picard’s Flowers where we have a wide variety of beautiful flowers lorem ipsum lorem ipsum lorem ipsum",
       imageUrl: "https://i.imgur.com/eHnCdZi.png",
+      platform: SocialMediaPlatforms.instagram,
     ),
     1: PostContent(
       id: 1,
-      dateTime: "2023-05-12T19:00:00-08:00",
+      dateTime: 1683946800000,
       caption:
           "Have you seen the new blossoms in store? Come and indulge in a floral paradise that will take your breath away 🌸🌺...",
       imageUrl: "https://i.imgur.com/rLYuuLJ.png",
+      platform: SocialMediaPlatforms.instagram,
     )
   };
   int _runningId = 0;
@@ -28,11 +31,17 @@ class UpcomingPostsStore extends ChangeNotifier {
       UnmodifiableListView(_posts.values);
 
   /// Setters
-  void add(ContentData contentData) {
+  void add(
+    ContentData contentData, {
+    required SocialMediaPlatforms platform,
+  }) {
     _runningId += 1;
     PostContent newPost = PostContent(
       id: _runningId,
       dateTime: contentData.dateTime,
+      caption: contentData.caption,
+      imageUrl: contentData.imageUrl,
+      platform: platform,
     );
     _posts.addAll({_runningId: newPost});
     notifyListeners();

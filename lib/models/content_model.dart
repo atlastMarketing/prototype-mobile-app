@@ -1,5 +1,7 @@
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+
 class ContentData {
-  String? dateTime;
+  int? dateTime;
   String? caption;
   String? imageUrl;
 
@@ -12,11 +14,13 @@ class ContentData {
 
 class PostContent extends ContentData {
   int id;
+  SocialMediaPlatforms platform;
 
   PostContent({
     required this.id,
-    dateTime,
-    caption,
+    required dateTime,
+    required caption,
+    required this.platform,
     imageUrl,
   }) : super(
           dateTime: dateTime,

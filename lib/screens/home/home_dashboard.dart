@@ -96,7 +96,7 @@ class HomeDashboard extends StatelessWidget {
               ? Column(
                   children: model.posts.map((post) {
                     DateTime? dt = post.dateTime != null
-                        ? DateTime.tryParse(post.dateTime!)
+                        ? DateTime.fromMillisecondsSinceEpoch(post.dateTime!)
                         : null;
                     String dtStrMonth = dt != null
                         ? DateFormat.MMM().format(dt).toUpperCase()
