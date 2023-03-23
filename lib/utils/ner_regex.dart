@@ -73,9 +73,13 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
     fEnd = match.end;
     matched = catalyst.substring(fStart, fEnd);
   }
+
+  // check if milliseconds or microseconds
+  int timestamp = entity.timestamp > 999999999999
+      ? entity.timestamp
+      : entity.timestamp * 1000;
   return NERRegexRangeDate(
-    // timestamp: entity.timestamp * 1000,
-    timestamp: entity.timestamp,
+    timestamp: timestamp,
     start: fStart,
     end: fEnd,
     matched: matched,

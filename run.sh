@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# This script file uses the `generate_dart_defines.sh` script to
+# This script file uses the `generate_dart_defines.sh` script to run the flutter application
+#   on a selected device and using a specified environment
 # Script accepts following arguments:
 #   $1 - build environment [dev|staging|prod]
 

@@ -354,7 +354,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
               handlePressed: () {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
-                bool platformsErrorCheck = _listOfSelectedPlatforms.length < 1;
+                bool platformsErrorCheck = _listOfSelectedPlatforms.isEmpty;
                 bool datesErrorCheck = _startDateController.text == "" ||
                     _endDateController.text == "";
                 if (platformsErrorCheck != _listOfSelectedPlatformsHasError ||
