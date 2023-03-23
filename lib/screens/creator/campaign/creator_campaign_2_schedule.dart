@@ -1,11 +1,11 @@
 import 'dart:math';
-import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/shared/grayscale_filter.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
@@ -18,18 +18,16 @@ import 'package:atlast_mobile_app/shared/calendar.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
+import './creator_campaign_single_post_edit.dart';
+
 class CreatorCampaignSchedule extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
-  // final List<PostContent> draftPosts;
-  // final void Function(List<PostContent>) saveDraftPosts;
 
   const CreatorCampaignSchedule({
     Key? key,
     required this.navKey,
     required this.catalyst,
-    // required this.draftPosts,
-    // required this.saveDraftPosts,
   }) : super(key: key);
 
   @override
@@ -146,10 +144,11 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         .entries
         .map(
           (e) => PostContent(
-              id: e.key.toString(),
-              dateTime: e.value,
-              caption: "",
-              platform: widget.catalyst.derivedPlatforms[0]),
+            id: e.key.toString(),
+            dateTime: e.value,
+            caption: "",
+            platform: widget.catalyst.derivedPlatforms[0],
+          ),
         )
         .toList();
 
@@ -169,7 +168,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     setState(() => _captionsIsLoading = true);
 
     SocialMediaPlatforms p = platform ?? widget.catalyst.derivedPlatforms[0];
-    final response = await GeneratorService.fetchCaptions(
+    final List<String> response = await GeneratorService.fetchCaptions(
       widget.catalyst.derivedPrompt,
       platform: p.toString(),
       // voice: <>,
@@ -190,9 +189,31 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     });
   }
 
-  void _approveCampaignDates() {
+  void _approveCampaignDates() async {
+    await _fetchCaptionsForCampaign(numCaptions: _draftPosts.length);
     setState(() => _campaignDatesApproved = true);
-    _fetchCaptionsForCampaign(numCaptions: _draftPosts.length);
+  }
+
+  void _saveDraftPost(String postId, PostContent newContent) {
+    int postIdDraft = int.parse(postId);
+    setState(() => _draftPosts[postIdDraft] = newContent);
+  }
+
+  void _openEditSinglePost(String postId) {
+    if (!_campaignDatesApproved) return;
+
+    int postIdDraft = int.parse(postId);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CreatorCampaignSinglePostEdit(
+          navKey: widget.navKey,
+          postContent: _draftPosts[postIdDraft],
+          saveChanges: _saveDraftPost,
+          prompt: widget.catalyst.derivedPrompt,
+          initialCaptions: _generatedCaptions,
+        ),
+      ),
+    );
   }
 
   @override
@@ -236,6 +257,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         SizedBox(
           width: double.infinity,
           child: CustomButton(
+            disabled: _captionsIsLoading,
             handlePressed: _fetchCampaignDates,
             fillColor: AppColors.error,
             text: 'Regenerate Campaign',
@@ -245,6 +267,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         SizedBox(
           width: double.infinity,
           child: CustomButton(
+            disabled: _captionsIsLoading,
             handlePressed: _approveCampaignDates,
             fillColor: AppColors.primary,
             text: 'Use Campaign',
@@ -270,11 +293,15 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
-                      child: CustomCalendar(
-                        disableSelection: true,
-                        // isLoading:
-                        //     _campaignDatesIsLoading || _captionsIsLoading,
-                        initialPosts: _draftPosts,
+                      child: GrayscaleFilter(
+                        active: !_campaignDatesApproved,
+                        child: CustomCalendar(
+                          disableSelection: true,
+                          // isLoading:
+                          //     _campaignDatesIsLoading || _captionsIsLoading,
+                          initialPosts: _draftPosts,
+                          handleTap: _openEditSinglePost,
+                        ),
                       ),
                     ),
                   ),
