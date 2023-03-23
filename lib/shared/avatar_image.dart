@@ -28,8 +28,8 @@ class AvatarImage extends StatelessWidget {
           child: Image.network(
             Uri.encodeFull(imageUrl),
             fit: fit,
-            errorBuilder: (_, obj, stack) => Image.network(
-              Uri.encodeFull("https://i.imgur.com/oQIe4jC.png"),
+            errorBuilder: (_, obj, stack) => Image.asset(
+              "images/default_placeholder.png",
               fit: BoxFit.cover,
             ),
           ),
