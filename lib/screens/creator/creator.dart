@@ -16,7 +16,7 @@ import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_media.dart';
-import 'campaign/creator_campaign_3_results.dart';
+import 'campaign/creator_campaign_2_schedule.dart';
 import 'social_media_post/creator_social_media_post_1_prompt.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
 
@@ -397,13 +397,13 @@ class _CreatorState extends State<Creator> {
                           _socialMediaPlatformAnnotations,
                     );
                   case "/campaign-2":
-                    return CreatorCampaignMedia(
-                      navKey: widget.navKey,
-                    );
-                  case "/campaign-results":
-                    return CreatorCampaignResults(
+                    return CreatorCampaignSchedule(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
+                    );
+                  case "/campaign-3":
+                    return CreatorCampaignMedia(
+                      navKey: widget.navKey,
                     );
                   case "/ad-1":
                     return const SamplePage();

@@ -14,21 +14,22 @@ import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class CreatorCampaignResults extends StatefulWidget {
+class CreatorCampaignSchedule extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
 
-  const CreatorCampaignResults({
+  const CreatorCampaignSchedule({
     Key? key,
     required this.navKey,
     required this.catalyst,
   }) : super(key: key);
 
   @override
-  _CreatorCampaignResultsState createState() => _CreatorCampaignResultsState();
+  _CreatorCampaignScheduleState createState() =>
+      _CreatorCampaignScheduleState();
 }
 
-class _CreatorCampaignResultsState extends State<CreatorCampaignResults> {
+class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   bool _campaignDatesLoaded = false;
   bool _campaignDatesRegenerating = false;
   List<int> _campaignDates = [];
@@ -44,7 +45,7 @@ class _CreatorCampaignResultsState extends State<CreatorCampaignResults> {
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+    widget.navKey.currentState!.pushNamed("/campaign-3");
   }
 
   Future<void> _fetchCampaignDates(BuildContext ctx) async {
