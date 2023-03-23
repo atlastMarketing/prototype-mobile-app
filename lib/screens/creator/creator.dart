@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/screens/creator/social_media_post/creator_social_media_image.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
@@ -55,7 +56,7 @@ class _CreatorState extends State<Creator> {
             derivedOutputType: CatalystOutputTypes.singlePost,
           ));
       // create post
-      widget.navKey.currentState!.pushNamed("/post-1");
+      widget.navKey.currentState!.pushNamed("/image");
     } else if (_selectedCreatorOptionIdx == 1) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
@@ -363,6 +364,10 @@ class _CreatorState extends State<Creator> {
             return MaterialPageRoute(
               builder: (context) {
                 switch (settings.name) {
+                  case "/image":
+                    return CreatorSocialMediaImage(
+                      navKey: widget.navKey,
+                    );
                   case "/post-1":
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
