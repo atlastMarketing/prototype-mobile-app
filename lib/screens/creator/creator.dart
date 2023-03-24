@@ -36,6 +36,8 @@ class _CreatorState extends State<Creator> {
   final entityExtractor =
       EntityExtractor(language: EntityExtractorLanguage.english);
 
+  final DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
+
   // ------
   // STATES
   // ------
@@ -48,6 +50,7 @@ class _CreatorState extends State<Creator> {
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
+  List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
 
   // ------
   // NAVIGATION FUNCTIONS
@@ -93,26 +96,36 @@ class _CreatorState extends State<Creator> {
     String catalyst, {
     CatalystOutputTypes type = CatalystOutputTypes.singlePost,
   }) async {
-    // ANNOTATION EXTRACTION
-    final List<EntityAnnotation> annotations =
-        await entityExtractor.annotateText(
-      catalyst,
-      // TODO: don't hardcode these params
-      // preferredLocale: 'en-US',
-      referenceTimeZone: 'America/Vancouver',
-    );
+    // MANUAL NER
+    String __derivedPrompt = catalyst;
+    List<SocialMediaPlatforms> __derivedPlatforms = [];
+    CatalystCampaignOutputTypes __campaignOutputType =
+        _catalystDetails.campaignOutputType ?? DEFAULT_CAMPAIGN_OUTPUT_TYPE;
+    List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
+    List<CampaignOutputTypeAnnotation> __campaignOutputTypeAnnotations = [];
 
     final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
         extractSocialMediaPlatformsFromCatalyst(catalyst);
 
-    // DATA MANIPULATION OF MANUAL NER
-    String __derivedPrompt = catalyst;
-    List<SocialMediaPlatforms> __derivedPlatforms = [];
-    List<int> __postTimestamps = [];
-    int? __startTimestamp;
-    int? __endTimestamp;
-    List<DateAnnotation> __dateAnnotations = [];
-    List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
+    if (type == CatalystOutputTypes.campaign) {
+      final NERRegexRangeCampaignOutputType? matchedCampaignOutputType =
+          extractCampaignOutputTypeFromCatalyst(catalyst);
+      __campaignOutputType =
+          matchedCampaignOutputType?.campaignOutputType ?? __campaignOutputType;
+
+      if (matchedCampaignOutputType != null) {
+        __campaignOutputTypeAnnotations.add(CampaignOutputTypeAnnotation(
+          range: TextRange(
+            start: matchedCampaignOutputType.start,
+            end: matchedCampaignOutputType.end,
+          ),
+          campaignOutputType: matchedCampaignOutputType,
+          style: AppText.bodyBold.merge(const TextStyle(
+            backgroundColor: AppColors.error,
+          )),
+        ));
+      }
+    }
 
     for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
       __derivedPrompt = __derivedPrompt.replaceRange(
@@ -131,8 +144,23 @@ class _CreatorState extends State<Creator> {
       ));
     }
 
-    // FURTHER DATA MANIPULATION OF GOOGLE NER
+    // AUTOMATIC ANNOTATION EXTRACTION (GOOGLE NER)
+    List<int> __postTimestamps = [];
+    int? __startTimestamp;
+    int? __endTimestamp;
+    List<DateAnnotation> __dateAnnotations = [];
+
+    final List<EntityAnnotation> annotations =
+        await entityExtractor.annotateText(
+      catalyst,
+      // TODO: don't hardcode these params
+      // preferredLocale: 'en-US',
+      referenceTimeZone: 'America/Vancouver',
+    );
+
+    // DATA MANIPULATION OF GOOGLE NER
     if (annotations.isNotEmpty) {
+      print(annotations);
       final List<EntityAnnotation> annotatedDates = annotations
           .where(
             (ant) => ant.entities
@@ -145,7 +173,7 @@ class _CreatorState extends State<Creator> {
         DateTimeEntity ent = annotatedDate.entities
             .firstWhere((e) => e.type == EntityType.dateTime) as DateTimeEntity;
         // skip if date selected is before today
-        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp * 1000)
+        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp)
             .isBefore(DateTime.now())) continue;
 
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
@@ -160,7 +188,7 @@ class _CreatorState extends State<Creator> {
 
         __dateAnnotations.add(DateAnnotation(
           range: TextRange(
-            start: _extractedDate.start + 1,
+            start: _extractedDate.start,
             end: _extractedDate.end,
           ),
           timestamp: _extractedDate.timestamp,
@@ -174,10 +202,15 @@ class _CreatorState extends State<Creator> {
           break;
         } else if (type == CatalystOutputTypes.campaign) {
           if (__startTimestamp == null && __endTimestamp == null) {
-            if (_extractedDate.matched.contains('from')) {
+            if (isStartingDate(_extractedDate.matched)) {
               __startTimestamp = _extractedDate.timestamp;
-            } else {
+            } else if (isEndingDate(_extractedDate.matched)) {
               __endTimestamp = _extractedDate.timestamp;
+            } else if (__campaignOutputType ==
+                CatalystCampaignOutputTypes.event) {
+              __endTimestamp = _extractedDate.timestamp;
+            } else {
+              __startTimestamp = _extractedDate.timestamp;
             }
           } else if (__startTimestamp == null && __endTimestamp != null) {
             __startTimestamp = _extractedDate.timestamp < __endTimestamp
@@ -210,8 +243,10 @@ class _CreatorState extends State<Creator> {
       _catalystDetails.derivedEndTimestamp = __endTimestamp;
       // remove hardcoding here
       _catalystDetails.derivedPlatforms = __derivedPlatforms;
+      _catalystDetails.campaignOutputType = __campaignOutputType;
       _dateAnnotations = __dateAnnotations;
       _socialMediaPlatformAnnotations = __socialMediaPlatformAnnotations;
+      _campaignOutputTypeAnnotations = __campaignOutputTypeAnnotations;
     });
   }
 
@@ -220,7 +255,7 @@ class _CreatorState extends State<Creator> {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
-    CatalystCampaignOutputTypes? campaignType,
+    CatalystCampaignOutputTypes? campaignOutputType,
     int? maximumPosts,
   }) {
     if (postTimestamps != null) {
@@ -238,13 +273,39 @@ class _CreatorState extends State<Creator> {
       _socialMediaPlatformAnnotations = [];
       _catalystDetails.derivedPlatforms = platforms;
     }
-    if (campaignType != null) {
-      _catalystDetails.campaignOutputType = campaignType;
+    if (campaignOutputType != null) {
+      _campaignOutputTypeAnnotations = [];
+      _catalystDetails.campaignOutputType = campaignOutputType;
     }
     if (maximumPosts != null) {
       _catalystDetails.maximumPosts = maximumPosts;
     }
     setState(() {});
+  }
+
+  List<Annotation> _compileAnnotations() {
+    List<Annotation> textAnnotations = [];
+
+    textAnnotations.addAll(_dateAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    textAnnotations.addAll(_socialMediaPlatformAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    textAnnotations.addAll(_campaignOutputTypeAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+
+    return textAnnotations;
   }
 
   // ------
@@ -406,14 +467,13 @@ class _CreatorState extends State<Creator> {
                       catalyst: _catalystDetails,
                     );
                   case "/campaign-1":
+                    List<Annotation> textAnnotations = _compileAnnotations();
                     return CreatorCampaignCatalyst(
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
                       updateCatalyst: _updateCatalyst,
                       catalyst: _catalystDetails,
-                      dateAnnotations: _dateAnnotations,
-                      socialMediaPlatformAnnotations:
-                          _socialMediaPlatformAnnotations,
+                      annotations: textAnnotations,
                     );
                   case "/campaign-2":
                     return CreatorCampaignSchedule(

@@ -1,5 +1,6 @@
 // ((make|create)( \w )?)?( a )?((campaign)|(marketing campaign))
 
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/unique_char.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
@@ -46,6 +47,53 @@ class NERRegexRangeSocialMediaPlatform extends NERRegexRange {
         );
 }
 
+class NERRegexRangeCampaignOutputType extends NERRegexRange {
+  final CatalystCampaignOutputTypes campaignOutputType;
+
+  NERRegexRangeCampaignOutputType({
+    required this.campaignOutputType,
+    required start,
+    required end,
+    required matched,
+  }) : super(
+          start: start,
+          end: end,
+          matched: matched,
+        );
+}
+
+final List<String> startingDatePrefixes = [
+  "from",
+  "starting",
+  "(starting from)",
+  "(starting on)"
+];
+final String startingDatePrefixesRegexJoined = startingDatePrefixes.join("|");
+
+bool isStartingDate(String input) {
+  return RegExp(startingDatePrefixesRegexJoined).hasMatch(input);
+}
+
+final List<String> endingDatePrefixes = [
+  "to",
+  "until",
+  "(lasting until)",
+  "ending",
+  "(ending on)"
+];
+final String endingDatePrefixesRegexJoined = endingDatePrefixes.join("|");
+
+bool isEndingDate(String input) {
+  return RegExp(endingDatePrefixesRegexJoined).hasMatch(input);
+}
+
+final String allDatePrefixesRegexJoined =
+    [...startingDatePrefixes, ...endingDatePrefixes].join("|");
+
+int castToMilliseconds(int sSinceEpoch) {
+  return sSinceEpoch > 999999999999 ? sSinceEpoch : sSinceEpoch * 1000;
+}
+
 NERRegexRangeDate extractDateBuffersFromCatalyst(
   String catalyst,
   int start,
@@ -55,11 +103,14 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   int fStart = start;
   int fEnd = end;
   String matched = catalyst.substring(start, end);
+
+  // use matcher and matchedHelper to avoid edge cases involving duplicate matches
   String matcher = UNIQUE_CHAR * matched.length;
   String matchedHelper =
       catalyst.replaceRange(start, end, UNIQUE_CHAR * matched.length);
 
-  RegExpMatch? match = RegExp(r"((in|on|at|and|from|to) )?(" + matcher + r")",
+  RegExpMatch? match = RegExp(
+          r"((" + allDatePrefixesRegexJoined + r") )?(" + matcher + r")",
           caseSensitive: false)
       .firstMatch(matchedHelper);
 
@@ -75,9 +126,7 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   }
 
   // check if milliseconds or microseconds
-  int timestamp = entity.timestamp > 999999999999
-      ? entity.timestamp
-      : entity.timestamp * 1000;
+  int timestamp = castToMilliseconds(entity.timestamp);
   return NERRegexRangeDate(
     timestamp: timestamp,
     start: fStart,
@@ -122,4 +171,70 @@ List<NERRegexRangeSocialMediaPlatform> extractSocialMediaPlatformsFromCatalyst(
       platform: platform,
     );
   }).toList();
+}
+
+NERRegexRangeCampaignOutputType? extractCampaignOutputTypeFromCatalyst(
+  String catalyst,
+) {
+  Iterable<RegExpMatch> matches =
+      RegExp(r"(every month)|monthly", caseSensitive: false)
+          .allMatches(catalyst);
+
+  if (matches.isNotEmpty) {
+    String matched = catalyst.substring(matches.first.start, matches.first.end);
+    return NERRegexRangeCampaignOutputType(
+      start: matches.first.start,
+      end: matches.first.end,
+      matched: matched,
+      campaignOutputType: CatalystCampaignOutputTypes.monthly,
+    );
+  }
+
+  matches =
+      RegExp(r"(every week)|weekly", caseSensitive: false).allMatches(catalyst);
+
+  if (matches.isNotEmpty) {
+    String matched = catalyst.substring(matches.first.start, matches.first.end);
+    return NERRegexRangeCampaignOutputType(
+      start: matches.first.start,
+      end: matches.first.end,
+      matched: matched,
+      campaignOutputType: CatalystCampaignOutputTypes.weekly,
+    );
+  }
+
+  // special case of weekly where the day of the week is given
+  matches = RegExp(
+    r"(every monday)|(every tuesday)|(every wednesday)|(every thursday)|(every friday)",
+    caseSensitive: false,
+  ).allMatches(catalyst);
+
+  if (matches.isNotEmpty) {
+    String matched = catalyst.substring(matches.first.start, matches.first.end);
+    int split = matched.indexOf(" ");
+    int fEnd = matches.first.start + split;
+    matched = catalyst.substring(matches.first.start, fEnd);
+    // but only highlight "every"
+    return NERRegexRangeCampaignOutputType(
+      start: matches.first.start,
+      end: fEnd,
+      matched: matched,
+      campaignOutputType: CatalystCampaignOutputTypes.weekly,
+    );
+  }
+
+  matches = RegExp(r"(every day)|everyday|daily|every", caseSensitive: false)
+      .allMatches(catalyst);
+
+  if (matches.isNotEmpty) {
+    String matched = catalyst.substring(matches.first.start, matches.first.end);
+    return NERRegexRangeCampaignOutputType(
+      start: matches.first.start,
+      end: matches.first.end,
+      matched: matched,
+      campaignOutputType: CatalystCampaignOutputTypes.daily,
+    );
+  }
+
+  return null;
 }

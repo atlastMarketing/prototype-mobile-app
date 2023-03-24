@@ -25,7 +25,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
-    CatalystCampaignOutputTypes? campaignType,
+    CatalystCampaignOutputTypes? campaignOutputType,
     int? maximumPosts,
   }) updateCatalyst;
   final CatalystBreakdown catalyst;

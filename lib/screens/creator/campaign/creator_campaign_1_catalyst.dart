@@ -28,12 +28,11 @@ class CreatorCampaignCatalyst extends StatefulWidget {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
-    CatalystCampaignOutputTypes? campaignType,
+    CatalystCampaignOutputTypes? campaignOutputType,
     int? maximumPosts,
   }) updateCatalyst;
   final CatalystBreakdown catalyst;
-  final List<DateAnnotation> dateAnnotations;
-  final List<SocialMediaPlatformAnnotation> socialMediaPlatformAnnotations;
+  final List<Annotation> annotations;
 
   const CreatorCampaignCatalyst({
     Key? key,
@@ -41,8 +40,7 @@ class CreatorCampaignCatalyst extends StatefulWidget {
     required this.analyzeCatalyst,
     required this.updateCatalyst,
     required this.catalyst,
-    required this.dateAnnotations,
-    required this.socialMediaPlatformAnnotations,
+    required this.annotations,
   }) : super(key: key);
 
   @override
@@ -63,8 +61,6 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   DateTime? _endDate;
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
-  CatalystCampaignOutputTypes _campaignOutputType =
-      CatalystCampaignOutputTypes.daily;
 
   // form advanced options
   bool _isAdvancedOptionsOpen = false;
@@ -136,8 +132,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   void _handleChangeCampaignOutputType(CatalystCampaignOutputTypes? newType) {
     CatalystCampaignOutputTypes newTypeFinal =
         newType ?? CatalystCampaignOutputTypes.daily;
-    setState(() => _campaignOutputType = newTypeFinal);
-    widget.updateCatalyst(campaignType: newTypeFinal);
+    widget.updateCatalyst(campaignOutputType: newTypeFinal);
   }
 
   void _handleChangeCampaignSize() {
@@ -158,21 +153,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   }
 
   Widget _buildForm() {
-    List<Annotation> textAnnotations = [];
-    textAnnotations.addAll(widget.dateAnnotations.map(
-      (annot) => Annotation(
-        range: annot.range,
-        style: annot.style,
-      ),
-    ));
-    textAnnotations.addAll(widget.socialMediaPlatformAnnotations.map(
-      (annot) => Annotation(
-        range: annot.range,
-        style: annot.style,
-      ),
-    ));
-    _catalystInputController.annotations = textAnnotations;
-
+    _catalystInputController.annotations = widget.annotations;
     return Form(
       key: _formKey,
       child: Column(
@@ -301,7 +282,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                               value: e.key, child: Text(e.value)))
                           .toList(),
                       onChanged: _handleChangeCampaignOutputType,
-                      value: _campaignOutputType,
+                      value: widget.catalyst.campaignOutputType,
                     ),
                   ),
                   const Text(
