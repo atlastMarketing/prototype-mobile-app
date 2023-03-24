@@ -116,7 +116,6 @@ class GeneratorService {
         headers: headers,
         body: json.encode(requestBody),
       );
-      // TODO: error handling
       final List<dynamic> responseBody = json.decode(response.body);
       return responseBody
           .map((timestamp) =>
@@ -178,7 +177,6 @@ class GeneratorService {
         headers: headers,
         body: json.encode(requestBody),
       );
-      // TODO: error handling
       final List<dynamic> responseBody = json.decode(response.body);
       return responseBody
           .map((timestamp) =>

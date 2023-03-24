@@ -1,20 +1,22 @@
 import 'dart:math';
-import 'package:atlast_mobile_app/shared/grayscale_filter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/stock_images.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/calendar.dart';
+import 'package:atlast_mobile_app/shared/widget_overlays.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
@@ -23,11 +25,17 @@ import './creator_campaign_single_post_edit.dart';
 class CreatorCampaignSchedule extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
+  final List<UploadedImage> images;
+  final List<PostContent> draftPosts;
+  final void Function(List<PostContent>) saveDraftPosts;
 
   const CreatorCampaignSchedule({
     Key? key,
     required this.navKey,
     required this.catalyst,
+    required this.images,
+    required this.draftPosts,
+    required this.saveDraftPosts,
   }) : super(key: key);
 
   @override
@@ -45,7 +53,6 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   bool _campaignDatesApproved = false;
 
   // generated stuff
-  List<PostContent> _draftPosts = [];
   List<String> _generatedCaptions = [];
 
   // misc
@@ -56,7 +63,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+    widget.navKey.currentState!.pushNamed("/campaign-confirm");
   }
 
   Future<void> _fetchCampaignDates() async {
@@ -139,6 +146,19 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         break;
     }
 
+    // TODO: get real images
+    List<String> listOfImageUrls = [
+      ...widget.images.map((i) => i.imageUrl).toList(),
+      ...stockImages
+    ];
+
+    setState(() {
+      _campaignDates = response;
+      _campaignDatesFetched = true;
+      _campaignDatesIsLoading = false;
+      _numDateGenerations += 1;
+    });
+
     List<PostContent> drafts = response
         .asMap()
         .entries
@@ -148,17 +168,13 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             dateTime: e.value,
             caption: "",
             platform: widget.catalyst.derivedPlatforms[0],
+            imageUrl:
+                listOfImageUrls[Random().nextInt(listOfImageUrls.length - 1)],
           ),
         )
         .toList();
 
-    setState(() {
-      _draftPosts = drafts;
-      _campaignDates = response;
-      _campaignDatesFetched = true;
-      _campaignDatesIsLoading = false;
-      _numDateGenerations += 1;
-    });
+    widget.saveDraftPosts(drafts);
   }
 
   Future<void> _fetchCaptionsForCampaign({
@@ -182,21 +198,25 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     setState(() {
       _captionsIsLoading = false;
       _generatedCaptions = response;
-      // TODO: don't cheat like this, but have a "lazy loading" of sorts for caption generation during campaign creation
-      for (var i = 0; i < _draftPosts.length; i++) {
-        _draftPosts[i].caption = response[i % response.length];
-      }
     });
+
+    List<PostContent> newPosts = widget.draftPosts;
+    for (var i = 0; i < widget.draftPosts.length; i++) {
+      newPosts[i].caption = response[i % response.length];
+    }
+    widget.saveDraftPosts(newPosts);
   }
 
   void _approveCampaignDates() async {
-    await _fetchCaptionsForCampaign(numCaptions: _draftPosts.length);
+    await _fetchCaptionsForCampaign(numCaptions: widget.draftPosts.length);
     setState(() => _campaignDatesApproved = true);
   }
 
   void _saveDraftPost(String postId, PostContent newContent) {
     int postIdDraft = int.parse(postId);
-    setState(() => _draftPosts[postIdDraft] = newContent);
+    List<PostContent> newPosts = widget.draftPosts;
+    newPosts[postIdDraft] = newContent;
+    widget.saveDraftPosts(newPosts);
   }
 
   void _openEditSinglePost(String postId) {
@@ -207,7 +227,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       MaterialPageRoute(
         builder: (context) => CreatorCampaignSinglePostEdit(
           navKey: widget.navKey,
-          postContent: _draftPosts[postIdDraft],
+          postContent: widget.draftPosts[postIdDraft],
           saveChanges: _saveDraftPost,
           prompt: widget.catalyst.derivedPrompt,
           initialCaptions: _generatedCaptions,
@@ -293,13 +313,12 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
-                      child: GrayscaleFilter(
-                        active: !_campaignDatesApproved,
+                      child: WidgetOverlays(
+                        disabled: !_campaignDatesApproved,
+                        loading: _campaignDatesIsLoading || _captionsIsLoading,
                         child: CustomCalendar(
                           disableSelection: true,
-                          // isLoading:
-                          //     _campaignDatesIsLoading || _captionsIsLoading,
-                          initialPosts: _draftPosts,
+                          initialPosts: widget.draftPosts,
                           handleTap: _openEditSinglePost,
                         ),
                       ),

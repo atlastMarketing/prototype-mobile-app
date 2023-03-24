@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
@@ -11,8 +12,8 @@ import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 
 class CreatorCampaignImages extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final List<String> images;
-  final void Function(List<String>) saveImages;
+  final List<UploadedImage> images;
+  final void Function(List<UploadedImage>) saveImages;
 
   const CreatorCampaignImages({
     Key? key,
@@ -26,8 +27,6 @@ class CreatorCampaignImages extends StatefulWidget {
 }
 
 class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
-  List<File> imageFiles = [];
-
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
@@ -71,17 +70,24 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
       maxWidth: 1080,
     );
     if (pickedFile == null) {
-      print("did not upload image!");
       return;
     }
 
+    File file = File(pickedFile.path);
     String url = await ImageUploadingService.uploadImage(File(pickedFile.path));
-    setState(() => imageFiles.add(File(pickedFile.path)));
-    widget.saveImages([...widget.images, url]);
+    widget.saveImages([
+      ...widget.images,
+      UploadedImage(
+        image: file,
+        imageUrl: url,
+      )
+    ]);
   }
 
   void _removePicture(int idx) {
-    setState(() => imageFiles.removeAt(idx));
+    List<UploadedImage> removed = widget.images;
+    removed.removeAt(idx);
+    widget.saveImages(removed);
   }
 
   Widget _buildImageItem(int idx, File imageFile) {
@@ -157,8 +163,8 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                 mainAxisSpacing: 20,
                 children: List.generate(
                   9,
-                  (idx) => idx < imageFiles.length
-                      ? _buildImageItem(idx, imageFiles[idx])
+                  (idx) => idx < widget.images.length
+                      ? _buildImageItem(idx, widget.images[idx].image)
                       : _buildUploaderItem(),
                 )),
           ),

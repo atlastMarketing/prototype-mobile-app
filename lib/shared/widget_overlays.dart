@@ -1,11 +1,14 @@
+import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 
-class GrayscaleFilter extends StatelessWidget {
-  final bool active;
+class WidgetOverlays extends StatelessWidget {
+  final bool disabled;
+  final bool loading;
   final Widget child;
-  const GrayscaleFilter({
+  const WidgetOverlays({
     Key? key,
-    this.active = true,
+    this.disabled = false,
+    this.loading = false,
     required this.child,
   }) : super(key: key);
 
@@ -13,7 +16,7 @@ class GrayscaleFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColorFiltered(
       colorFilter: ColorFilter.matrix(
-        active
+        disabled
             ? [
                 0.2126,
                 0.7152,
@@ -59,7 +62,17 @@ class GrayscaleFilter extends StatelessWidget {
                 0,
               ],
       ),
-      child: child,
+      child: Stack(
+        children: [
+          loading
+              ? Container(
+                  color: AppColors.dark.withOpacity(0.2),
+                  child: const Center(child: CircularProgressIndicator()),
+                )
+              : const SizedBox.shrink(),
+          child,
+        ],
+      ),
     );
   }
 }

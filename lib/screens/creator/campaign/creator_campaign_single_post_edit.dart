@@ -1,3 +1,8 @@
+import 'package:atlast_mobile_app/configs/layout.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/shared/avatar_image.dart';
+import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +11,6 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
-import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
 class CreatorCampaignSinglePostEdit extends StatefulWidget {
@@ -32,7 +36,8 @@ class CreatorCampaignSinglePostEdit extends StatefulWidget {
 
 class _CreatorCampaignSinglePostEditState
     extends State<CreatorCampaignSinglePostEdit> {
-  String _caption = "";
+  final TextEditingController _captionController = TextEditingController();
+  bool _isEditingCaption = false;
   String _imageUrl = "";
 
   List<String> _availableCaptions = [];
@@ -51,11 +56,15 @@ class _CreatorCampaignSinglePostEditState
         id: widget.postContent.id,
         platform: widget.postContent.platform,
         dateTime: widget.postContent.dateTime!,
-        caption: _caption,
+        caption: _captionController.text,
         imageUrl: _imageUrl,
       ),
     );
     widget.navKey.currentState!.pop();
+  }
+
+  void _toggleEditState() {
+    setState(() => _isEditingCaption = !_isEditingCaption);
   }
 
   Future<void> _refreshCaption() async {
@@ -63,7 +72,7 @@ class _CreatorCampaignSinglePostEditState
 
     if (_availableCaptions.isNotEmpty) {
       setState(() {
-        _caption = _availableCaptions.removeLast();
+        _captionController.text = _availableCaptions.removeLast();
         _captionsIsLoading = false;
       });
       return;
@@ -80,7 +89,7 @@ class _CreatorCampaignSinglePostEditState
 
     setState(() {
       _numGenerations += 1;
-      _caption = response.removeLast();
+      _captionController.text = response.removeLast();
       _availableCaptions = response;
       _captionsIsLoading = false;
     });
@@ -91,21 +100,14 @@ class _CreatorCampaignSinglePostEditState
     super.initState();
 
     // listen for changes to autofill
-    _caption = widget.postContent.caption ?? "";
+    _captionController.text = widget.postContent.caption ?? "";
     _imageUrl = widget.postContent.imageUrl ?? "";
     _availableCaptions = widget.initialCaptions;
   }
 
   Widget _buildImageUploader() {
     return widget.postContent.imageUrl != null
-        ? Image.network(
-            Uri.encodeFull(_imageUrl),
-            fit: BoxFit.contain,
-            errorBuilder: (_, obj, stack) => Image.asset(
-              "images/default_placeholder.png",
-              fit: BoxFit.cover,
-            ),
-          )
+        ? AvatarImage(Uri.encodeFull(_imageUrl))
         : Stack(
             children: [
               Image.asset("images/default_placeholder.png"),
@@ -151,56 +153,72 @@ class _CreatorCampaignSinglePostEditState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(bottom: 5),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: _buildImageUploader(),
               ),
-              Text(_caption, style: AppText.body),
+              CustomFormTextField(
+                controller: _captionController,
+                previewOnly: !_isEditingCaption,
+                autocorrect: true,
+                vSize: 7,
+              ),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed:
+                              _captionsIsLoading ? null : _refreshCaption,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.error,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.refresh,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
                   ElevatedButton(
-                    onPressed: _captionsIsLoading ? null : _refreshCaption,
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(8),
-                      backgroundColor: AppColors.error,
-                      // foregroundColor: AppColors.black,
-                    ),
-                    child: const Icon(
-                      Icons.refresh,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _toggleEditState,
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(8),
                       backgroundColor: AppColors.customize,
                       // foregroundColor: AppColors.black,
                     ),
-                    child: const Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                      size: 25,
-                    ),
+                    child: _isEditingCaption
+                        ? const Icon(
+                            Icons.save,
+                            color: Colors.white,
+                            size: 25,
+                          )
+                        : const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 25,
+                          ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(8),
-                      backgroundColor: AppColors.confirm,
-                      // foregroundColor: AppColors.black,
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                  ),
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed: _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.confirm,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
                 ],
               )
             ],
@@ -216,7 +234,7 @@ class _CreatorCampaignSinglePostEditState
                 bottomLeft: Radius.circular(6),
                 bottomRight: Radius.circular(6),
               ),
-              color: AppColors.primary,
+              color: AppColors.secondary,
               boxShadow: [
                 BoxShadow(
                   offset: Offset(0, 2),
@@ -242,6 +260,14 @@ class _CreatorCampaignSinglePostEditState
             ),
           ),
         ),
+        // TODO: replace with platform icons
+        Positioned(
+          top: 30,
+          left: 120,
+          child: Text(
+            socialMediaPlatformsOptions[widget.postContent.platform]!,
+          ),
+        ),
       ],
     );
   }
@@ -250,24 +276,15 @@ class _CreatorCampaignSinglePostEditState
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 60),
-              child: _buildForm(),
-            ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: CustomButton(
-              handlePressed: _handleSave,
-              fillColor: AppColors.primary,
-              text: 'Save Post',
-            ),
-          ),
-        ],
+      paddingOverwrite: EdgeInsets.zero,
+      content: SingleChildScrollBare(
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height - 150,
+          padding: pagePadding,
+          clipBehavior: Clip.none,
+          child: _buildForm(),
+        ),
       ),
     );
   }

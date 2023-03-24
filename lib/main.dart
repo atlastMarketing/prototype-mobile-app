@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'configs/theme.dart';
 import 'data/main_navigation.dart';
-import 'data/upcoming_posts.dart';
+import 'data/scheduled_posts.dart';
 import 'data/user.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => UpcomingPostsStore()),
+        ChangeNotifierProvider(create: (context) => ScheduledPostsStore()),
         ChangeNotifierProvider(create: (context) => MainNavigationStore()),
         ChangeNotifierProvider(create: (context) => UserStore()),
       ],

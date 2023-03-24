@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/screens/creator/campaign/creator_campaign_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
@@ -8,8 +9,10 @@ import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/constants/unique_char.dart';
 import 'package:atlast_mobile_app/models/annotations_model.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
@@ -48,11 +51,12 @@ class _CreatorState extends State<Creator> {
 
   // prompt analysis
   late CatalystBreakdown _catalystDetails;
-  List<String> _uploadedImages = [];
+  List<UploadedImage> _uploadedImages = [];
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
   List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
+  List<PostContent> _draftPosts = [];
 
   // ------
   // NAVIGATION FUNCTIONS
@@ -314,8 +318,12 @@ class _CreatorState extends State<Creator> {
     return textAnnotations;
   }
 
-  void _saveUploadedImages(List<String> newUrls) {
-    setState(() => _uploadedImages = newUrls);
+  void _saveUploadedImages(List<UploadedImage> images) {
+    setState(() => _uploadedImages = images);
+  }
+
+  void _saveDraftPosts(List<PostContent> newPosts) {
+    setState(() => _draftPosts = newPosts);
   }
 
   // ------
@@ -495,6 +503,14 @@ class _CreatorState extends State<Creator> {
                     return CreatorCampaignSchedule(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
+                      images: _uploadedImages,
+                      draftPosts: _draftPosts,
+                      saveDraftPosts: _saveDraftPosts,
+                    );
+                  case "/campaign-confirm":
+                    return CreatorCampaignConfirm(
+                      navKey: widget.navKey,
+                      draftPosts: _draftPosts,
                     );
                   case "/ad-1":
                     return const SamplePage();

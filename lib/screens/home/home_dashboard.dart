@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/suggested_posts.dart';
-import 'package:atlast_mobile_app/data/upcoming_posts.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
@@ -73,7 +73,7 @@ class HomeDashboard extends StatelessWidget {
   }
 
   Widget _buildUpcomingPosts() {
-    return Consumer<UpcomingPostsStore>(
+    return Consumer<ScheduledPostsStore>(
       builder: (context, model, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -92,9 +92,9 @@ class HomeDashboard extends StatelessWidget {
               ],
             ),
           ),
-          model.posts.isNotEmpty
+          model.somePosts.isNotEmpty
               ? Column(
-                  children: model.posts.map((post) {
+                  children: model.somePosts.map((post) {
                     DateTime? dt = post.dateTime != null
                         ? DateTime.fromMillisecondsSinceEpoch(post.dateTime!)
                         : null;

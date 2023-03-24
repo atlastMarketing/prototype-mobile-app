@@ -59,7 +59,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
           currPost.imageUrl ?? "",
           width: details.bounds.width,
           height: details.bounds.width,
-          fit: BoxFit.contain,
           borderRadius: 0,
         ),
       );

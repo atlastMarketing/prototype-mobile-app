@@ -9,6 +9,7 @@ class LayoutFullPage extends StatelessWidget {
   final String? appBarTitleText;
   final Widget? appBarContent;
   final bool squeezeContents;
+  final EdgeInsets? paddingOverwrite;
 
   const LayoutFullPage({
     Key? key,
@@ -19,6 +20,7 @@ class LayoutFullPage extends StatelessWidget {
     // fancy aesthetic stuff (not necessary)
     // if any of the pages break because of overflows, this is the first thing to turn off.
     this.squeezeContents = false,
+    this.paddingOverwrite,
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
@@ -35,7 +37,10 @@ class LayoutFullPage extends StatelessWidget {
         child: appBarContent,
       );
     } else if (appBarTitleText != null) {
-      titleContent = Text(appBarTitleText!, style: AppText.subheading);
+      titleContent = Text(
+        appBarTitleText!,
+        style: AppText.subheading.merge(AppText.blackText),
+      );
     }
 
     return AppBar(
@@ -61,6 +66,8 @@ class LayoutFullPage extends StatelessWidget {
     // minus appbar
     maxHeight -= appBar != null ? appBar.preferredSize.height : 0;
 
+    EdgeInsets padding = paddingOverwrite ?? pagePadding;
+
     return SafeArea(
       child: Scaffold(
         appBar: _buildAppBar(),
@@ -74,11 +81,11 @@ class LayoutFullPage extends StatelessWidget {
                       maxHeight: maxHeight,
                     ),
                     child: IntrinsicHeight(
-                      child: Padding(padding: pagePadding, child: content),
+                      child: Padding(padding: padding, child: content),
                     ),
                   ),
                 )
-              : Padding(padding: pagePadding, child: content);
+              : Padding(padding: padding, child: content);
         }),
         resizeToAvoidBottomInset: true,
         extendBody: false,
