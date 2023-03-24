@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/models/content_model.dart';
@@ -11,8 +10,6 @@ class ScheduledPostsStore extends ChangeNotifier {
   /// Getters
   UnmodifiableListView<PostContent> get posts =>
       UnmodifiableListView(_posts.values);
-  UnmodifiableListView<PostContent> get somePosts =>
-      UnmodifiableListView(_posts.values.take(min(_posts.length, 5)));
 
   PostContent? postById(String postId) => _posts[postId];
 

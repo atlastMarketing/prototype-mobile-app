@@ -7,6 +7,7 @@ import 'package:atlast_mobile_app/constants/stock_images.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
@@ -63,12 +64,13 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   }
 
   void _handleContinue() {
+    Provider.of<ScheduledPostsStore>(context, listen: false)
+        .add(widget.draftPosts);
     widget.navKey.currentState!.pushNamed("/campaign-confirm");
   }
 
-  Future<void> _fetchCampaignDates() async {
-    setState(() => _campaignDatesIsLoading = true);
-
+  Future<List<int>> _fetchCampaignSetForPlatform(
+      SocialMediaPlatforms platform) async {
     late List<int> response;
 
     switch (widget.catalyst.campaignOutputType) {
@@ -80,7 +82,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                 DateTime.now().millisecondsSinceEpoch,
             widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
-            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            platform: platform.toString(),
             // voice: <>,
             userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
@@ -98,7 +100,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                 DateTime.now().millisecondsSinceEpoch,
             widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
-            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            platform: platform.toString(),
             // voice: <>,
             userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
@@ -116,7 +118,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                 DateTime.now().millisecondsSinceEpoch,
             widget.catalyst.campaignOutputType!,
             endDate: widget.catalyst.derivedEndTimestamp,
-            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            platform: platform.toString(),
             // voice: <>,
             userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
@@ -135,7 +137,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             widget.catalyst.campaignOutputType ??
                 CatalystCampaignOutputTypes.event,
             endDate: widget.catalyst.derivedEndTimestamp,
-            platform: widget.catalyst.derivedPlatforms[0].toString(),
+            platform: platform.toString(),
             // voice: <>,
             userData: Provider.of<UserStore>(context, listen: false).data,
             generationNum: _numDateGenerations + 1,
@@ -146,35 +148,51 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         break;
     }
 
+    return response;
+  }
+
+  Future<void> _fetchCampaignDates() async {
+    setState(() => _campaignDatesIsLoading = true);
+
     // TODO: get real images
     List<String> listOfImageUrls = [
       ...widget.images.map((i) => i.imageUrl).toList(),
       ...stockImages
     ];
 
+    List<int> allDates = [];
+    List<int> newDates = [];
+    List<PostContent> allDrafts = [];
+    List<PostContent> newDrafts = [];
+
+    int draftCounter = -1;
+
+    for (SocialMediaPlatforms platform in widget.catalyst.derivedPlatforms) {
+      newDates = await _fetchCampaignSetForPlatform(platform);
+      allDates.addAll(newDates);
+
+      newDrafts = newDates.map((e) {
+        draftCounter += 1;
+        return PostContent(
+          id: draftCounter.toString(),
+          dateTime: e,
+          caption: "",
+          platform: platform,
+          imageUrl:
+              listOfImageUrls[Random().nextInt(listOfImageUrls.length - 1)],
+        );
+      }).toList();
+      allDrafts.addAll(newDrafts);
+    }
+
     setState(() {
-      _campaignDates = response;
+      _campaignDates = allDates;
       _campaignDatesFetched = true;
       _campaignDatesIsLoading = false;
       _numDateGenerations += 1;
     });
 
-    List<PostContent> drafts = response
-        .asMap()
-        .entries
-        .map(
-          (e) => PostContent(
-            id: e.key.toString(),
-            dateTime: e.value,
-            caption: "",
-            platform: widget.catalyst.derivedPlatforms[0],
-            imageUrl:
-                listOfImageUrls[Random().nextInt(listOfImageUrls.length - 1)],
-          ),
-        )
-        .toList();
-
-    widget.saveDraftPosts(drafts);
+    widget.saveDraftPosts(allDrafts);
   }
 
   Future<void> _fetchCaptionsForCampaign({

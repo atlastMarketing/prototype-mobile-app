@@ -110,9 +110,6 @@ class _CreatorState extends State<Creator> {
     List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
     List<CampaignOutputTypeAnnotation> __campaignOutputTypeAnnotations = [];
 
-    final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
-        extractSocialMediaPlatformsFromCatalyst(catalyst);
-
     if (type == CatalystOutputTypes.campaign) {
       final NERRegexRangeCampaignOutputType? matchedCampaignOutputType =
           extractCampaignOutputTypeFromCatalyst(catalyst);
@@ -130,8 +127,16 @@ class _CreatorState extends State<Creator> {
             backgroundColor: AppColors.error,
           )),
         ));
+        __derivedPrompt = __derivedPrompt.replaceRange(
+          matchedCampaignOutputType.start,
+          matchedCampaignOutputType.end,
+          UNIQUE_CHAR * matchedCampaignOutputType.matched.length,
+        );
       }
     }
+
+    final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
+        extractSocialMediaPlatformsFromCatalyst(catalyst);
 
     for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
       __derivedPrompt = __derivedPrompt.replaceRange(

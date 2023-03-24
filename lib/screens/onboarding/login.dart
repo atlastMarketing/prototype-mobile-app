@@ -48,7 +48,8 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     widget.navKey.currentState!.pushNamed("/forgot-password");
   }
 
-  void _overwriteLogin() {
+  void forceLogin() {
+    // ONLY FOR DEBUGGING
     print("login and onboarding overwrite!");
     Provider.of<UserStore>(context, listen: false).login(
       "64164c4c932e6d9d7b255737",
@@ -76,7 +77,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
             style: AppText.title.merge(AppText.blackText),
           ),
           GestureDetector(
-            onDoubleTap: _overwriteLogin,
+            onDoubleTap: forceLogin,
             child: GradientText(
               "atlast",
               style: AppText.title.merge(AppText.blackText),

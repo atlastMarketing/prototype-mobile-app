@@ -92,9 +92,9 @@ class HomeDashboard extends StatelessWidget {
               ],
             ),
           ),
-          model.somePosts.isNotEmpty
+          model.posts.isNotEmpty
               ? Column(
-                  children: model.somePosts.map((post) {
+                  children: model.posts.take(5).map((post) {
                     DateTime? dt = post.dateTime != null
                         ? DateTime.fromMillisecondsSinceEpoch(post.dateTime!)
                         : null;

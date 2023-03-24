@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,7 @@ import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
-import 'package:atlast_mobile_app/services/generator_service.dart';
+// import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
@@ -35,6 +36,7 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
   bool _isEditingCaption = false;
 
   bool _isPostLoaded = false;
+  bool _isPostNotFound = false;
   late PostContent _postData;
 
   void _handleBack() {
@@ -50,9 +52,21 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
   }
 
   void _loadPostData() async {
-    _captionController.text = _postData.caption ?? "";
+    PostContent? post = Provider.of<ScheduledPostsStore>(context, listen: false)
+        .postById(widget.postId);
+    if (post == null) {
+      setState(() {
+        _isPostLoaded = true;
+        _isPostNotFound = true;
+      });
+      return;
+    }
 
-    setState(() => _isPostLoaded = true);
+    _captionController.text = post.caption ?? "";
+    setState(() {
+      _isPostLoaded = true;
+      _postData = post;
+    });
   }
 
   @override
@@ -96,6 +110,16 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
               duration: 800,
             )
           ],
+        ),
+      );
+    }
+
+    if (_isPostNotFound) {
+      return Center(
+        child: Text(
+          "Post not found.",
+          style:
+              AppText.heading.merge(const TextStyle(color: AppColors.primary)),
         ),
       );
     }

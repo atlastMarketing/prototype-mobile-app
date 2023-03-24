@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
@@ -27,18 +25,13 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
   int _animationState = 0;
 
   void _doTheWork() async {
-    // Future.delayed(const Duration(milliseconds: 500), () {
-    //   setState(() => _animationState = 1);
-    // });
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() => _animationState = 1);
+    });
 
-    // setState(() => _animationState = 1);
-    Provider.of<ScheduledPostsStore>(context, listen: false)
-        .add(widget.draftPosts);
-    // setState(() => _animationState = 2);
-
-    // Future.delayed(const Duration(milliseconds: 5500), () {
-    //   setState(() => _animationState = 2);
-    // });
+    Future.delayed(const Duration(milliseconds: 5500), () {
+      setState(() => _animationState = 2);
+    });
     Future.delayed(const Duration(milliseconds: 5000), () {
       widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
     });
