@@ -57,7 +57,7 @@ class _CreatorSocialMediaPostPromptState
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/post-results");
+    widget.navKey.currentState!.pushNamed("/post-image");
   }
 
   void _handleChangeCatalyst() async {
