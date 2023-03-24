@@ -15,7 +15,8 @@ import 'package:atlast_mobile_app/shared/sample_page.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
-import 'campaign/creator_campaign_2_schedule.dart';
+import 'campaign/creator_campaign_2_images.dart';
+import 'campaign/creator_campaign_3_schedule.dart';
 import 'social_media_post/creator_social_media_post_1_prompt.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
 import 'social_media_post/creator_social_media_post_image.dart';
@@ -47,6 +48,7 @@ class _CreatorState extends State<Creator> {
 
   // prompt analysis
   late CatalystBreakdown _catalystDetails;
+  List<String> _uploadedImages = [];
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
@@ -312,6 +314,10 @@ class _CreatorState extends State<Creator> {
     return textAnnotations;
   }
 
+  void _saveUploadedImages(List<String> newUrls) {
+    setState(() => _uploadedImages = newUrls);
+  }
+
   // ------
   // WIDGET BUILDERS
   // ------
@@ -480,6 +486,12 @@ class _CreatorState extends State<Creator> {
                       annotations: textAnnotations,
                     );
                   case "/campaign-2":
+                    return CreatorCampaignImages(
+                      navKey: widget.navKey,
+                      images: _uploadedImages,
+                      saveImages: _saveUploadedImages,
+                    );
+                  case "/campaign-3":
                     return CreatorCampaignSchedule(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,

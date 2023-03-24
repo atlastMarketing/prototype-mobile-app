@@ -281,7 +281,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 2, currStep: 2),
+      appBarContent: const AppBarSteps(totalSteps: 3, currStep: 3),
       content: () {
         if (!_campaignDatesFetched) return _buildLoadingAnims();
 

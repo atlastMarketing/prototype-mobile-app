@@ -317,7 +317,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 2, currStep: 1),
+      appBarContent: const AppBarSteps(totalSteps: 3, currStep: 1),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
