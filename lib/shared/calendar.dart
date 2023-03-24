@@ -128,6 +128,15 @@ class _CustomCalendarState extends State<CustomCalendar> {
       allowDragAndDrop: true,
       timeZone: "Pacific Standard Time", // TODO: don't hardcode
       allowedViews: hasMultipleViews ? widget.allowedViews : null,
+      // allowedViews: [
+      //   CalendarView.day,
+      //   CalendarView.month,
+      //   CalendarView.schedule,
+      //   CalendarView.timelineDay,
+      //   CalendarView.timelineMonth,
+      //   CalendarView.week,
+      //   CalendarView.workWeek,
+      // ],
       onTap: _handleTap,
 
       // view settings

@@ -19,7 +19,7 @@ class GeneratorService {
     required String catalyst,
     int? numOptions,
   }) async {
-    late http.Response response;
+    http.Response? response;
 
     try {
       final requestBody = {
@@ -78,7 +78,7 @@ class GeneratorService {
     int? endDate,
     int? maxPosts,
   }) async {
-    late http.Response response;
+    http.Response? response;
 
     try {
       final requestBody = {
@@ -140,7 +140,7 @@ class GeneratorService {
     int? endDate,
     int? maxPosts,
   }) async {
-    late http.Response response;
+    http.Response? response;
 
     try {
       final requestBody = {

@@ -2,7 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-void printAPIError(http.Response response, dynamic? err) {
+void printAPIError(http.Response? response, dynamic err) {
+  if (response == null) {
+    print(err);
+    return;
+  }
   String message = "** API ERROR (${response.statusCode})";
   if (response.body.isEmpty) {
     message += ": NO INFORMATION FOUND";
