@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/models/annotations_model.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
