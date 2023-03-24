@@ -123,7 +123,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
       // functionality
       view: widget.defaultView,
-      // view: CalendarView.month,
       allowDragAndDrop: true,
       timeZone: "Pacific Standard Time", // TODO: don't hardcode
       allowedViews: hasMultipleViews ? widget.allowedViews : null,

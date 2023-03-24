@@ -6,21 +6,31 @@ import 'package:atlast_mobile_app/models/content_model.dart';
 
 class ScheduledPostsStore extends ChangeNotifier {
   /// Private state
-  final List<PostContent> _posts = [];
+  final Map<String, PostContent> _posts = {};
 
   /// Getters
-  UnmodifiableListView<PostContent> get posts => UnmodifiableListView(_posts);
+  UnmodifiableListView<PostContent> get posts =>
+      UnmodifiableListView(_posts.values);
   UnmodifiableListView<PostContent> get somePosts =>
-      UnmodifiableListView(_posts.sublist(0, min(_posts.length, 5)));
+      UnmodifiableListView(_posts.values.take(min(_posts.length, 5)));
+
+  PostContent? postById(String postId) => _posts[postId];
 
   /// Setters
   void add(List<PostContent> newPosts) {
-    _posts.addAll(newPosts);
+    for (PostContent post in newPosts) {
+      _posts[post.id] = post;
+    }
+    notifyListeners();
+  }
+
+  void update(PostContent post) {
+    _posts[post.id] = post;
     notifyListeners();
   }
 
   void remove(String postId) {
-    _posts.removeWhere((p) => p.id == postId);
+    _posts.remove(postId);
     notifyListeners();
   }
 
