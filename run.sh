@@ -10,6 +10,12 @@ if [ -z "$1" ]; then
   echo -e "Running using default 'dev' environment"
 fi
 
+if [ "$1" == "prod" ]; then
+  OPTIONS="--release"
+else
+  OPTIONS=""
+fi
+
 if [ "$2" ]; then
     RUN_DEVICE="-d $2"
 else
@@ -26,4 +32,4 @@ fi
 
 echo -e "Using DART_DEFINES: $DART_DEFINES\n"
 
-eval "flutter run $DART_DEFINES $RUN_DEVICE"
+eval "flutter run $DART_DEFINES $RUN_DEVICE $OPTIONS"
