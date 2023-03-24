@@ -212,6 +212,13 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     setState(() => _campaignDatesApproved = true);
   }
 
+  void _updateDraftPost(PostContent updatedContent) {
+    int postIdDraft = int.parse(updatedContent.id);
+    List<PostContent> newPosts = widget.draftPosts;
+    newPosts[postIdDraft] = updatedContent;
+    widget.saveDraftPosts(newPosts);
+  }
+
   void _saveDraftPost(String postId, PostContent newContent) {
     int postIdDraft = int.parse(postId);
     List<PostContent> newPosts = widget.draftPosts;
@@ -318,8 +325,10 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                         loading: _campaignDatesIsLoading || _captionsIsLoading,
                         child: CustomCalendar(
                           disableSelection: true,
+                          allowDragAndDrop: true,
                           initialPosts: widget.draftPosts,
                           handleTap: _openEditSinglePost,
+                          updatePost: _updateDraftPost,
                         ),
                       ),
                     ),

@@ -4,22 +4,28 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
+import 'package:atlast_mobile_app/utils/datetime_utils.dart';
 
 class CustomCalendar extends StatefulWidget {
   final List<PostContent> initialPosts;
+  final void Function(PostContent)? updatePost;
   final void Function(String)? handleTap;
 
   final List<CalendarView> allowedViews;
   final CalendarView defaultView;
+  final bool allowDragAndDrop;
+
   final bool disableSelection;
 
   const CustomCalendar({
     Key? key,
     required this.initialPosts,
+    this.updatePost,
     this.handleTap,
     this.allowedViews = const [CalendarView.week],
     this.defaultView = CalendarView.week,
     this.disableSelection = false,
+    this.allowDragAndDrop = false,
   }) : super(key: key);
 
   @override
@@ -114,6 +120,21 @@ class _CustomCalendarState extends State<CustomCalendar> {
     }
   }
 
+  void _onDragEnd(AppointmentDragEndDetails appointmentDragEndDetails) {
+    PostContent currPost =
+        appointmentDragEndDetails.appointment! as PostContent;
+    // CalendarResource? sourceResource = appointmentDragEndDetails.sourceResource;
+    // CalendarResource? targetResource = appointmentDragEndDetails.targetResource;
+    DateTime? droppingTime = appointmentDragEndDetails.droppingTime;
+
+    if (droppingTime == null) return; // reset
+
+    DateTime nearestHour =
+        roundDown(droppingTime, delta: const Duration(hours: 1));
+    currPost.dateTime = nearestHour.millisecondsSinceEpoch;
+    if (widget.updatePost != null) widget.updatePost!(currPost);
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool hasMultipleViews = widget.allowedViews.length > 1;
@@ -123,7 +144,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
       // functionality
       view: widget.defaultView,
-      allowDragAndDrop: true,
+      allowDragAndDrop: widget.allowDragAndDrop,
+      onDragEnd: _onDragEnd,
       timeZone: "Pacific Standard Time", // TODO: don't hardcode
       allowedViews: hasMultipleViews ? widget.allowedViews : null,
       // allowedViews: [
@@ -149,6 +171,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
       monthViewSettings: const MonthViewSettings(
         showAgenda: true,
         appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+      ),
+      dragAndDropSettings: const DragAndDropSettings(
+        showTimeIndicator: true,
       ),
       appointmentBuilder: _buildAppointment,
 
@@ -205,5 +230,17 @@ class PostDataSource extends CalendarDataSource {
   @override
   bool isAllDay(int index) {
     return false;
+  }
+
+  @override
+  PostContent? convertAppointmentToObject(
+      Object? customData, Appointment appointment) {
+    return PostContent(
+      id: (customData as PostContent).id,
+      platform: customData.platform,
+      caption: customData.caption!,
+      dateTime: customData.dateTime!,
+      imageUrl: customData.imageUrl,
+    );
   }
 }
