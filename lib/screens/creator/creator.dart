@@ -169,12 +169,16 @@ class _CreatorState extends State<Creator> {
           )
           .toList();
 
+      DateTime lastMidnight = DateTime.now();
+      lastMidnight =
+          DateTime(lastMidnight.year, lastMidnight.month, lastMidnight.day);
+
       for (EntityAnnotation annotatedDate in annotatedDates) {
         DateTimeEntity ent = annotatedDate.entities
             .firstWhere((e) => e.type == EntityType.dateTime) as DateTimeEntity;
         // skip if date selected is before today
         if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp)
-            .isBefore(DateTime.now())) continue;
+            .isBefore(lastMidnight)) continue;
 
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
