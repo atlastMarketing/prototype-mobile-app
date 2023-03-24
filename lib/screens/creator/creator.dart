@@ -56,7 +56,7 @@ class _CreatorState extends State<Creator> {
             derivedOutputType: CatalystOutputTypes.singlePost,
           ));
       // create post
-      widget.navKey.currentState!.pushNamed("/post-1");
+      widget.navKey.currentState!.pushNamed("/post-image");
     } else if (_selectedCreatorOptionIdx == 1) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
