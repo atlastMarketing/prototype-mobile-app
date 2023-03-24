@@ -7,24 +7,30 @@ import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/utils/datetime_utils.dart';
 
 class CustomCalendar extends StatefulWidget {
-  final List<PostContent> initialPosts;
-  final void Function(PostContent)? updatePost;
+  final List<PostContent> posts;
+  final void Function(String id, PostContent post)? updatePost;
   final void Function(String)? handleTap;
 
   final List<CalendarView> allowedViews;
   final CalendarView defaultView;
-  final bool allowDragAndDrop;
+  final DateTime? minDateRestriction;
+  final DateTime? initialDate;
 
+  final bool allowDragAndDrop;
   final bool disableSelection;
+  final bool disableInteractions;
 
   const CustomCalendar({
     Key? key,
-    required this.initialPosts,
+    required this.posts,
     this.updatePost,
     this.handleTap,
     this.allowedViews = const [CalendarView.week],
     this.defaultView = CalendarView.week,
+    this.minDateRestriction,
+    this.initialDate,
     this.disableSelection = false,
+    this.disableInteractions = false,
     this.allowDragAndDrop = false,
   }) : super(key: key);
 
@@ -41,7 +47,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
   }
 
   List<PostContent> _getDataSource() {
-    return widget.initialPosts;
+    return [...widget.posts];
   }
 
   Widget _buildAppointment(
@@ -112,7 +118,6 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
   void _handleTap(CalendarTapDetails details) {
     dynamic appointments = details.appointments;
-    DateTime date = details.date!;
 
     if (appointments != null && widget.handleTap != null) {
       PostContent appointment = appointments.first;
@@ -128,24 +133,29 @@ class _CustomCalendarState extends State<CustomCalendar> {
     DateTime? droppingTime = appointmentDragEndDetails.droppingTime;
 
     if (droppingTime == null) return; // reset
+    if (widget.minDateRestriction != null &&
+        droppingTime.isBefore(widget.minDateRestriction!)) return;
 
     DateTime nearestHour =
         roundDown(droppingTime, delta: const Duration(hours: 1));
     currPost.dateTime = nearestHour.millisecondsSinceEpoch;
-    if (widget.updatePost != null) widget.updatePost!(currPost);
+    if (widget.updatePost != null) widget.updatePost!(currPost.id, currPost);
   }
 
   @override
   Widget build(BuildContext context) {
     final bool hasMultipleViews = widget.allowedViews.length > 1;
+
+    bool adnd = widget.allowDragAndDrop;
+    if (widget.disableInteractions) adnd = false;
     return SfCalendar(
       controller: _calendarController,
       dataSource: PostDataSource(_getDataSource()),
 
       // functionality
       view: widget.defaultView,
-      allowDragAndDrop: widget.allowDragAndDrop,
-      onDragEnd: _onDragEnd,
+      allowDragAndDrop: adnd,
+      onDragEnd: adnd ? _onDragEnd : null,
       timeZone: "Pacific Standard Time", // TODO: don't hardcode
       allowedViews: hasMultipleViews ? widget.allowedViews : null,
       // allowedViews: [
@@ -176,6 +186,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
         showTimeIndicator: true,
       ),
       appointmentBuilder: _buildAppointment,
+      initialDisplayDate: widget.initialDate,
+      initialSelectedDate: widget.initialDate,
+      minDate: widget.minDateRestriction,
 
       // decorations
       todayHighlightColor: AppColors.primary,
@@ -239,7 +252,7 @@ class PostDataSource extends CalendarDataSource {
       id: (customData as PostContent).id,
       platform: customData.platform,
       caption: customData.caption!,
-      dateTime: customData.dateTime!,
+      dateTime: appointment.startTime.millisecondsSinceEpoch,
       imageUrl: customData.imageUrl,
     );
   }

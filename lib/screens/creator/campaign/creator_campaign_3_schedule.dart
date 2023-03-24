@@ -200,7 +200,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       _generatedCaptions = response;
     });
 
-    List<PostContent> newPosts = widget.draftPosts;
+    List<PostContent> newPosts = [...widget.draftPosts];
     for (var i = 0; i < widget.draftPosts.length; i++) {
       newPosts[i].caption = response[i % response.length];
     }
@@ -212,16 +212,9 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     setState(() => _campaignDatesApproved = true);
   }
 
-  void _updateDraftPost(PostContent updatedContent) {
-    int postIdDraft = int.parse(updatedContent.id);
-    List<PostContent> newPosts = widget.draftPosts;
-    newPosts[postIdDraft] = updatedContent;
-    widget.saveDraftPosts(newPosts);
-  }
-
   void _saveDraftPost(String postId, PostContent newContent) {
     int postIdDraft = int.parse(postId);
-    List<PostContent> newPosts = widget.draftPosts;
+    List<PostContent> newPosts = [...widget.draftPosts];
     newPosts[postIdDraft] = newContent;
     widget.saveDraftPosts(newPosts);
   }
@@ -312,6 +305,9 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       content: () {
         if (!_campaignDatesFetched) return _buildLoadingAnims();
 
+        DateTime? firstDate = DateTime.fromMillisecondsSinceEpoch(
+            widget.draftPosts.first.dateTime!);
+
         return _campaignDates.isNotEmpty
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -325,10 +321,13 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                         loading: _campaignDatesIsLoading || _captionsIsLoading,
                         child: CustomCalendar(
                           disableSelection: true,
+                          // disableInteractions: !_campaignDatesApproved,
                           allowDragAndDrop: true,
-                          initialPosts: widget.draftPosts,
+                          posts: widget.draftPosts,
                           handleTap: _openEditSinglePost,
-                          updatePost: _updateDraftPost,
+                          updatePost: _saveDraftPost,
+                          initialDate: firstDate,
+                          minDateRestriction: DateTime.now(),
                         ),
                       ),
                     ),

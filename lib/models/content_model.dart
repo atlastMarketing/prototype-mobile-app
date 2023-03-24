@@ -29,4 +29,21 @@ class PostContent extends PostDraft {
           caption: caption,
           imageUrl: imageUrl,
         );
+
+  @override
+  String toString() {
+    String date = dateTime.toString();
+    if (dateTime != null) {
+      try {
+        date = DateTime.fromMillisecondsSinceEpoch(dateTime!).toIso8601String();
+      } catch (_) {}
+    }
+    return """POST $id - {
+      platform: $platform
+      dateTime: $date
+      caption: $caption
+      imageUrl: $imageUrl
+    }
+    """;
+  }
 }

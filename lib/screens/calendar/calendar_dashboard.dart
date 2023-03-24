@@ -52,7 +52,7 @@ class CalendarDashboard extends StatelessWidget {
                         CalendarView.schedule,
                       ],
                       disableSelection: false,
-                      initialPosts: model.posts,
+                      posts: model.posts,
                       handleTap: (String postId) =>
                           _openEditSinglePost(context, postId),
                     ),
