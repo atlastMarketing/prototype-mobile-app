@@ -36,7 +36,7 @@ class _CreatorSocialMediaPostImageState
       imageUrl = url;
     });
     // Navigator.pop(context);
-    widget.navKey.currentState!.pushNamed("/post-1");
+    widget.navKey.currentState!.pushNamed("/post-results");
   }
 
   @override
