@@ -10,15 +10,23 @@ class CustomScrollBehaviorEmpty extends ScrollBehavior {
 
 class SingleChildScrollBare extends StatelessWidget {
   final Widget child;
+  final ScrollController? scrollController;
+
   const SingleChildScrollBare({
     Key? key,
     required this.child,
+    this.scrollController,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ScrollConfiguration(
-        behavior: CustomScrollBehaviorEmpty(),
-        child: SingleChildScrollView(child: child));
+      behavior: CustomScrollBehaviorEmpty(),
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        controller: scrollController,
+        child: child,
+      ),
+    );
   }
 }

@@ -5,6 +5,7 @@ class AvatarImage extends StatelessWidget {
   final double? height;
   final double? width;
   final double borderRadius;
+  final BoxFit fit;
 
   const AvatarImage(
     this.imageUrl, {
@@ -12,6 +13,7 @@ class AvatarImage extends StatelessWidget {
     this.width,
     this.height,
     this.borderRadius = 10.0,
+    this.fit = BoxFit.cover,
   }) : super(key: key);
 
   @override
@@ -25,9 +27,9 @@ class AvatarImage extends StatelessWidget {
           aspectRatio: 1,
           child: Image.network(
             Uri.encodeFull(imageUrl),
-            fit: BoxFit.cover,
-            errorBuilder: (_, obj, stack) => Image.network(
-              Uri.encodeFull("https://i.imgur.com/oQIe4jC.png"),
+            fit: fit,
+            errorBuilder: (_, obj, stack) => Image.asset(
+              "images/default_placeholder.png",
               fit: BoxFit.cover,
             ),
           ),

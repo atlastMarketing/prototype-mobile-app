@@ -1,12 +1,19 @@
 #!/bin/bash
 
-# This script file uses the `generate_dart_defines.sh` script to
+# This script file uses the `generate_dart_defines.sh` script to run the flutter application
+#   on a selected device and using a specified environment
 # Script accepts following arguments:
 #   $1 - build environment [dev|staging|prod]
 
 RUN_ENV="${1:-dev}"
 if [ -z "$1" ]; then
   echo -e "Running using default 'dev' environment"
+fi
+
+if [ "$1" == "prod" ]; then
+  OPTIONS="--release"
+else
+  OPTIONS=""
 fi
 
 if [ "$2" ]; then
@@ -25,4 +32,4 @@ fi
 
 echo -e "Using DART_DEFINES: $DART_DEFINES\n"
 
-eval "flutter run $DART_DEFINES $RUN_DEVICE"
+eval "flutter run $DART_DEFINES $RUN_DEVICE $OPTIONS"

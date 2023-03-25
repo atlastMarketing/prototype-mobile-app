@@ -53,7 +53,7 @@ class _CreatorSocialMediaPostResultsState
       setState(() => _captionsRegenerating = true);
     }
 
-    final response = await GeneratorService.fetchCaptions(
+    final List<String> response = await GeneratorService.fetchCaptions(
       widget.catalyst.derivedPrompt,
       platform: widget.catalyst.derivedPlatforms[0].toString(),
       // voice: <>,

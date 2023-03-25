@@ -48,6 +48,19 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     widget.navKey.currentState!.pushNamed("/forgot-password");
   }
 
+  void forceLogin() {
+    // ONLY FOR DEBUGGING
+    print("login and onboarding overwrite!");
+    Provider.of<UserStore>(context, listen: false).login(
+      "64164c4c932e6d9d7b255737",
+      email: "marketingatlast@gmail.com",
+      businessName: "Atlast",
+      businessType: "Digital Products",
+      businessIndustry: "Professional, Scientific and Technical Services",
+    );
+    Provider.of<UserStore>(context, listen: false).setIsOnboarded(true);
+  }
+
   Widget _buildHeroWidget() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -63,14 +76,17 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
             "made easy,",
             style: AppText.title.merge(AppText.blackText),
           ),
-          GradientText(
-            "atlast",
-            style: AppText.title.merge(AppText.blackText),
-            gradient: LinearGradient(
-              colors: [
-                AppColors.secondary.withOpacity(0.5),
-                AppColors.primary,
-              ],
+          GestureDetector(
+            onDoubleTap: forceLogin,
+            child: GradientText(
+              "atlast",
+              style: AppText.title.merge(AppText.blackText),
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.secondary.withOpacity(0.5),
+                  AppColors.primary,
+                ],
+              ),
             ),
           ),
         ],

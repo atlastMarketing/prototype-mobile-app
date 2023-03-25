@@ -20,7 +20,15 @@ class PostPreview extends StatelessWidget {
           elevation: 1,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.network(imageUrl, width: size, height: size),
+            child: Image.network(
+              imageUrl,
+              width: size,
+              height: size,
+              errorBuilder: (_, obj, stack) => Image.asset(
+                "images/default_placeholder.png",
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
         Positioned.fill(
