@@ -9,10 +9,12 @@ import 'package:image_picker/image_picker.dart';
 
 class CreatorSocialMediaPostImage extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
+  final Function(String) saveImageUrl;
 
   const CreatorSocialMediaPostImage({
     Key? key,
     required this.navKey,
+    required this.saveImageUrl,
   }) : super(key: key);
 
   @override
@@ -23,7 +25,6 @@ class CreatorSocialMediaPostImage extends StatefulWidget {
 class _CreatorSocialMediaPostImageState
     extends State<CreatorSocialMediaPostImage> {
   File? imageFile;
-  String? imageUrl;
 
   void _getFromCamera() async {
     XFile? pickedFile = await ImagePicker().pickImage(
@@ -33,9 +34,9 @@ class _CreatorSocialMediaPostImageState
     );
     String url =
         await ImageUploadingService.uploadImage(File(pickedFile!.path));
+    widget.saveImageUrl(url);
     setState(() {
       imageFile = File(pickedFile!.path);
-      imageUrl = url;
     });
     // Navigator.pop(context);
     widget.navKey.currentState!.pushNamed("/post-results");
@@ -65,14 +66,15 @@ class _CreatorSocialMediaPostImageState
               child: ElevatedButton(
                 child: InfoPopupWidget(
                     child: Text('Take a Picture for your Post'),
-                    contentTitle: "1. Use good lighting: Ensure the product is well-lit and avoid harsh shadows or glares.\n2. Focus on the product: Keep the focus on the product and avoid cluttered backgrounds or distracting elements.\n3. Use a visually appealing composition: Experiment with different angles and compositions to find the most attractive way to showcase the product.\n4. Showcase product benefits: Highlight the product's unique features and benefits in the caption or description.\n5. Keep it consistent: Maintain a consistent visual style across all your social media posts to create a cohesive brand image.\n\n- Your AI Marketing Advisor",
-                    enableHighlight: true
-                  ),
+                    contentTitle:
+                        "1. Use good lighting: Ensure the product is well-lit and avoid harsh shadows or glares.\n2. Focus on the product: Keep the focus on the product and avoid cluttered backgrounds or distracting elements.\n3. Use a visually appealing composition: Experiment with different angles and compositions to find the most attractive way to showcase the product.\n4. Showcase product benefits: Highlight the product's unique features and benefits in the caption or description.\n5. Keep it consistent: Maintain a consistent visual style across all your social media posts to create a cohesive brand image.\n\n- Your AI Marketing Advisor",
+                    enableHighlight: true),
                 onPressed: () {
                   _getFromCamera();
                 },
                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(AppColors.primary),
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.primary),
                     padding: MaterialStateProperty.all(EdgeInsets.all(20)),
                     textStyle:
                         MaterialStateProperty.all(AppText.buttonLargeText)),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
@@ -16,11 +17,13 @@ import 'package:provider/provider.dart';
 class CreatorSocialMediaPostResults extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
+  final String imageUrl;
 
   const CreatorSocialMediaPostResults({
     Key? key,
     required this.navKey,
     required this.catalyst,
+    required this.imageUrl,
   }) : super(key: key);
 
   @override
@@ -42,8 +45,15 @@ class _CreatorSocialMediaPostResultsState
     widget.navKey.currentState!.pop();
   }
 
-  void _handleContinue() {
+  void _handleContinue() async {
     widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+
+    final url = Uri.parse(
+        '$API_URL/content-manager'); // TODO: end point needs to be set up
+    final headers = {"Content-type": "application/json"};
+    final json =
+        '{"image_url": $widget.imageUrl}'; // TODO: needs user id, rest of post inputs, and to be configured to follow the content-manager format
+    await post(url, headers: headers, body: json);
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {

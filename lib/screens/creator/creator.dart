@@ -37,6 +37,7 @@ class _CreatorState extends State<Creator> {
   late CatalystBreakdown _catalystDetails;
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
+  String? imageUrl;
 
   // TODO: break down prompt details
   int _selectedCreatorOptionIdx = -1;
@@ -366,8 +367,9 @@ class _CreatorState extends State<Creator> {
                 switch (settings.name) {
                   case "/post-image":
                     return CreatorSocialMediaPostImage(
-                      navKey: widget.navKey,
-                    );
+                        navKey: widget.navKey,
+                        saveImageUrl: (String url) =>
+                            {setState(() => imageUrl = url)});
                   case "/post-1":
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
@@ -382,6 +384,7 @@ class _CreatorState extends State<Creator> {
                     return CreatorSocialMediaPostResults(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
+                      imageUrl: imageUrl,
                     );
                   case "/campaign-1":
                     return CreatorCampaignCatalyst(
