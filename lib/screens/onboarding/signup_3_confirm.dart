@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/services/user_service.dart';
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
@@ -22,25 +23,44 @@ class OnboardingConfirm extends StatefulWidget {
 
 class _OnboardingConfirmState extends State<OnboardingConfirm> {
   int _animationState = 0;
+  bool _isError = false;
+
+  void _doTheWork() async {
+    UserStore userModelProvider =
+        Provider.of<UserStore>(context, listen: false);
+
+    // if already logged in, just save data
+    if (userModelProvider.isLoggedIn) {
+      bool success = await UserService.updateAccount(userModelProvider.data);
+      if (!success) {
+        setState(() => _isError = true);
+        return;
+      }
+    }
+    // if creating new account
+    else {
+      String id = await UserService.createAccount(userModelProvider.data);
+      if (id == "") {
+        setState(() => _isError = true);
+        return;
+      }
+      userModelProvider.save(id);
+    }
+    userModelProvider.setIsOnboarded(true);
+  }
 
   @override
   void initState() {
     super.initState();
+    _doTheWork();
 
-    UserStore userModelProvider =
-        Provider.of<UserStore>(context, listen: false);
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() => _animationState = 1);
-    });
-    Future.delayed(const Duration(milliseconds: 5500), () {
-      setState(() => _animationState = 2);
-    });
-    Future.delayed(const Duration(milliseconds: 8000), () {
-      userModelProvider.setIsOnboarded(true);
-      if (!userModelProvider.isLoggedIn) {
-        userModelProvider.login("DEFAULT_USER_ID");
-      }
-    });
+    // Future.delayed(const Duration(milliseconds: 500), () {
+    //   setState(() => _animationState = 1);
+    // });
+    // Future.delayed(const Duration(milliseconds: 5500), () {
+    //   setState(() => _animationState = 2);
+    // });
+    // Future.delayed(const Duration(milliseconds: 8000), () {});
   }
 
   Widget? _buildAnimationWidget() {

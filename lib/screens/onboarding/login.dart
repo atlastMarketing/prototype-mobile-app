@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/models/user_model.dart';
+import 'package:atlast_mobile_app/services/user_service.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/gradient_text.dart';
@@ -26,18 +28,55 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isUserNotFound = false;
 
-  void _handleLoginClick() {
-    // TODO: Add real auth API calls
-    // TODO: check if the signed-in user has completed onboarding
-    // final user = await fetchSelfData();
+  void _handleLoginClick() async {
+    UserStore userModelProvider =
+        Provider.of<UserStore>(context, listen: false);
 
-    // TODO: add smooth page transition
-    Provider.of<UserStore>(context, listen: false).login(
-      "DEFAULT_USER_ID",
-      email: _emailController.text,
-    );
-    widget.navKey.currentState!.pushNamed("/creator-2");
+    UserModel? user = await UserService.login(_emailController.text);
+    print(user);
+
+    if (user == null) {
+      print("CANNOT LOGIN - USER NOT FOUND!");
+      setState(() => _isUserNotFound = true);
+      return;
+    }
+
+    print("SUCCESSFUL LOGIN FOR USER WITH ID '${user.id}'");
+
+    // check if user onboarded (any missing stuff?)
+    if (user.businessName == null ||
+        user.businessName == "" ||
+        user.businessIndustry == null ||
+        user.businessIndustry == "" ||
+        user.businessDescription == null ||
+        user.businessDescription == "" ||
+        user.businessType == null ||
+        user.businessType == "") {
+      print("-- USER HAS MISSING FIELDS!");
+      print("id: ${user.id}");
+      print("businessName: ${user.businessName}");
+      print("businessIndustry: ${user.businessIndustry}");
+      print("businessType: ${user.businessType}");
+      print("businessDescription: ${user.businessDescription}");
+
+      userModelProvider.save(
+        user.id,
+        email: _emailController.text,
+        businessName: user.businessName,
+        businessIndustry: user.businessIndustry,
+        businessType: user.businessType,
+      );
+      userModelProvider.setIsOnboarded(false);
+      widget.navKey.currentState!.pushNamed("/creator-2");
+    } else {
+      userModelProvider.save(
+        user.id,
+        email: _emailController.text,
+      );
+      userModelProvider.setIsOnboarded(true);
+    }
   }
 
   void _handleCreateAccount() {
@@ -51,7 +90,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   void forceLogin() {
     // ONLY FOR DEBUGGING
     print("login and onboarding overwrite!");
-    Provider.of<UserStore>(context, listen: false).login(
+    Provider.of<UserStore>(context, listen: false).save(
       "64164c4c932e6d9d7b255737",
       email: "marketingatlast@gmail.com",
       businessName: "Atlast",
@@ -59,6 +98,10 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
       businessIndustry: "Professional, Scientific and Technical Services",
     );
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(true);
+  }
+
+  void _resetErrorStates() {
+    if (_isUserNotFound == true) (() => _isUserNotFound = false);
   }
 
   Widget _buildHeroWidget() {
@@ -108,6 +151,18 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
               }
             },
           ),
+          _isUserNotFound
+              ? const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: Text(
+                      "Email is not associated with a user!",
+                      style: AppText.errorText,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
           const Padding(padding: EdgeInsets.only(bottom: 10)),
           CustomFormTextField(
             controller: _passwordController,
