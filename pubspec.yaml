@@ -41,6 +41,7 @@ dependencies:
   google_mlkit_entity_extraction: ^0.6.0
   get: ^4.6.5
   image_picker: ^0.8.7
+  info_popup: ^3.0.0
 
 dev_dependencies:
   flutter_test:
