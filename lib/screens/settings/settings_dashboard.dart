@@ -19,7 +19,7 @@ class SettingsDashboard extends StatelessWidget {
   }
 
   void _logout(BuildContext ctx) {
-    Provider.of<UserStore>(ctx, listen: false).logout();
+    Provider.of<UserStore>(ctx, listen: false).clear();
     Provider.of<UserStore>(ctx, listen: false).setIsOnboarded(false);
   }
 

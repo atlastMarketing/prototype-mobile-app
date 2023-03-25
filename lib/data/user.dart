@@ -33,41 +33,46 @@ class UserStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void login(
+  void save(
     String id, {
     String? email,
     String? businessName,
     String? businessType,
     String? businessIndustry,
+    String? businessDescription,
   }) {
     _id = id;
     _email = email ?? _email;
     _businessName = businessName ?? _businessName;
     _businessType = businessType ?? _businessType;
     _businessIndustry = businessIndustry ?? _businessIndustry;
+    _businessDescription = businessDescription ?? _businessDescription;
     notifyListeners();
   }
 
-  void logout() {
+  void clear() {
     _id = "";
     _email = "";
     _businessName = "";
     _businessType = "";
     _businessIndustry = "";
+    _businessDescription = "";
     _isOnboarded = false;
     notifyListeners();
   }
 
-  void updateUser({
+  void update({
     String? email,
     String? businessName,
     String? businessType,
     String? businessIndustry,
+    String? businessDescription,
   }) {
     _email = email ?? _email;
     _businessName = businessName ?? _businessName;
     _businessType = businessType ?? _businessType;
     _businessIndustry = businessIndustry ?? _businessIndustry;
+    _businessDescription = businessDescription ?? _businessDescription;
     notifyListeners();
   }
 }

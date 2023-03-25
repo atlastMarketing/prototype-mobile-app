@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
-import 'package:atlast_mobile_app/utils/print_error.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/models/user_model.dart';
+import 'package:atlast_mobile_app/utils/print_error.dart';
 
 // ignore: constant_identifier_names
 const String API_URL = String.fromEnvironment('API_URL', defaultValue: '');

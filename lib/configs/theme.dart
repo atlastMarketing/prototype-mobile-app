@@ -107,4 +107,5 @@ class AppText {
   static const primaryText = TextStyle(color: AppColors.primary);
   static const blackText = TextStyle(color: AppColors.black);
   static const whiteText = TextStyle(color: AppColors.white);
+  static const errorText = TextStyle(fontSize: 12, color: AppColors.error);
 }

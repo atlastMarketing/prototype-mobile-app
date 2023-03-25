@@ -41,7 +41,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   }
 
   void _handleContinue(BuildContext ctx) {
-    Provider.of<UserStore>(ctx, listen: false).updateUser(
+    Provider.of<UserStore>(ctx, listen: false).update(
       businessName: _bNameController.text,
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,

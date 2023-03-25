@@ -28,12 +28,13 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
   final TextEditingController _emailController = TextEditingController();
 
   void _handleBack() {
+    Provider.of<UserStore>(context, listen: false)
+        .update(email: _emailController.text);
     widget.navKey.currentState!.pop();
   }
 
-  void _handleContinue(BuildContext ctx) {
-    Provider.of<UserStore>(ctx, listen: false)
-        .updateUser(email: _emailController.text);
+  void _handleContinue() {
+    Provider.of<UserStore>(context, listen: false).clear();
     widget.navKey.currentState!.pushNamed("/creator-2");
   }
 
@@ -88,7 +89,7 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  _handleContinue(context);
+                  _handleContinue();
                 }
               },
               fillColor: AppColors.primary,
