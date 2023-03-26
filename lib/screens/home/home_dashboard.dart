@@ -213,12 +213,16 @@ class HomeDashboard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: CustomButton(
-              text: 'Create',
-              handlePressed: handleCreate,
-            ),
+          Consumer<ScheduledPostsStore>(
+            builder: (context, model, child) => model.posts.isEmpty
+                ? SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      text: 'Create',
+                      handlePressed: handleCreate,
+                    ),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),

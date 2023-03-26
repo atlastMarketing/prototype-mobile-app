@@ -50,6 +50,7 @@ class AppColors {
   static const black = Colors.black;
   static const dark = Colors.grey;
   static const light = Color.fromRGBO(241, 241, 253, 1.0);
+  static const background = Color.fromRGBO(250, 250, 250, 1.0);
   static const white = Colors.white;
 }
 
