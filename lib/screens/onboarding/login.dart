@@ -50,16 +50,19 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
         user.businessName == "" ||
         user.businessIndustry == null ||
         user.businessIndustry == "" ||
-        user.businessDescription == null ||
-        user.businessDescription == "" ||
         user.businessType == null ||
-        user.businessType == "") {
+        user.businessType == "" ||
+        user.businessDescription == null ||
+        user.businessDescription == "") {
       print("-- USER HAS MISSING FIELDS!");
       print("id: ${user.id}");
       print("businessName: ${user.businessName}");
       print("businessIndustry: ${user.businessIndustry}");
       print("businessType: ${user.businessType}");
       print("businessDescription: ${user.businessDescription}");
+      print("businessVoice: ${user.businessVoice}");
+      print("businessUrl: ${user.businessUrl}");
+      print("avatarImageUrl: ${user.avatarImageUrl}");
 
       userModelProvider.save(
         user.id,
@@ -67,6 +70,10 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
         businessName: user.businessName,
         businessIndustry: user.businessIndustry,
         businessType: user.businessType,
+        businessDescription: user.businessDescription,
+        businessVoice: user.businessVoice,
+        businessUrl: user.businessUrl,
+        avatarImageUrl: user.avatarImageUrl,
       );
       userModelProvider.setIsOnboarded(false);
       widget.navKey.currentState!.pushNamed("/onboarding-2");
@@ -91,11 +98,16 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     // ONLY FOR DEBUGGING
     print("login and onboarding overwrite!");
     Provider.of<UserStore>(context, listen: false).save(
-      "64164c4c932e6d9d7b255737",
-      email: "marketingatlast@gmail.com",
-      businessName: "Atlast",
-      businessType: "Digital Products",
-      businessIndustry: "Professional, Scientific and Technical Services",
+      "642012b9d167fef05707548c",
+      email: "example@atlast.com",
+      businessName: "Picard's Flower Shop",
+      businessType: "Physical Products",
+      businessIndustry: "Accommodation and Food Services",
+      businessDescription:
+          "My flower shop is a family owned business offering a wide variety of plants, florals, and bouquets.",
+      businessVoice: "Fun, Colourful, Casual, Family-oriented",
+      // businessUrl: "",
+      // avatarImageUrl: "",
     );
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(true);
   }

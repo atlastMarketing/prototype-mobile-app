@@ -58,6 +58,7 @@ class UserService {
 
     try {
       final requestBody = user.toJson();
+      requestBody.remove('_id');
       print(
           "** sending POST request to '/user' with the following body: $requestBody");
 

@@ -10,6 +10,9 @@ class UserStore extends ChangeNotifier {
   String _businessType = "";
   String _businessIndustry = "";
   String _businessDescription = "";
+  String _businessVoice = "";
+  String _avatarImageUrl = "";
+  String _businessUrl = "";
 
   // TODO: move app logic settings elswhere
   bool _isOnboarded = false;
@@ -25,6 +28,9 @@ class UserStore extends ChangeNotifier {
         businessType: _businessType,
         businessIndustry: _businessIndustry,
         businessDescription: _businessDescription,
+        businessVoice: _businessVoice,
+        avatarImageUrl: _avatarImageUrl,
+        businessUrl: _businessUrl,
       );
 
   /// Setters
@@ -40,6 +46,9 @@ class UserStore extends ChangeNotifier {
     String? businessType,
     String? businessIndustry,
     String? businessDescription,
+    String? businessVoice,
+    String? avatarImageUrl,
+    String? businessUrl,
   }) {
     _id = id;
     _email = email ?? _email;
@@ -47,6 +56,9 @@ class UserStore extends ChangeNotifier {
     _businessType = businessType ?? _businessType;
     _businessIndustry = businessIndustry ?? _businessIndustry;
     _businessDescription = businessDescription ?? _businessDescription;
+    _businessVoice = businessVoice ?? _businessVoice;
+    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
+    _businessUrl = businessUrl ?? _businessUrl;
     notifyListeners();
   }
 
@@ -57,6 +69,9 @@ class UserStore extends ChangeNotifier {
     _businessType = "";
     _businessIndustry = "";
     _businessDescription = "";
+    _businessVoice = "";
+    _avatarImageUrl = "";
+    _businessUrl = "";
     _isOnboarded = false;
     notifyListeners();
   }
@@ -67,12 +82,18 @@ class UserStore extends ChangeNotifier {
     String? businessType,
     String? businessIndustry,
     String? businessDescription,
+    String? businessVoice,
+    String? avatarImageUrl,
+    String? businessUrl,
   }) {
     _email = email ?? _email;
     _businessName = businessName ?? _businessName;
     _businessType = businessType ?? _businessType;
     _businessIndustry = businessIndustry ?? _businessIndustry;
     _businessDescription = businessDescription ?? _businessDescription;
+    _businessVoice = businessVoice ?? _businessVoice;
+    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
+    _businessUrl = businessUrl ?? _businessUrl;
     notifyListeners();
   }
 }

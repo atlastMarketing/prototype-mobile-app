@@ -8,66 +8,76 @@ import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/utils/form_validations.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
-class OnboardingEmail extends StatefulWidget {
+class OnboardingBusinessDescription extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  OnboardingEmail({
+  const OnboardingBusinessDescription({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _OnboardingEmailState createState() => _OnboardingEmailState();
+  _OnboardingBusinessDescriptionState createState() =>
+      _OnboardingBusinessDescriptionState();
 }
 
-class _OnboardingEmailState extends State<OnboardingEmail> {
+class _OnboardingBusinessDescriptionState
+    extends State<OnboardingBusinessDescription> {
   // form variables
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _businessDescriptionController =
+      TextEditingController();
 
   void _handleBack() {
-    Provider.of<UserStore>(context, listen: false).clear();
     widget.navKey.currentState!.pop();
   }
 
   void _handleContinue() {
-    Provider.of<UserStore>(context, listen: false)
-        .update(email: _emailController.text);
-    widget.navKey.currentState!.pushNamed("/onboarding-2");
+    Provider.of<UserStore>(context, listen: false).update(
+      businessDescription: _businessDescriptionController.text,
+    );
+    widget.navKey.currentState!.pushNamed("/onboarding-4");
   }
 
   @override
   void initState() {
     super.initState();
-    _emailController.text =
-        Provider.of<UserStore>(context, listen: false).data.email ?? "";
+    _businessDescriptionController.text =
+        Provider.of<UserStore>(context, listen: false)
+                .data
+                .businessDescription ??
+            "";
   }
 
   Widget _buildForm() {
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "What's your email address?",
-            style: AppText.bodyBold,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 30),
-            child: CustomFormTextField(
-              controller: _emailController,
-              placeholderText: "name@example.com",
-              validator: (String? val) {
-                if (!isValidEmail(val)) {
-                  return 'Enter a valid email!';
-                }
-              },
+      child: SingleChildScrollBare(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "How would you describe your business?",
+              style: AppText.bodyBold,
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              child: CustomFormTextField(
+                controller: _businessDescriptionController,
+                placeholderText:
+                    "Ex. My flower shop is a family owned business offering a wide variety of plants, florals, and bouquets.",
+                vSize: 10,
+                validator: (String? val) {
+                  if (val == null || val == "") {
+                    return 'Business description cannot be empty!';
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -76,11 +86,11 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 5, currStep: 1),
+      appBarContent: const AppBarSteps(totalSteps: 5, currStep: 3),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const HeroHeading(text: "Let's get started!"),
+          const HeroHeading(text: "Your Business"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20),
@@ -108,7 +118,7 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _businessDescriptionController.dispose();
     super.dispose();
   }
 }

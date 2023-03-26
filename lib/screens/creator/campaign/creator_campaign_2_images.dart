@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -100,7 +101,7 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
           Positioned(
             right: 5,
             top: 5,
-            child: Container(
+            child: SizedBox(
               width: 20,
               height: 20,
               child: Material(
@@ -124,29 +125,6 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
     );
   }
 
-  Widget _buildUploaderItem() {
-    return Material(
-      borderRadius: BorderRadius.circular(5),
-      child: InkWell(
-        onTap: _requestImage,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.dark.withOpacity(0.3),
-              style: BorderStyle.solid,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            Icons.add,
-            color: AppColors.dark.withOpacity(0.5),
-            size: MediaQuery.of(context).size.width / 6,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutFullPage(
@@ -165,7 +143,10 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                   9,
                   (idx) => idx < widget.images.length
                       ? _buildImageItem(idx, widget.images[idx].image)
-                      : _buildUploaderItem(),
+                      : ImageUploader(
+                          handleTap: _requestImage,
+                          iconSize: MediaQuery.of(context).size.width / 6,
+                        ),
                 )),
           ),
           SizedBox(

@@ -24,11 +24,13 @@ class OnboardingConfirm extends StatefulWidget {
 class _OnboardingConfirmState extends State<OnboardingConfirm> {
   int _animationState = 0;
   bool _isError = false;
+  bool _enoughTimeHasPassed = false;
 
   void _doTheWork() async {
     UserStore userModelProvider =
         Provider.of<UserStore>(context, listen: false);
 
+    // Future.delayed(const Duration(milliseconds: 8000), () {});
     // if already logged in, just save data
     if (userModelProvider.isLoggedIn) {
       bool success = await UserService.updateAccount(userModelProvider.data);
@@ -36,31 +38,36 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
         setState(() => _isError = true);
         return;
       }
+      setState(() => _animationState = 2);
+
+      Future.delayed(const Duration(milliseconds: 3000), () {
+        userModelProvider.setIsOnboarded(true);
+      });
     }
     // if creating new account
     else {
+      setState(() => _animationState = 1);
       String id = await UserService.createAccount(userModelProvider.data);
       if (id == "") {
         setState(() => _isError = true);
         return;
       }
       userModelProvider.save(id);
+
+      Future.delayed(const Duration(milliseconds: 5000), () {
+        setState(() => _animationState = 2);
+      });
+
+      Future.delayed(const Duration(milliseconds: 8000), () {
+        userModelProvider.setIsOnboarded(true);
+      });
     }
-    userModelProvider.setIsOnboarded(true);
   }
 
   @override
   void initState() {
     super.initState();
     _doTheWork();
-
-    // Future.delayed(const Duration(milliseconds: 500), () {
-    //   setState(() => _animationState = 1);
-    // });
-    // Future.delayed(const Duration(milliseconds: 5500), () {
-    //   setState(() => _animationState = 2);
-    // });
-    // Future.delayed(const Duration(milliseconds: 8000), () {});
   }
 
   Widget? _buildAnimationWidget() {
