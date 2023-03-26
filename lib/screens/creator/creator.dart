@@ -384,7 +384,7 @@ class _CreatorState extends State<Creator> {
                     return CreatorSocialMediaPostResults(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
-                      imageUrl: imageUrl,
+                      imageUrl: imageUrl!,
                     );
                   case "/campaign-1":
                     return CreatorCampaignCatalyst(
