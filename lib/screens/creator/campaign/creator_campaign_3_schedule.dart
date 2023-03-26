@@ -17,9 +17,10 @@ import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/calendar.dart';
-import 'package:atlast_mobile_app/shared/widget_overlays.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/widget_overlays.dart';
 
 import './creator_campaign_single_post_edit.dart';
 
@@ -294,11 +295,18 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       children: [
         SizedBox(
           width: double.infinity,
-          child: CustomButton(
-            disabled: _captionsIsLoading,
-            handlePressed: _fetchCampaignDates,
-            fillColor: AppColors.error,
-            text: 'Regenerate Campaign',
+          child: HelpPopup(
+            title: "Choose your campaign!",
+            content:
+                "Regenerate new campaigns until you find the right one! You can start editing posts until you confirm a campaign of choice.",
+            highlight: false,
+            down: true,
+            child: CustomButton(
+              disabled: _captionsIsLoading,
+              handlePressed: _fetchCampaignDates,
+              fillColor: AppColors.error,
+              text: 'Regenerate Campaign',
+            ),
           ),
         ),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
@@ -339,7 +347,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                         loading: _campaignDatesIsLoading || _captionsIsLoading,
                         child: CustomCalendar(
                           disableSelection: true,
-                          // disableInteractions: !_campaignDatesApproved,
+                          disableInteractions: !_campaignDatesApproved,
                           allowDragAndDrop: true,
                           posts: widget.draftPosts,
                           handleTap: _openEditSinglePost,

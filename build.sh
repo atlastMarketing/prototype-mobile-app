@@ -22,4 +22,5 @@ fi
 
 echo -e "Using DART_DEFINES: $DART_DEFINES\n"
 
-eval "flutter build $1 --$2 --flavor $3 $DART_DEFINES"
+# eval "flutter build $1 --$2 --flavor $3 $DART_DEFINES"
+eval "flutter build $1 --$2 $DART_DEFINES"

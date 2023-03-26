@@ -98,7 +98,7 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   String catalyst,
   int start,
   int end,
-  DateTimeEntity entity,
+  int timestamp,
 ) {
   int fStart = start;
   int fEnd = end;
@@ -126,7 +126,6 @@ NERRegexRangeDate extractDateBuffersFromCatalyst(
   }
 
   // check if milliseconds or microseconds
-  int timestamp = castToMilliseconds(entity.timestamp);
   return NERRegexRangeDate(
     timestamp: timestamp,
     start: fStart,

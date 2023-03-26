@@ -11,21 +11,21 @@ import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
-import 'package:atlast_mobile_app/utils/form_validations.dart';
 
-class OnboardingBusiness extends StatefulWidget {
+class OnboardingBusinessDetails extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const OnboardingBusiness({
+  const OnboardingBusinessDetails({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _OnboardingBusinessState createState() => _OnboardingBusinessState();
+  _OnboardingBusinessDetailsState createState() =>
+      _OnboardingBusinessDetailsState();
 }
 
-class _OnboardingBusinessState extends State<OnboardingBusiness> {
+class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bNameController = TextEditingController();
@@ -40,13 +40,27 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
     widget.navKey.currentState!.pop();
   }
 
-  void _handleContinue(BuildContext ctx) {
-    Provider.of<UserStore>(ctx, listen: false).updateUser(
+  void _handleContinue() {
+    Provider.of<UserStore>(context, listen: false).update(
       businessName: _bNameController.text,
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,
     );
-    widget.navKey.currentState!.pushNamed("/creator-3");
+    widget.navKey.currentState!.pushNamed("/onboarding-3");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    String? initialBType =
+        Provider.of<UserStore>(context, listen: false).data.businessType;
+    if (initialBType != null && initialBType != "") _bTypeInput = initialBType;
+
+    String? initialBIndustry =
+        Provider.of<UserStore>(context, listen: false).data.businessIndustry;
+    if (initialBIndustry != null && initialBIndustry != "") {
+      _bIndustryInput = initialBIndustry;
+    }
   }
 
   Widget _buildForm() {
@@ -64,10 +78,10 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
               padding: const EdgeInsets.only(top: 10, bottom: 20),
               child: CustomFormTextField(
                 controller: _bNameController,
-                placeholderText: "Ex. Starbucks",
+                placeholderText: "Ex. Picard's Flower Shop",
                 validator: (String? val) {
-                  if (!isValidName(val)) {
-                    return 'Business name cannot be empty or contain special characters!';
+                  if (val == null || val == "") {
+                    return 'Business name cannot be empty!';
                   }
                 },
               ),
@@ -106,7 +120,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 2, currStep: 2),
+      appBarContent: const AppBarSteps(totalSteps: 5, currStep: 2),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -124,7 +138,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
                 if (_formKey.currentState!.validate()) {
-                  _handleContinue(context);
+                  _handleContinue();
                 }
               },
               fillColor: AppColors.primary,

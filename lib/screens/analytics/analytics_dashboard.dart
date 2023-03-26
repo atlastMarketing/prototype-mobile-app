@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/layout.dart';
+import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 
 class AnalyticsDashboard extends StatelessWidget {
@@ -23,9 +24,31 @@ class AnalyticsDashboard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: const [
-                    HeroHeading(text: "Analytics Dashboard"),
-                    Center(child: Text("TODO: make analytics and stuff")),
+                  children: [
+                    const HeroHeading(text: "Analytics Dashboard"),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(100),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Padding(padding: EdgeInsets.all(30)),
+                            Image.asset("assets/images/maintenance.gif",
+                                width: 150, height: 150),
+                            const Padding(padding: EdgeInsets.all(10)),
+                            const Text(
+                              'This page is currently under construction. Come back later!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
