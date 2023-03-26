@@ -22,6 +22,7 @@ class CustomCalendar extends StatefulWidget {
   final bool allowDragAndDrop;
   final bool disableSelection;
   final bool disableInteractions;
+  final bool enableOnboarding;
 
   const CustomCalendar({
     Key? key,
@@ -35,6 +36,7 @@ class CustomCalendar extends StatefulWidget {
     this.disableSelection = false,
     this.disableInteractions = false,
     this.allowDragAndDrop = false,
+    this.enableOnboarding = false,
   }) : super(key: key);
 
   @override
@@ -62,7 +64,8 @@ class _CustomCalendarState extends State<CustomCalendar> {
   ) {
     final PostContent currPost = details.appointments.first;
 
-    final shouldShowOnboarding = !widget.disableInteractions &&
+    final shouldShowOnboarding = widget.enableOnboarding &&
+        !widget.disableInteractions &&
         !_isPopupDismissed &&
         Provider.of<UserStore>(context, listen: false).hasHelpPopups &&
         _isFirstAppointment(currPost.id);

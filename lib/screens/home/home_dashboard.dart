@@ -1,3 +1,5 @@
+import 'package:atlast_mobile_app/screens/calendar/calendar_edit_single_post.dart';
+import 'package:atlast_mobile_app/screens/home/home_edit_single_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +24,30 @@ class HomeDashboard extends StatelessWidget {
     required this.handleCreate,
   }) : super(key: key);
 
-  void _openSuggestedPost(int postId) {
+  void _openSuggestedPost(BuildContext ctx, int postId) {
     print("Opening suggested post with id $postId");
+
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (context) => HomeEditSingleSuggestion(
+          navKey: navKey,
+          suggestionId: postId,
+        ),
+      ),
+    );
   }
 
-  void _openUpcomingPost(String postId) {
+  void _openUpcomingPost(BuildContext ctx, String postId) {
     print("Opening upcoming post with id $postId");
+
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (context) => CalendarEditSinglePost(
+          navKey: navKey,
+          postId: postId,
+        ),
+      ),
+    );
   }
 
   Widget _buildSuggestedPosts() {
@@ -59,9 +79,9 @@ class HomeDashboard extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: model.suggestions.length,
                         itemBuilder: (context, idx) => PostPreview(
-                          imageUrl: model.suggestions[idx][0].imageUrl ?? "",
+                          imageUrl: model.suggestions[idx].imageUrl ?? "",
                           size: 120,
-                          handlePressed: () => _openSuggestedPost(idx),
+                          handlePressed: () => _openSuggestedPost(context, idx),
                         ),
                         separatorBuilder: (context, idx) => const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 8),
@@ -130,7 +150,7 @@ class HomeDashboard extends StatelessWidget {
                           color: AppColors.light,
                           borderRadius: BorderRadius.circular(10),
                           child: InkWell(
-                            onTap: () => _openUpcomingPost(post.id),
+                            onTap: () => _openUpcomingPost(context, post.id),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                 vertical: 20,

@@ -39,8 +39,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
       SuggestedPostsStore suggestedPostProvider =
           Provider.of<SuggestedPostsStore>(context, listen: false);
 
-      final List<List<PostDraft>> response =
-          await GeneratorService.fetchSuggestions(
+      final List<PostDraft> response = await GeneratorService.fetchSuggestions(
         // TODO: get the connected social media paltforms
         platform: SocialMediaPlatforms.instagram,
         userData: user,

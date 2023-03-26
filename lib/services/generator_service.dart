@@ -195,7 +195,7 @@ class GeneratorService {
     }
   }
 
-  static Future<List<List<PostDraft>>> fetchSuggestions({
+  static Future<List<PostDraft>> fetchSuggestions({
     required SocialMediaPlatforms platform,
     String voice = "",
     required UserModel userData,
@@ -236,26 +236,23 @@ class GeneratorService {
       final int date = responseBody['date'];
       final List<dynamic> collections = responseBody['completions'];
 
-      final List<List<PostDraft>> extractedCollections = [];
+      final List<PostDraft> extractedCollections = [];
 
       for (dynamic collection in collections) {
-        final List<PostDraft> draftChoices = [];
         final String imageUrl =
             stockImages[Random().nextInt(stockImages.length - 1)];
         for (Map<String, dynamic> choice in collection['choices']) {
-          draftChoices.add(PostDraft(
+          extractedCollections.add(PostDraft(
             platform: platform,
             caption: choice['text'],
             dateTime: date,
             imageUrl: imageUrl,
           ));
         }
-        extractedCollections.add(draftChoices);
       }
 
       return extractedCollections;
     } catch (err) {
-      print(err);
       printAPIError(response, err);
       return [];
     }

@@ -41,8 +41,7 @@ class SettingsDashboard extends StatelessWidget {
       SuggestedPostsStore suggestedPostProvider =
           Provider.of<SuggestedPostsStore>(ctx, listen: false);
 
-      final List<List<PostDraft>> response =
-          await GeneratorService.fetchSuggestions(
+      final List<PostDraft> response = await GeneratorService.fetchSuggestions(
         // TODO: get the connected social media paltforms
         platform: SocialMediaPlatforms.instagram,
         userData: userModelProvider.data,
@@ -60,18 +59,16 @@ class SettingsDashboard extends StatelessWidget {
     SuggestedPostsStore suggestedPostsProvider =
         Provider.of<SuggestedPostsStore>(ctx, listen: false);
 
-    List<List<PostDraft>> generated = [];
+    List<PostDraft> generated = [];
     for (int idx in List<int>.generate(5, (i) => i)) {
       DateTime today = DateTime.now().add(Duration(days: idx));
-      generated.add([
-        PostDraft(
-          platform: SocialMediaPlatforms.instagram,
-          dateTime: today.millisecondsSinceEpoch,
-          caption:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-          imageUrl: stockImages[idx],
-        )
-      ]);
+      generated.add(PostDraft(
+        platform: SocialMediaPlatforms.instagram,
+        dateTime: today.millisecondsSinceEpoch,
+        caption:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
+        imageUrl: stockImages[idx],
+      ));
     }
     suggestedPostsProvider.addCollections(generated);
   }
@@ -89,7 +86,7 @@ class SettingsDashboard extends StatelessWidget {
         dateTime: today.millisecondsSinceEpoch,
         caption:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-        imageUrl: stockImages[idx],
+        imageUrl: stockImages[stockImages.length - 1 - idx],
       ));
     }
     scheduledPostsProvider.add(generated);
