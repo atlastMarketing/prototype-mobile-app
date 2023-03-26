@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:info_popup/info_popup.dart';
 import 'package:intl/intl.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -61,6 +62,8 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
   DateTime? _endDate;
   final TextEditingController _endDateController = TextEditingController();
   bool _dateControllersHasError = false;
+
+  bool infoPopupDismissed = false;
 
   // form advanced options
   bool _isAdvancedOptionsOpen = false;
@@ -200,10 +203,26 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
               ],
             ),
           ),
-          const Text(
-            "What is the duration of your campaign?",
-            style: AppText.bodyBold,
-          ),
+          infoPopupDismissed == false
+              ? InfoPopupWidget(
+                  onControllerCreated: (InfoPopupController controller) {
+                    controller.show();
+                  },
+                  infoPopupDismissed: () {
+                    setState(() => infoPopupDismissed = true);
+                  },
+                  contentTitle:
+                      "I suggest a campaign of 1-2 weeks for this product.\n\n- Your AI Marketing Advisor",
+                  enableHighlight: true,
+                  child: const Text(
+                    "What is the duration of your campaign?",
+                    style: AppText.bodyBold,
+                  ),
+                )
+              : const Text(
+                  "What is the duration of your campaign?",
+                  style: AppText.bodyBold,
+                ),
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 30),
             child: Column(
