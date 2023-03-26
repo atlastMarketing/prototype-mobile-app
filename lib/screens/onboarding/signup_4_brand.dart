@@ -116,7 +116,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
                   width: 120,
                   fit: BoxFit.cover,
                   errorBuilder: (_, obj, stack) => Image.asset(
-                    "images/default_placeholder.png",
+                    "assets/images/default_placeholder.png",
                     fit: BoxFit.cover,
                   ),
                 ),

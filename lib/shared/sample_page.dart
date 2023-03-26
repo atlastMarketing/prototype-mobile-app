@@ -23,7 +23,8 @@ class SamplePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset("images/maintenance.gif", width: 150, height: 150),
+              Image.asset("assets/images/maintenance.gif",
+                  width: 150, height: 150),
               const Padding(padding: EdgeInsets.all(10)),
               const Text(
                 'This page is currently under construction. Come back later!',

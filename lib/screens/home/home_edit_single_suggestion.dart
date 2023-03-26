@@ -91,7 +91,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
         ? AvatarImage(Uri.encodeFull(_postData.imageUrl!))
         : Stack(
             children: [
-              Image.asset("images/default_placeholder.png"),
+              Image.asset("assets/images/default_placeholder.png"),
               Positioned.fill(
                 child: Material(
                   color: AppColors.black.withOpacity(0.2),

@@ -34,7 +34,7 @@ class AnalyticsDashboard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Padding(padding: EdgeInsets.all(30)),
-                            Image.asset("images/maintenance.gif",
+                            Image.asset("assets/images/maintenance.gif",
                                 width: 150, height: 150),
                             const Padding(padding: EdgeInsets.all(10)),
                             const Text(

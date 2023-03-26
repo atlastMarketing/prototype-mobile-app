@@ -93,7 +93,7 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
           child: InkWell(
             onTap: () => setState(() => _instagramActive = !_instagramActive),
             child: Image.asset(
-              "images/instagram.png",
+              "assets/images/instagram.png",
               color: _instagramActive ? AppColors.primary : null,
             ),
           ),
@@ -103,7 +103,7 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
           child: InkWell(
             onTap: () => setState(() => _facebookActive = !_facebookActive),
             child: Image.asset(
-              "images/facebook.png",
+              "assets/images/facebook.png",
               color: _facebookActive ? AppColors.primary : null,
             ),
           ),
@@ -113,7 +113,7 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
           child: InkWell(
             onTap: () => setState(() => _linkedinActive = !_linkedinActive),
             child: Image.asset(
-              "images/linkedin.png",
+              "assets/images/linkedin.png",
               color: _linkedinActive ? AppColors.primary : null,
             ),
           ),
@@ -123,7 +123,7 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
           child: InkWell(
             onTap: () => setState(() => _twitterActive = !_twitterActive),
             child: Image.asset(
-              "images/twitter.png",
+              "assets/images/twitter.png",
               color: _twitterActive ? AppColors.primary : null,
             ),
           ),
