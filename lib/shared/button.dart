@@ -34,8 +34,8 @@ class CustomButton extends StatelessWidget {
       child: Text(
         text,
         style: disabled
-            ? const TextStyle(color: AppColors.dark, fontSize: 16)
-            : TextStyle(color: textColor, fontSize: 16),
+            ? AppText.buttonText.merge(const TextStyle(color: AppColors.dark))
+            : AppText.buttonText.merge(TextStyle(color: textColor)),
       ),
     );
   }

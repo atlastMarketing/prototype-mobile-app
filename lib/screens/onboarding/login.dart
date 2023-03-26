@@ -76,18 +76,26 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
             "made easy,",
             style: AppText.title.merge(AppText.blackText),
           ),
-          GestureDetector(
-            onDoubleTap: forceLogin,
-            child: GradientText(
-              "atlast",
-              style: AppText.title.merge(AppText.blackText),
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.secondary.withOpacity(0.5),
-                  AppColors.primary,
-                ],
+          Row(
+            children: [
+              GestureDetector(
+                onDoubleTap: forceLogin,
+                child: GradientText(
+                  "atlast",
+                  style: AppText.title.merge(AppText.blackText),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.secondary.withOpacity(0.5),
+                      AppColors.primary,
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Text(
+                ".",
+                style: AppText.title.merge(AppText.blackText),
+              ),
+            ],
           ),
         ],
       ),

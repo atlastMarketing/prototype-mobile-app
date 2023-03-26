@@ -56,9 +56,9 @@ class AppColors {
 class AppText {
   // title
   static const title = TextStyle(
-    fontFamily: 'Grancino',
-    fontSize: 64,
-    // fontWeight: FontWeight.w600,
+    // fontFamily: 'Grancino',
+    fontSize: 60,
+    fontWeight: FontWeight.w700,
   );
   // heading
   static const heading = TextStyle(
@@ -72,6 +72,10 @@ class AppText {
   // buttons
   static const buttonLargeText = TextStyle(
     fontSize: 24,
+    fontWeight: FontWeight.w600,
+  );
+  static const buttonText = TextStyle(
+    fontSize: 20,
     fontWeight: FontWeight.w600,
   );
   // body
