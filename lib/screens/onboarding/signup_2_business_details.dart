@@ -13,19 +13,20 @@ import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/utils/form_validations.dart';
 
-class OnboardingBusiness extends StatefulWidget {
+class OnboardingBusinessDetails extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  const OnboardingBusiness({
+  const OnboardingBusinessDetails({
     Key? key,
     required this.navKey,
   }) : super(key: key);
 
   @override
-  _OnboardingBusinessState createState() => _OnboardingBusinessState();
+  _OnboardingBusinessDetailsState createState() =>
+      _OnboardingBusinessDetailsState();
 }
 
-class _OnboardingBusinessState extends State<OnboardingBusiness> {
+class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bNameController = TextEditingController();
@@ -46,7 +47,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,
     );
-    widget.navKey.currentState!.pushNamed("/creator-3");
+    widget.navKey.currentState!.pushNamed("/onboarding-3");
   }
 
   Widget _buildForm() {

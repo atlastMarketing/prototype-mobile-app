@@ -35,7 +35,7 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
 
   void _handleContinue() {
     Provider.of<UserStore>(context, listen: false).clear();
-    widget.navKey.currentState!.pushNamed("/creator-2");
+    widget.navKey.currentState!.pushNamed("/onboarding-2");
   }
 
   Widget _buildForm(BuildContext ctx) {

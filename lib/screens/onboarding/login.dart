@@ -69,7 +69,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
         businessType: user.businessType,
       );
       userModelProvider.setIsOnboarded(false);
-      widget.navKey.currentState!.pushNamed("/creator-2");
+      widget.navKey.currentState!.pushNamed("/onboarding-2");
     } else {
       userModelProvider.save(
         user.id,
@@ -80,7 +80,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   }
 
   void _handleCreateAccount() {
-    widget.navKey.currentState!.pushNamed("/creator-1");
+    widget.navKey.currentState!.pushNamed("/onboarding-1");
   }
 
   void _handleForgotPassword() {
