@@ -8,6 +8,7 @@ class CustomButton extends StatelessWidget {
   final Color fillColor;
   final Color textColor;
   final bool disabled;
+  final bool isSpinning;
 
   const CustomButton({
     Key? key,
@@ -16,6 +17,7 @@ class CustomButton extends StatelessWidget {
     this.fillColor = AppColors.primary,
     this.textColor = AppColors.white,
     this.disabled = false,
+    this.isSpinning = false,
   }) : super(key: key);
 
   @override
@@ -30,13 +32,22 @@ class CustomButton extends StatelessWidget {
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      onPressed: disabled ? null : handlePressed,
-      child: Text(
-        text,
-        style: disabled
-            ? AppText.buttonText.merge(const TextStyle(color: AppColors.dark))
-            : AppText.buttonText.merge(TextStyle(color: textColor)),
-      ),
+      onPressed: disabled || isSpinning ? null : handlePressed,
+      child: isSpinning
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: AppColors.white,
+              ),
+            )
+          : Text(
+              text,
+              style: disabled
+                  ? AppText.buttonText
+                      .merge(const TextStyle(color: AppColors.dark))
+                  : AppText.buttonText.merge(TextStyle(color: textColor)),
+            ),
     );
   }
 }
