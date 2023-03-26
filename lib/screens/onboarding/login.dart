@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/user_model.dart';
+import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/services/user_service.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
@@ -30,18 +34,51 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isUserNotFound = false;
 
+  Future<void> _fetchSuggestions(UserModel user) async {
+    try {
+      SuggestedPostsStore suggestedPostProvider =
+          Provider.of<SuggestedPostsStore>(context, listen: false);
+
+      final List<List<PostDraft>> response =
+          await GeneratorService.fetchSuggestions(
+        // TODO: get the connected social media paltforms
+        platform: SocialMediaPlatforms.instagram,
+        userData: user,
+      );
+
+      suggestedPostProvider.addCollections(response);
+      return;
+    } catch (err) {
+      print(err);
+      return;
+    }
+  }
+
   void _handleLoginClick() async {
     UserStore userModelProvider =
         Provider.of<UserStore>(context, listen: false);
 
     UserModel? user = await UserService.login(_emailController.text);
-    print(user);
 
     if (user == null) {
       print("CANNOT LOGIN - USER NOT FOUND!");
       setState(() => _isUserNotFound = true);
       return;
     }
+
+    userModelProvider.save(
+      user.id,
+      email: _emailController.text,
+      businessName: user.businessName,
+      businessIndustry: user.businessIndustry,
+      businessType: user.businessType,
+      businessDescription: user.businessDescription,
+      businessVoice: user.businessVoice,
+      businessUrl: user.businessUrl,
+      avatarImageUrl: user.avatarImageUrl,
+    );
+
+    await _fetchSuggestions(user);
 
     print("SUCCESSFUL LOGIN FOR USER WITH ID '${user.id}'");
 
@@ -64,24 +101,9 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
       print("businessUrl: ${user.businessUrl}");
       print("avatarImageUrl: ${user.avatarImageUrl}");
 
-      userModelProvider.save(
-        user.id,
-        email: _emailController.text,
-        businessName: user.businessName,
-        businessIndustry: user.businessIndustry,
-        businessType: user.businessType,
-        businessDescription: user.businessDescription,
-        businessVoice: user.businessVoice,
-        businessUrl: user.businessUrl,
-        avatarImageUrl: user.avatarImageUrl,
-      );
       userModelProvider.setIsOnboarded(false);
       widget.navKey.currentState!.pushNamed("/onboarding-2");
     } else {
-      userModelProvider.save(
-        user.id,
-        email: _emailController.text,
-      );
       userModelProvider.setIsOnboarded(true);
     }
   }

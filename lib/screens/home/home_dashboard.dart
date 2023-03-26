@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/constants/suggested_posts.dart';
+import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
@@ -22,7 +22,7 @@ class HomeDashboard extends StatelessWidget {
     required this.handleCreate,
   }) : super(key: key);
 
-  void _openSuggestedPost(String postId) {
+  void _openSuggestedPost(int postId) {
     print("Opening suggested post with id $postId");
   }
 
@@ -31,44 +31,61 @@ class HomeDashboard extends StatelessWidget {
   }
 
   Widget _buildSuggestedPosts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Today's Suggested Posts", style: AppText.subheading),
-        Row(
-          children: [
-            const Icon(Icons.auto_awesome, size: 10, color: AppColors.primary),
-            const Padding(padding: EdgeInsets.only(right: 5)),
-            Text(
-              "Generated using Atlast smart suggestions",
-              style: AppText.bodySemiBold
-                  .merge(AppText.primaryText)
-                  .merge(AppText.bodySmall),
-            ),
-          ],
-        ),
-        const Padding(padding: EdgeInsets.only(bottom: 20)),
-        Column(
-          children: [
-            SizedBox(
-              height: 120,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: suggestedPosts.length,
-                itemBuilder: (context, idx) => PostPreview(
-                  imageUrl: suggestedPosts[idx]["imageUrl"],
-                  size: 120,
-                  handlePressed: () =>
-                      _openSuggestedPost(suggestedPosts[idx]["id"]),
-                ),
-                separatorBuilder: (context, idx) => const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                ),
+    return Consumer<SuggestedPostsStore>(
+      builder: (context, model, child) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Today's Suggested Posts", style: AppText.subheading),
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome,
+                  size: 10, color: AppColors.primary),
+              const Padding(padding: EdgeInsets.only(right: 5)),
+              Text(
+                "Generated using Atlast smart suggestions",
+                style: AppText.bodySemiBold
+                    .merge(AppText.primaryText)
+                    .merge(AppText.bodySmall),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          ),
+          const Padding(padding: EdgeInsets.only(bottom: 20)),
+          model.suggestions.isNotEmpty
+              ? Column(
+                  children: [
+                    SizedBox(
+                      height: 120,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: model.suggestions.length,
+                        itemBuilder: (context, idx) => PostPreview(
+                          imageUrl: model.suggestions[idx][0].imageUrl ?? "",
+                          size: 120,
+                          handlePressed: () => _openSuggestedPost(idx),
+                        ),
+                        separatorBuilder: (context, idx) => const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Material(
+                  elevation: 1,
+                  child: Container(
+                    height: 100,
+                    width: double.infinity,
+                    color: AppColors.dark.withOpacity(0.1),
+                    child: const Center(
+                      child: Text(
+                        "No suggestions at this time",
+                        style: AppText.bodySmall,
+                      ),
+                    ),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 
@@ -147,7 +164,7 @@ class HomeDashboard extends StatelessWidget {
                                   ),
                                   const Padding(
                                       padding: EdgeInsets.only(right: 15)),
-                                  Flexible(
+                                  Expanded(
                                     child: Text(
                                       post.caption ?? "No caption yet!",
                                       style: post.caption != null
@@ -187,7 +204,7 @@ class HomeDashboard extends StatelessWidget {
                       ),
                     ),
                   ),
-                )
+                ),
         ],
       ),
     );

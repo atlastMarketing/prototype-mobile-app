@@ -24,6 +24,7 @@ class PostPreview extends StatelessWidget {
               imageUrl,
               width: size,
               height: size,
+              fit: BoxFit.cover,
               errorBuilder: (_, obj, stack) => Image.asset(
                 "images/default_placeholder.png",
                 fit: BoxFit.cover,

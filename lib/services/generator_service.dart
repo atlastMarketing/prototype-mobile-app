@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/constants/stock_images.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/user_model.dart';
 import 'package:atlast_mobile_app/utils/print_error.dart';
 
@@ -37,6 +41,7 @@ class GeneratorService {
           'business_type': userData.businessType,
           'business_industry': userData.businessIndustry,
           'business_description': userData.businessDescription,
+          'business_voice': userData.businessVoice,
         },
         'meta_prompt': {
           'generation_num': generationNum,
@@ -101,6 +106,7 @@ class GeneratorService {
           'business_type': userData.businessType,
           'business_industry': userData.businessIndustry,
           'business_description': userData.businessDescription,
+          'business_voice': userData.businessVoice,
         },
         'meta_prompt': {
           'generation_num': generationNum,
@@ -162,6 +168,7 @@ class GeneratorService {
           'business_type': userData.businessType,
           'business_industry': userData.businessIndustry,
           'business_description': userData.businessDescription,
+          'business_voice': userData.businessVoice,
         },
         'meta_prompt': {
           'generation_num': generationNum,
@@ -183,6 +190,72 @@ class GeneratorService {
               timestamp is int ? timestamp : int.parse(timestamp))
           .toList();
     } catch (err) {
+      printAPIError(response, err);
+      return [];
+    }
+  }
+
+  static Future<List<List<PostDraft>>> fetchSuggestions({
+    required SocialMediaPlatforms platform,
+    String voice = "",
+    required UserModel userData,
+    int? numOptions,
+  }) async {
+    http.Response? response;
+
+    try {
+      final requestBody = {
+        'prompt_info': {
+          'voice': voice,
+          'platform': socialMediaPlatformsOptions[platform],
+          'num_options': numOptions,
+        },
+        'meta_user': {
+          'user_id': userData.id,
+        },
+        'meta_business': {
+          'business_name': userData.businessName,
+          'business_type': userData.businessType,
+          'business_industry': userData.businessIndustry,
+          'business_description': userData.businessDescription,
+          'business_voice': userData.businessVoice,
+        },
+        'meta_prompt': {},
+      };
+      print(
+          "** sending POST request to '/ml/suggestions' with the following body: $requestBody");
+
+      final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+      response = await http.post(
+        Uri.parse('$API_URL/ml/suggestions'),
+        headers: headers,
+        body: json.encode(requestBody),
+      );
+
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      final int date = responseBody['date'];
+      final List<dynamic> collections = responseBody['completions'];
+
+      final List<List<PostDraft>> extractedCollections = [];
+
+      for (dynamic collection in collections) {
+        final List<PostDraft> draftChoices = [];
+        final String imageUrl =
+            stockImages[Random().nextInt(stockImages.length - 1)];
+        for (Map<String, dynamic> choice in collection['choices']) {
+          draftChoices.add(PostDraft(
+            platform: platform,
+            caption: choice['text'],
+            dateTime: date,
+            imageUrl: imageUrl,
+          ));
+        }
+        extractedCollections.add(draftChoices);
+      }
+
+      return extractedCollections;
+    } catch (err) {
+      print(err);
       printAPIError(response, err);
       return [];
     }
