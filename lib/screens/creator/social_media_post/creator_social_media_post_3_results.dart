@@ -1,6 +1,6 @@
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:flutter/material.dart';
 
-import 'package:http/http.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
@@ -46,14 +46,12 @@ class _CreatorSocialMediaPostResultsState
   }
 
   void _handleContinue() async {
+    // _saveContent();  // TODO: need to acquire all data needed for all content manager fields
     widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+  }
 
-    final url = Uri.parse(
-        '$API_URL/content-manager'); // TODO: end point needs to be set up
-    final headers = {"Content-type": "application/json"};
-    final json =
-        '{"image_url": $widget.imageUrl}'; // TODO: needs user id, rest of post inputs, and to be configured to follow the content-manager format
-    await post(url, headers: headers, body: json);
+  Future<void> _saveContent() async {
+    await ContentManagerService.saveContent(widget.imageUrl);
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {
