@@ -18,13 +18,22 @@ class SettingsDashboard extends StatelessWidget {
     Provider.of<UserStore>(ctx, listen: false).setIsOnboarded(false);
   }
 
+  void _triggerHelpPopups(BuildContext ctx) {
+    bool currState = Provider.of<UserStore>(ctx, listen: false).hasHelpPopups;
+    Provider.of<UserStore>(ctx, listen: false).setHasHelpPopups(!currState);
+  }
+
   void _logout(BuildContext ctx) {
     Provider.of<UserStore>(ctx, listen: false).clear();
     Provider.of<UserStore>(ctx, listen: false).setIsOnboarded(false);
+    Provider.of<UserStore>(ctx, listen: false).setHasHelpPopups(true);
   }
 
   @override
   Widget build(BuildContext context) {
+    bool popupsStatus =
+        Provider.of<UserStore>(context, listen: false).hasHelpPopups;
+
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -49,6 +58,12 @@ class SettingsDashboard extends StatelessWidget {
                           ),
                           const Padding(
                               padding: EdgeInsets.symmetric(vertical: 5)),
+                          FilledButton(
+                            onPressed: () => _triggerHelpPopups(context),
+                            child: popupsStatus
+                                ? const Text("Deactivate Popups")
+                                : const Text("Activate Popups"),
+                          ),
                           FilledButton(
                             onPressed: () => _resetOnboarding(context),
                             child: const Text("Reset Onboarding"),

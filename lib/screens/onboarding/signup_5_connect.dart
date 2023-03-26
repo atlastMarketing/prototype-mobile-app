@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -72,57 +73,62 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
               "Connect your social media accounts",
               style: AppText.bodyBold,
             ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () =>
-                        setState(() => _instagramActive = !_instagramActive),
-                    child: Image.asset(
-                      "images/instagram.png",
-                      color: _instagramActive ? AppColors.primary : null,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () =>
-                        setState(() => _facebookActive = !_facebookActive),
-                    child: Image.asset(
-                      "images/facebook.png",
-                      color: _facebookActive ? AppColors.primary : null,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () =>
-                        setState(() => _linkedinActive = !_linkedinActive),
-                    child: Image.asset(
-                      "images/linkedin.png",
-                      color: _linkedinActive ? AppColors.primary : null,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () =>
-                        setState(() => _twitterActive = !_twitterActive),
-                    child: Image.asset(
-                      "images/twitter.png",
-                      color: _twitterActive ? AppColors.primary : null,
-                    ),
-                  ),
-                ),
-              ],
+            HelpPopup(
+              title: "Why?",
+              content:
+                  "By allowing us to view your current accounts, we can better understand your visual identity",
+              child: _buildSocialMediaConnections(),
             )
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildSocialMediaConnections() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            onTap: () => setState(() => _instagramActive = !_instagramActive),
+            child: Image.asset(
+              "images/instagram.png",
+              color: _instagramActive ? AppColors.primary : null,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            onTap: () => setState(() => _facebookActive = !_facebookActive),
+            child: Image.asset(
+              "images/facebook.png",
+              color: _facebookActive ? AppColors.primary : null,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            onTap: () => setState(() => _linkedinActive = !_linkedinActive),
+            child: Image.asset(
+              "images/linkedin.png",
+              color: _linkedinActive ? AppColors.primary : null,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: InkWell(
+            onTap: () => setState(() => _twitterActive = !_twitterActive),
+            child: Image.asset(
+              "images/twitter.png",
+              color: _twitterActive ? AppColors.primary : null,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

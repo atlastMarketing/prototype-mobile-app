@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -7,7 +6,9 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 
@@ -143,10 +144,21 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                   9,
                   (idx) => idx < widget.images.length
                       ? _buildImageItem(idx, widget.images[idx].image)
-                      : ImageUploader(
-                          handleTap: _requestImage,
-                          iconSize: MediaQuery.of(context).size.width / 6,
-                        ),
+                      : idx == 8
+                          ? HelpPopup(
+                              title: "Marketer's tip",
+                              content:
+                                  "Take a couple seconds to take real pictures around your shop – this makes a huge difference. ",
+                              highlight: false,
+                              child: ImageUploader(
+                                handleTap: _requestImage,
+                                iconSize: MediaQuery.of(context).size.width / 6,
+                              ),
+                            )
+                          : ImageUploader(
+                              handleTap: _requestImage,
+                              iconSize: MediaQuery.of(context).size.width / 6,
+                            ),
                 )),
           ),
           SizedBox(

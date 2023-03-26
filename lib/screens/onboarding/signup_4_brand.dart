@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:flutter/material.dart';
+import 'package:info_popup/info_popup.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -11,7 +11,9 @@ import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
@@ -188,9 +190,15 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 20),
-              child: CustomFormTextField(
-                controller: _businessVoiceController,
-                placeholderText: "Ex. Fun, Colourful, Casual, Family-oriented",
+              child: HelpPopup(
+                title: "Terminology",
+                content:
+                    "A brand identity is the visual representation of your brand.",
+                child: CustomFormTextField(
+                  controller: _businessVoiceController,
+                  placeholderText:
+                      "Ex. Fun, Colourful, Casual, Family-oriented",
+                ),
               ),
             ),
           ],

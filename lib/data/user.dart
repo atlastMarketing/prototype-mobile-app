@@ -16,10 +16,12 @@ class UserStore extends ChangeNotifier {
 
   // TODO: move app logic settings elswhere
   bool _isOnboarded = false;
+  bool _hasHelpPopups = true;
 
   /// Getters
   bool get isLoggedIn => _id != "";
   bool get isOnboarded => _isOnboarded;
+  bool get hasHelpPopups => _hasHelpPopups;
 
   UserModel get data => UserModel(
         id: _id,
@@ -36,6 +38,11 @@ class UserStore extends ChangeNotifier {
   /// Setters
   void setIsOnboarded(bool newState) {
     _isOnboarded = newState;
+    notifyListeners();
+  }
+
+  void setHasHelpPopups(bool newState) {
+    _hasHelpPopups = newState;
     notifyListeners();
   }
 

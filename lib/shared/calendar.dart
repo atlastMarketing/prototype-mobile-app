@@ -1,7 +1,10 @@
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/utils/datetime_utils.dart';
@@ -40,6 +43,7 @@ class CustomCalendar extends StatefulWidget {
 
 class _CustomCalendarState extends State<CustomCalendar> {
   final CalendarController _calendarController = CalendarController();
+  bool _isPopupDismissed = false;
 
   @override
   void initState() {
@@ -50,11 +54,18 @@ class _CustomCalendarState extends State<CustomCalendar> {
     return [...widget.posts];
   }
 
+  bool _isFirstAppointment(String id) => widget.posts[0].id == id;
+
   Widget _buildAppointment(
     BuildContext ctx,
     CalendarAppointmentDetails details,
   ) {
     final PostContent currPost = details.appointments.first;
+
+    final shouldShowOnboarding = !widget.disableInteractions &&
+        !_isPopupDismissed &&
+        Provider.of<UserStore>(context, listen: false).hasHelpPopups &&
+        _isFirstAppointment(currPost.id);
 
     if ([
       CalendarView.week,
@@ -63,17 +74,35 @@ class _CustomCalendarState extends State<CustomCalendar> {
       CalendarView.timelineWorkWeek,
       CalendarView.timelineMonth,
     ].contains(_calendarController.view)) {
-      return Container(
-        height: details.bounds.width,
-        width: details.bounds.width,
-        color: Colors.transparent,
-        child: AvatarImage(
-          currPost.imageUrl ?? "",
-          width: details.bounds.width,
-          height: details.bounds.width,
-          borderRadius: 0,
-        ),
-      );
+      return shouldShowOnboarding
+          ? HelpPopup(
+              title: "Edit me!",
+              content:
+                  "Hold and drag on any post to schedule on a different day or time. Click on posts to edit.",
+              handleDismiss: (_) => setState(() => _isPopupDismissed = true),
+              child: Container(
+                height: details.bounds.width,
+                width: details.bounds.width,
+                color: Colors.transparent,
+                child: AvatarImage(
+                  currPost.imageUrl ?? "",
+                  width: details.bounds.width,
+                  height: details.bounds.width,
+                  borderRadius: 0,
+                ),
+              ),
+            )
+          : Container(
+              height: details.bounds.width,
+              width: details.bounds.width,
+              color: Colors.transparent,
+              child: AvatarImage(
+                currPost.imageUrl ?? "",
+                width: details.bounds.width,
+                height: details.bounds.width,
+                borderRadius: 0,
+              ),
+            );
     }
 
     if ([
