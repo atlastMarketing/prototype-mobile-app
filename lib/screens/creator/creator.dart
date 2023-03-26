@@ -55,6 +55,7 @@ class _CreatorState extends State<Creator> {
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
+  String? imageUrl;
   List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
   List<PostContent> _draftPosts = [];
 
@@ -74,7 +75,7 @@ class _CreatorState extends State<Creator> {
             derivedOutputType: CatalystOutputTypes.singlePost,
           ));
       // create post
-      widget.navKey.currentState!.pushNamed("/post-image");
+      widget.navKey.currentState!.pushNamed("/post-1");
     } else if (_selectedCreatorOptionIdx == 1) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
@@ -472,8 +473,9 @@ class _CreatorState extends State<Creator> {
                 switch (settings.name) {
                   case "/post-image":
                     return CreatorSocialMediaPostImage(
-                      navKey: widget.navKey,
-                    );
+                        navKey: widget.navKey,
+                        saveImageUrl: (String url) =>
+                            {setState(() => imageUrl = url)});
                   case "/post-1":
                     return CreatorSocialMediaPostPrompt(
                       navKey: widget.navKey,
@@ -488,6 +490,7 @@ class _CreatorState extends State<Creator> {
                     return CreatorSocialMediaPostResults(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
+                      imageUrl: imageUrl!,
                     );
                   case "/campaign-1":
                     List<Annotation> textAnnotations = _compileAnnotations();

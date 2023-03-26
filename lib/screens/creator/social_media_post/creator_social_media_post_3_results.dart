@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -16,11 +17,13 @@ import 'package:provider/provider.dart';
 class CreatorSocialMediaPostResults extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
+  final String imageUrl;
 
   const CreatorSocialMediaPostResults({
     Key? key,
     required this.navKey,
     required this.catalyst,
+    required this.imageUrl,
   }) : super(key: key);
 
   @override
@@ -42,8 +45,13 @@ class _CreatorSocialMediaPostResultsState
     widget.navKey.currentState!.pop();
   }
 
-  void _handleContinue() {
+  void _handleContinue() async {
+    // _saveContent();  // TODO: need to acquire all data needed for all content manager fields
     widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+  }
+
+  Future<void> _saveContent() async {
+    await ContentManagerService.saveContent(widget.imageUrl);
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {
