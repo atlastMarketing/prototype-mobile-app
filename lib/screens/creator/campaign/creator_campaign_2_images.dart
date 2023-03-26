@@ -6,7 +6,9 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 
@@ -100,7 +102,7 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
           Positioned(
             right: 5,
             top: 5,
-            child: Container(
+            child: SizedBox(
               width: 20,
               height: 20,
               child: Material(
@@ -124,29 +126,6 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
     );
   }
 
-  Widget _buildUploaderItem() {
-    return Material(
-      borderRadius: BorderRadius.circular(5),
-      child: InkWell(
-        onTap: _requestImage,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.dark.withOpacity(0.3),
-              style: BorderStyle.solid,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            Icons.add,
-            color: AppColors.dark.withOpacity(0.5),
-            size: MediaQuery.of(context).size.width / 6,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutFullPage(
@@ -165,7 +144,21 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                   9,
                   (idx) => idx < widget.images.length
                       ? _buildImageItem(idx, widget.images[idx].image)
-                      : _buildUploaderItem(),
+                      : idx == 8
+                          ? HelpPopup(
+                              title: "Marketer's tip",
+                              content:
+                                  "Take a couple seconds to take real pictures around your shop – this makes a huge difference. ",
+                              highlight: false,
+                              child: ImageUploader(
+                                handleTap: _requestImage,
+                                iconSize: MediaQuery.of(context).size.width / 6,
+                              ),
+                            )
+                          : ImageUploader(
+                              handleTap: _requestImage,
+                              iconSize: MediaQuery.of(context).size.width / 6,
+                            ),
                 )),
           ),
           SizedBox(

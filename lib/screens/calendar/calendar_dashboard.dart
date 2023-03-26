@@ -51,6 +51,8 @@ class CalendarDashboard extends StatelessWidget {
                         CalendarView.month,
                         CalendarView.schedule,
                       ],
+                      // TODO: add "options" for onboarding
+                      enableOnboarding: false,
                       disableSelection: false,
                       posts: model.posts,
                       handleTap: (String postId) =>

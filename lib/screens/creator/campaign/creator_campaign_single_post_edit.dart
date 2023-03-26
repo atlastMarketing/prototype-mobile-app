@@ -56,7 +56,7 @@ class _CreatorCampaignSinglePostEditState
         id: widget.postContent.id,
         platform: widget.postContent.platform,
         dateTime: widget.postContent.dateTime!,
-        caption: _captionController.text,
+        caption: _captionController.text.trim(),
         imageUrl: _imageUrl,
       ),
     );
@@ -110,7 +110,7 @@ class _CreatorCampaignSinglePostEditState
         ? AvatarImage(Uri.encodeFull(_imageUrl))
         : Stack(
             children: [
-              Image.asset("images/default_placeholder.png"),
+              Image.asset("assets/images/default_placeholder.png"),
               Positioned.fill(
                 child: Material(
                   color: AppColors.black.withOpacity(0.2),

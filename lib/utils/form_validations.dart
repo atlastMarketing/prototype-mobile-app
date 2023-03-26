@@ -6,7 +6,7 @@ bool isValidEmail(String? s) {
 
 bool isValidName(String? s) {
   if (s == null || s == "") return false;
-  final nameRegExp = RegExp(r'^[a-zA-Z0-9_\-=@,\.;\s]+$');
+  final nameRegExp = RegExp(r"^[a-zA-Z0-9_\-=@,\.;'\s]+$");
   return nameRegExp.hasMatch(s.trim());
 }
 

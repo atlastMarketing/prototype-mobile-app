@@ -29,7 +29,7 @@ class AvatarImage extends StatelessWidget {
             Uri.encodeFull(imageUrl),
             fit: fit,
             errorBuilder: (_, obj, stack) => Image.asset(
-              "images/default_placeholder.png",
+              "assets/images/default_placeholder.png",
               fit: BoxFit.cover,
             ),
           ),

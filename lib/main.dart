@@ -5,12 +5,14 @@ import 'app.dart';
 import 'configs/theme.dart';
 import 'data/main_navigation.dart';
 import 'data/scheduled_posts.dart';
+import 'data/suggested_posts.dart';
 import 'data/user.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => SuggestedPostsStore()),
         ChangeNotifierProvider(create: (context) => ScheduledPostsStore()),
         ChangeNotifierProvider(create: (context) => MainNavigationStore()),
         ChangeNotifierProvider(create: (context) => UserStore()),
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: AppColors.primary,
+        scaffoldBackgroundColor: AppColors.background,
         fontFamily: 'Quicksand',
       ),
       home: const App(),
