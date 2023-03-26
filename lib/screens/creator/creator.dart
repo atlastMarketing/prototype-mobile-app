@@ -172,6 +172,7 @@ class _CreatorState extends State<Creator> {
 
     // DATA MANIPULATION OF GOOGLE NER
     if (annotations.isNotEmpty) {
+      print("ANOT!");
       print(annotations);
       final List<EntityAnnotation> annotatedDates = annotations
           .where(
@@ -188,15 +189,16 @@ class _CreatorState extends State<Creator> {
       for (EntityAnnotation annotatedDate in annotatedDates) {
         DateTimeEntity ent = annotatedDate.entities
             .firstWhere((e) => e.type == EntityType.dateTime) as DateTimeEntity;
+        final timestamp = castToMilliseconds(ent.timestamp);
         // skip if date selected is before today
-        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp)
+        if (DateTime.fromMillisecondsSinceEpoch(timestamp)
             .isBefore(lastMidnight)) continue;
 
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
           annotatedDate.start,
           annotatedDate.end,
-          ent,
+          timestamp,
         );
 
         __derivedPrompt = __derivedPrompt.replaceRange(_extractedDate.start,
