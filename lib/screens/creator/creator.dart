@@ -1,4 +1,4 @@
-import 'package:atlast_mobile_app/screens/creator/social_media_post/creator_social_media_post_image.dart';
+import 'package:atlast_mobile_app/screens/creator/campaign/creator_campaign_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
@@ -7,19 +7,22 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/constants/unique_char.dart';
+import 'package:atlast_mobile_app/models/annotations_model.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
-import 'package:atlast_mobile_app/shared/annotated_text_field.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
-import 'campaign/creator_campaign_2_media.dart';
-import 'campaign/creator_campaign_3_results.dart';
+import 'campaign/creator_campaign_2_images.dart';
+import 'campaign/creator_campaign_3_schedule.dart';
 import 'social_media_post/creator_social_media_post_1_prompt.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
+import 'social_media_post/creator_social_media_post_image.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -34,22 +37,37 @@ class Creator extends StatefulWidget {
 }
 
 class _CreatorState extends State<Creator> {
-  late CatalystBreakdown _catalystDetails;
-  List<DateAnnotation> _dateAnnotations = [];
-  List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
-  String? imageUrl;
-
-  // TODO: break down prompt details
-  int _selectedCreatorOptionIdx = -1;
-
   final entityExtractor =
       EntityExtractor(language: EntityExtractorLanguage.english);
 
-  _exitCreator() {
+  final DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
+
+  // ------
+  // STATES
+  // ------
+
+  // navigations states
+  int _selectedCreatorOptionIdx = -1;
+
+  // prompt analysis
+  late CatalystBreakdown _catalystDetails;
+  List<UploadedImage> _uploadedImages = [];
+  // prompt analysis - annotations
+  List<DateAnnotation> _dateAnnotations = [];
+  List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
+  String? imageUrl;
+  List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
+  List<PostContent> _draftPosts = [];
+
+  // ------
+  // NAVIGATION FUNCTIONS
+  // ------
+
+  void _exitCreator() {
     Navigator.of(context).pop();
   }
 
-  _handleInitialContinue() {
+  void _handleInitialContinue() {
     if (_selectedCreatorOptionIdx == 0) {
       setState(() => _catalystDetails = CatalystBreakdown(
             catalyst: "",
@@ -63,6 +81,7 @@ class _CreatorState extends State<Creator> {
             catalyst: "",
             derivedPrompt: "",
             derivedOutputType: CatalystOutputTypes.campaign,
+            campaignOutputType: CatalystCampaignOutputTypes.daily,
           ));
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");
@@ -76,34 +95,49 @@ class _CreatorState extends State<Creator> {
     setState(() => _selectedCreatorOptionIdx = optionIdx);
   }
 
+  // ------
+  // CATALYST ANALYZERS
+  // ------
+
   Future<void> _analyzeCatalyst(
     String catalyst, {
     CatalystOutputTypes type = CatalystOutputTypes.singlePost,
   }) async {
-    // ------
-    // ANNOTATION EXTRACTION
-    // ------
-    final List<EntityAnnotation> annotations =
-        await entityExtractor.annotateText(
-      catalyst,
-      // TODO: don't hardcode these params
-      // preferredLocale: 'en-US',
-      referenceTimeZone: 'America/Vancouver',
-    );
+    // MANUAL NER
+    String __derivedPrompt = catalyst;
+    List<SocialMediaPlatforms> __derivedPlatforms = [];
+    CatalystCampaignOutputTypes __campaignOutputType =
+        _catalystDetails.campaignOutputType ?? DEFAULT_CAMPAIGN_OUTPUT_TYPE;
+    List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
+    List<CampaignOutputTypeAnnotation> __campaignOutputTypeAnnotations = [];
+
+    if (type == CatalystOutputTypes.campaign) {
+      final NERRegexRangeCampaignOutputType? matchedCampaignOutputType =
+          extractCampaignOutputTypeFromCatalyst(catalyst);
+      __campaignOutputType =
+          matchedCampaignOutputType?.campaignOutputType ?? __campaignOutputType;
+
+      if (matchedCampaignOutputType != null) {
+        __campaignOutputTypeAnnotations.add(CampaignOutputTypeAnnotation(
+          range: TextRange(
+            start: matchedCampaignOutputType.start,
+            end: matchedCampaignOutputType.end,
+          ),
+          campaignOutputType: matchedCampaignOutputType,
+          style: AppText.bodyBold.merge(const TextStyle(
+            backgroundColor: AppColors.error,
+          )),
+        ));
+        __derivedPrompt = __derivedPrompt.replaceRange(
+          matchedCampaignOutputType.start,
+          matchedCampaignOutputType.end,
+          UNIQUE_CHAR * matchedCampaignOutputType.matched.length,
+        );
+      }
+    }
 
     final List<NERRegexRangeSocialMediaPlatform> matchedPlatforms =
         extractSocialMediaPlatformsFromCatalyst(catalyst);
-
-    // ------
-    // DATA MANIPULATION OF MANUAL NER
-    // ------
-    String __derivedPrompt = catalyst;
-    List<SocialMediaPlatforms> __derivedPlatforms = [];
-    List<int> __postTimestamps = [];
-    int? __startTimestamp;
-    int? __endTimestamp;
-    List<DateAnnotation> __dateAnnotations = [];
-    List<SocialMediaPlatformAnnotation> __socialMediaPlatformAnnotations = [];
 
     for (NERRegexRangeSocialMediaPlatform match in matchedPlatforms) {
       __derivedPrompt = __derivedPrompt.replaceRange(
@@ -122,10 +156,23 @@ class _CreatorState extends State<Creator> {
       ));
     }
 
-    // ------
-    // FURTHER DATA MANIPULATION OF GOOGLE NER
-    // ------
+    // AUTOMATIC ANNOTATION EXTRACTION (GOOGLE NER)
+    List<int> __postTimestamps = [];
+    int? __startTimestamp;
+    int? __endTimestamp;
+    List<DateAnnotation> __dateAnnotations = [];
+
+    final List<EntityAnnotation> annotations =
+        await entityExtractor.annotateText(
+      catalyst,
+      // TODO: don't hardcode these params
+      // preferredLocale: 'en-US',
+      referenceTimeZone: 'America/Vancouver',
+    );
+
+    // DATA MANIPULATION OF GOOGLE NER
     if (annotations.isNotEmpty) {
+      print(annotations);
       final List<EntityAnnotation> annotatedDates = annotations
           .where(
             (ant) => ant.entities
@@ -134,12 +181,16 @@ class _CreatorState extends State<Creator> {
           )
           .toList();
 
+      DateTime lastMidnight = DateTime.now();
+      lastMidnight =
+          DateTime(lastMidnight.year, lastMidnight.month, lastMidnight.day);
+
       for (EntityAnnotation annotatedDate in annotatedDates) {
         DateTimeEntity ent = annotatedDate.entities
             .firstWhere((e) => e.type == EntityType.dateTime) as DateTimeEntity;
         // skip if date selected is before today
-        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp * 1000)
-            .isBefore(DateTime.now())) continue;
+        if (DateTime.fromMillisecondsSinceEpoch(ent.timestamp)
+            .isBefore(lastMidnight)) continue;
 
         final NERRegexRangeDate _extractedDate = extractDateBuffersFromCatalyst(
           catalyst,
@@ -153,7 +204,7 @@ class _CreatorState extends State<Creator> {
 
         __dateAnnotations.add(DateAnnotation(
           range: TextRange(
-            start: _extractedDate.start + 1,
+            start: _extractedDate.start,
             end: _extractedDate.end,
           ),
           timestamp: _extractedDate.timestamp,
@@ -167,10 +218,15 @@ class _CreatorState extends State<Creator> {
           break;
         } else if (type == CatalystOutputTypes.campaign) {
           if (__startTimestamp == null && __endTimestamp == null) {
-            if (_extractedDate.matched.contains('from')) {
+            if (isStartingDate(_extractedDate.matched)) {
               __startTimestamp = _extractedDate.timestamp;
-            } else {
+            } else if (isEndingDate(_extractedDate.matched)) {
               __endTimestamp = _extractedDate.timestamp;
+            } else if (__campaignOutputType ==
+                CatalystCampaignOutputTypes.event) {
+              __endTimestamp = _extractedDate.timestamp;
+            } else {
+              __startTimestamp = _extractedDate.timestamp;
             }
           } else if (__startTimestamp == null && __endTimestamp != null) {
             __startTimestamp = _extractedDate.timestamp < __endTimestamp
@@ -193,20 +249,20 @@ class _CreatorState extends State<Creator> {
       }
     }
 
-    // ------
     // SAVING
-    // ------
     setState(() {
       _catalystDetails.catalyst = catalyst;
       _catalystDetails.derivedPrompt =
-          __derivedPrompt.replaceAll(UNIQUE_CHAR, "");
+          __derivedPrompt.replaceAll(UNIQUE_CHAR, "").trim();
       _catalystDetails.derivedPostTimestamps = __postTimestamps;
       _catalystDetails.derivedStartTimestamp = __startTimestamp;
       _catalystDetails.derivedEndTimestamp = __endTimestamp;
       // remove hardcoding here
       _catalystDetails.derivedPlatforms = __derivedPlatforms;
+      _catalystDetails.campaignOutputType = __campaignOutputType;
       _dateAnnotations = __dateAnnotations;
       _socialMediaPlatformAnnotations = __socialMediaPlatformAnnotations;
+      _campaignOutputTypeAnnotations = __campaignOutputTypeAnnotations;
     });
   }
 
@@ -215,6 +271,8 @@ class _CreatorState extends State<Creator> {
     int? startTimestamp,
     int? endTimestamp,
     List<SocialMediaPlatforms>? platforms,
+    CatalystCampaignOutputTypes? campaignOutputType,
+    int? maximumPosts,
   }) {
     if (postTimestamps != null) {
       _dateAnnotations = [];
@@ -231,8 +289,52 @@ class _CreatorState extends State<Creator> {
       _socialMediaPlatformAnnotations = [];
       _catalystDetails.derivedPlatforms = platforms;
     }
+    if (campaignOutputType != null) {
+      _campaignOutputTypeAnnotations = [];
+      _catalystDetails.campaignOutputType = campaignOutputType;
+    }
+    if (maximumPosts != null) {
+      _catalystDetails.maximumPosts = maximumPosts;
+    }
     setState(() {});
   }
+
+  List<Annotation> _compileAnnotations() {
+    List<Annotation> textAnnotations = [];
+
+    textAnnotations.addAll(_dateAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    textAnnotations.addAll(_socialMediaPlatformAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+    textAnnotations.addAll(_campaignOutputTypeAnnotations.map(
+      (annot) => Annotation(
+        range: annot.range,
+        style: annot.style,
+      ),
+    ));
+
+    return textAnnotations;
+  }
+
+  void _saveUploadedImages(List<UploadedImage> images) {
+    setState(() => _uploadedImages = images);
+  }
+
+  void _saveDraftPosts(List<PostContent> newPosts) {
+    setState(() => _draftPosts = newPosts);
+  }
+
+  // ------
+  // WIDGET BUILDERS
+  // ------
 
   Widget _buildCreatorOptionButton(
     String title,
@@ -345,6 +447,10 @@ class _CreatorState extends State<Creator> {
     );
   }
 
+  // ------
+  // BUILD
+  // ------
+
   @override
   Widget build(BuildContext context) {
     // lazy loading
@@ -387,23 +493,32 @@ class _CreatorState extends State<Creator> {
                       imageUrl: imageUrl!,
                     );
                   case "/campaign-1":
+                    List<Annotation> textAnnotations = _compileAnnotations();
                     return CreatorCampaignCatalyst(
                       navKey: widget.navKey,
                       analyzeCatalyst: _analyzeCatalyst,
                       updateCatalyst: _updateCatalyst,
                       catalyst: _catalystDetails,
-                      dateAnnotations: _dateAnnotations,
-                      socialMediaPlatformAnnotations:
-                          _socialMediaPlatformAnnotations,
+                      annotations: textAnnotations,
                     );
                   case "/campaign-2":
-                    return CreatorCampaignMedia(
+                    return CreatorCampaignImages(
                       navKey: widget.navKey,
+                      images: _uploadedImages,
+                      saveImages: _saveUploadedImages,
                     );
-                  case "/campaign-results":
-                    return CreatorCampaignResults(
+                  case "/campaign-3":
+                    return CreatorCampaignSchedule(
                       navKey: widget.navKey,
                       catalyst: _catalystDetails,
+                      images: _uploadedImages,
+                      draftPosts: _draftPosts,
+                      saveDraftPosts: _saveDraftPosts,
+                    );
+                  case "/campaign-confirm":
+                    return CreatorCampaignConfirm(
+                      navKey: widget.navKey,
+                      draftPosts: _draftPosts,
                     );
                   case "/ad-1":
                     return const SamplePage();

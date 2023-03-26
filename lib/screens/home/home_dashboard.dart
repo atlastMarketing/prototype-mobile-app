@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/suggested_posts.dart';
-import 'package:atlast_mobile_app/data/upcoming_posts.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
@@ -22,11 +22,11 @@ class HomeDashboard extends StatelessWidget {
     required this.handleCreate,
   }) : super(key: key);
 
-  void _openSuggestedPost(int postId) {
+  void _openSuggestedPost(String postId) {
     print("Opening suggested post with id $postId");
   }
 
-  void _openUpcomingPost(int postId) {
+  void _openUpcomingPost(String postId) {
     print("Opening upcoming post with id $postId");
   }
 
@@ -73,7 +73,7 @@ class HomeDashboard extends StatelessWidget {
   }
 
   Widget _buildUpcomingPosts() {
-    return Consumer<UpcomingPostsStore>(
+    return Consumer<ScheduledPostsStore>(
       builder: (context, model, child) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -94,9 +94,9 @@ class HomeDashboard extends StatelessWidget {
           ),
           model.posts.isNotEmpty
               ? Column(
-                  children: model.posts.map((post) {
+                  children: model.posts.take(5).map((post) {
                     DateTime? dt = post.dateTime != null
-                        ? DateTime.tryParse(post.dateTime!)
+                        ? DateTime.fromMillisecondsSinceEpoch(post.dateTime!)
                         : null;
                     String dtStrMonth = dt != null
                         ? DateFormat.MMM().format(dt).toUpperCase()

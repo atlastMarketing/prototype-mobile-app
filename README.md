@@ -24,6 +24,10 @@ samples, guidance on mobile development, and a full API reference.
 
 **Local Repository Setup**
 - After cloning, install all the packages into the repository by running `flutter pub get`
+- Establish dotenv files in a `ROOT/env/` folder, typically this will include the following three files
+    - `.env.development`
+    - `.env.staging`
+    - `.env.production`
 
 **Local Development**
 - Find available devices by running `flutter devices` (if using offline simulators, make sure they are running first).

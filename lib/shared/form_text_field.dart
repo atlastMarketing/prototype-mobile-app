@@ -4,6 +4,7 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 
 class CustomFormTextField extends StatelessWidget {
   final bool disabled;
+  final bool previewOnly;
   final String placeholderText;
   //x field options
   final TextEditingController? controller;
@@ -14,10 +15,12 @@ class CustomFormTextField extends StatelessWidget {
   // additional (functional props)
   final String? Function(String?)? validator;
   final int vSize;
+  final TextInputType keyboardType;
 
   const CustomFormTextField({
     Key? key,
     this.disabled = false,
+    this.previewOnly = false,
     this.placeholderText = "",
     this.controller,
     this.autocorrect = false,
@@ -26,26 +29,31 @@ class CustomFormTextField extends StatelessWidget {
     this.fillColor,
     this.validator,
     this.vSize = 1,
+    this.keyboardType = TextInputType.text,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      enabled: !disabled,
+      enabled: !disabled && !previewOnly,
       controller: controller,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: 15.0,
-        ),
+        contentPadding: previewOnly
+            ? EdgeInsets.zero
+            : const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 15.0,
+              ),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.dark.withOpacity(0.5)),
           borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
-        disabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
+        disabledBorder: previewOnly
+            ? InputBorder.none
+            : const OutlineInputBorder(
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.primary),
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -70,6 +78,7 @@ class CustomFormTextField extends StatelessWidget {
       validator: validator,
       minLines: vSize,
       maxLines: vSize,
+      keyboardType: keyboardType,
     );
   }
 }

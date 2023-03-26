@@ -88,9 +88,6 @@ class _AppState extends State<App> with RouteAware {
     // than having to individually change instances of widgets.
 
     return Consumer<UserStore>(builder: (context, model, child) {
-      print("user id: ${model.data.id}");
-      print("model.isLoggedIn ${model.isLoggedIn}");
-      print("model.isOnboarded ${model.isOnboarded}");
       return model.isOnboarded && model.isLoggedIn
           ? Scaffold(
               body: Navigator(
