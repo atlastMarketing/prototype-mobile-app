@@ -60,11 +60,11 @@ class GeneratorService {
 
       final Map<String, dynamic> responseBody = json.decode(response.body);
       // TODO: address bug here
-      List<dynamic> extractedCaptions1 =
+      List<dynamic> extractedCaptions =
           responseBody['choices'].map((e) => e['text'].toString()).toList();
-      List<String> extractedCaptions =
-          extractedCaptions1.map((e) => e.toString()).toList();
-      return extractedCaptions;
+      List<String> extractedCaptionsTrimmed =
+          extractedCaptions.map((e) => e.toString().trim()).toList();
+      return extractedCaptionsTrimmed;
     } catch (err) {
       printAPIError(response, err);
       return [];
@@ -244,7 +244,7 @@ class GeneratorService {
         for (Map<String, dynamic> choice in collection['choices']) {
           extractedCollections.add(PostDraft(
             platform: platform,
-            caption: choice['text'],
+            caption: choice['text'].trim(),
             dateTime: date,
             imageUrl: imageUrl,
           ));

@@ -56,7 +56,7 @@ class _CreatorCampaignSinglePostEditState
         id: widget.postContent.id,
         platform: widget.postContent.platform,
         dateTime: widget.postContent.dateTime!,
-        caption: _captionController.text,
+        caption: _captionController.text.trim(),
         imageUrl: _imageUrl,
       ),
     );

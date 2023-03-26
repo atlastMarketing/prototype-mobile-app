@@ -31,7 +31,7 @@ class HelpPopup extends StatelessWidget {
       contentMaxWidth: MediaQuery.of(context).size.width - 100,
       customContent: HelpPopupContent(title: title, content: content),
       enableHighlight: highlight,
-      dismissTriggerBehavior: PopupDismissTriggerBehavior.onTapArea,
+      dismissTriggerBehavior: PopupDismissTriggerBehavior.anyWhere,
       child: child,
     );
   }

@@ -72,7 +72,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
         id: "suggested-turned-scheduled-${widget.suggestionId}",
         platform: _postData.platform,
         dateTime: _postData.dateTime!,
-        caption: _postData.caption!,
+        caption: _postData.caption!.trim(),
         imageUrl: _postData.imageUrl!,
       )
     ]);
