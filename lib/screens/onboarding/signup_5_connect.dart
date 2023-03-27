@@ -30,8 +30,6 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
 
   bool _instagramActive = false;
   bool _facebookActive = false;
-  bool _twitterActive = false;
-  bool _linkedinActive = false;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -111,20 +109,18 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
         Padding(
           padding: const EdgeInsets.all(10),
           child: InkWell(
-            onTap: () => setState(() => _linkedinActive = !_linkedinActive),
+            onTap: () => {},
             child: Image.asset(
               "assets/images/linkedin.png",
-              color: _linkedinActive ? AppColors.primary : null,
             ),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(10),
           child: InkWell(
-            onTap: () => setState(() => _twitterActive = !_twitterActive),
+            onTap: () => {},
             child: Image.asset(
               "assets/images/twitter.png",
-              color: _twitterActive ? AppColors.primary : null,
             ),
           ),
         ),
