@@ -31,8 +31,8 @@ class _UserProfileState extends State<UserProfile> {
     Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
   }
 
-  void _editProfile() {
-    Navigator.of(context).push(
+  void _editProfile(BuildContext ctx) {
+    Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (context) => UserProfileEdit(navKey: widget.navKey),
       ),
@@ -168,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
             _buildButton(
               icon: Icons.edit,
               text: "Edit Profile",
-              handlePress: _editProfile,
+              handlePress: () => _editProfile(context),
             ),
             _buildButton(
               icon: Icons.settings,

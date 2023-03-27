@@ -41,7 +41,7 @@ class HomeDashboard extends StatelessWidget {
   void _openUpcomingPost(BuildContext ctx, String postId) {
     print("Opening upcoming post with id $postId");
 
-    Navigator.of(ctx).push(
+    navKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => HomeEditSinglePost(
           navKey: navKey,

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +14,7 @@ import 'package:atlast_mobile_app/services/user_service.dart';
 import 'package:atlast_mobile_app/shared/form_text_dropdown.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
+import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 

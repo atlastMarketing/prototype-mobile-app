@@ -78,6 +78,22 @@ class _AppState extends State<App> with RouteAware {
     }
   }
 
+  Widget _askToExit() {
+    return AlertDialog(
+      content: const Text('Are you sure you want to exit?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('No'),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        TextButton(
+          child: const Text('Yes, exit'),
+          onPressed: () => Navigator.of(context).pop(true),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -89,38 +105,81 @@ class _AppState extends State<App> with RouteAware {
 
     return Consumer<UserStore>(builder: (context, model, child) {
       return model.isOnboarded && model.isLoggedIn
-          ? Scaffold(
-              body: Navigator(
-                observers: [rootObserver],
-                key: rootNavKey,
-                onGenerateRoute: (RouteSettings settings) {
-                  return MaterialPageRoute(
-                      settings: settings,
-                      builder: (BuildContext context) => PageView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: _pageController,
-                            children: [
-                              Home(
-                                navKey: _navkeys[RouteEnum.home]!,
-                                handleCreate: () =>
-                                    _navigateToPage(RouteEnum.creator),
-                              ),
-                              Calendar(
-                                navKey: _navkeys[RouteEnum.calendar]!,
-                              ),
-                              Analytics(
-                                navKey: _navkeys[RouteEnum.analytics]!,
-                              ),
-                              Settings(
-                                navKey: _navkeys[RouteEnum.settings]!,
-                              ),
-                            ],
-                          ));
-                },
+          ? WillPopScope(
+              // TODO: do something about this ugly thing
+              onWillPop: () async {
+                if (_navkeys[RouteEnum.analytics]!.currentState != null) {
+                  // print(_navkeys[RouteEnum.analytics]!.currentState!.canPop());
+                  if (_navkeys[RouteEnum.analytics]!.currentState!.canPop()) {
+                    _navkeys[RouteEnum.analytics]!.currentState!.maybePop();
+                    return false;
+                  }
+                } else if (_navkeys[RouteEnum.calendar]!.currentState != null) {
+                  // print(_navkeys[RouteEnum.calendar]!.currentState!.canPop());
+                  if (_navkeys[RouteEnum.calendar]!.currentState!.canPop()) {
+                    _navkeys[RouteEnum.calendar]!.currentState!.maybePop();
+                    return false;
+                  }
+                } else if (_navkeys[RouteEnum.creator]!.currentState != null) {
+                  // print(_navkeys[RouteEnum.creator]!.currentState!.canPop());
+                  if (_navkeys[RouteEnum.creator]!.currentState!.canPop()) {
+                    _navkeys[RouteEnum.creator]!.currentState!.maybePop();
+                    return false;
+                  }
+                } else if (_navkeys[RouteEnum.home]!.currentState != null) {
+                  // print(_navkeys[RouteEnum.home]!.currentState!.canPop());
+                  if (_navkeys[RouteEnum.home]!.currentState!.canPop()) {
+                    _navkeys[RouteEnum.home]!.currentState!.maybePop();
+                    return false;
+                  }
+                } else if (_navkeys[RouteEnum.settings]!.currentState != null) {
+                  // print(_navkeys[RouteEnum.settings]!.currentState!.canPop());
+                  if (_navkeys[RouteEnum.settings]!.currentState!.canPop()) {
+                    _navkeys[RouteEnum.settings]!.currentState!.maybePop();
+                    return false;
+                  }
+                }
+
+                return await showDialog<bool>(
+                      context: context,
+                      builder: (context) => _askToExit(),
+                    ) ??
+                    false;
+              },
+              child: Scaffold(
+                // TODO: probably remove the navigator here because we use "pageview" instead
+                body: Navigator(
+                  observers: [rootObserver],
+                  key: rootNavKey,
+                  onGenerateRoute: (RouteSettings settings) {
+                    return MaterialPageRoute(
+                        settings: settings,
+                        builder: (BuildContext context) => PageView(
+                              physics: const NeverScrollableScrollPhysics(),
+                              controller: _pageController,
+                              children: [
+                                Home(
+                                  navKey: _navkeys[RouteEnum.home]!,
+                                  handleCreate: () =>
+                                      _navigateToPage(RouteEnum.creator),
+                                ),
+                                Calendar(
+                                  navKey: _navkeys[RouteEnum.calendar]!,
+                                ),
+                                Analytics(
+                                  navKey: _navkeys[RouteEnum.analytics]!,
+                                ),
+                                Settings(
+                                  navKey: _navkeys[RouteEnum.settings]!,
+                                ),
+                              ],
+                            ));
+                  },
+                ),
+                bottomNavigationBar: model.isOnboarded && model.isLoggedIn
+                    ? BottomNavigation(onNavbarTap: _navigateToPage)
+                    : null,
               ),
-              bottomNavigationBar: model.isOnboarded && model.isLoggedIn
-                  ? BottomNavigation(onNavbarTap: _navigateToPage)
-                  : null,
             )
           : Onboarding(
               navKey: _navkeys[RouteEnum.onboarding]!,

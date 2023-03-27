@@ -31,22 +31,33 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     // lazy loading
-    return Navigator(
-      key: widget.navKey,
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) {
-            switch (settings.name) {
-              default:
-                return HomeDashboard(
-                  navKey: widget.navKey,
-                  handleCreate: widget.handleCreate,
-                );
-            }
-          },
-        );
+    return WillPopScope(
+      onWillPop: () async {
+        print("POP!");
+        if (widget.navKey.currentState != null &&
+            widget.navKey.currentState!.canPop()) {
+          // widget.navKey.currentState!.pop();
+          return false;
+        }
+        return false;
       },
+      child: Navigator(
+        key: widget.navKey,
+        initialRoute: '/',
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) {
+              switch (settings.name) {
+                default:
+                  return HomeDashboard(
+                    navKey: widget.navKey,
+                    handleCreate: widget.handleCreate,
+                  );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 }
