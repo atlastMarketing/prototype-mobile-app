@@ -108,6 +108,10 @@ class AppText {
   static const bodySmall = TextStyle(
     fontSize: 12,
   );
+  static const bodySmallBold = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+  );
 
   static const primaryText = TextStyle(color: AppColors.primary);
   static const darkText = TextStyle(color: AppColors.dark);

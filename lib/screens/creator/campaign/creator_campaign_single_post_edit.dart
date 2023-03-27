@@ -260,13 +260,22 @@ class _CreatorCampaignSinglePostEditState
             ),
           ),
         ),
-        // TODO: replace with platform icons
         Positioned(
-          top: 30,
-          left: 120,
-          child: Text(
-            socialMediaPlatformsOptions[widget.postContent.platform]!,
-          ),
+          top: 5,
+          right: 20,
+          child: Row(children: [
+            Text(
+              socialMediaPlatformsOptions[widget.postContent.platform]!,
+              style: AppText.bodyBold.merge(AppText.darkText),
+            ),
+            const Padding(padding: EdgeInsets.only(right: 5)),
+            Image.asset(
+              socialMediaPlatformsImageUrls[widget.postContent.platform]!,
+              width: 14,
+              height: 14,
+              color: AppColors.dark,
+            ),
+          ]),
         ),
       ],
     );
