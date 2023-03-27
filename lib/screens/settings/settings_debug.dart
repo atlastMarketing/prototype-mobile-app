@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -74,16 +76,56 @@ class SettingsDebug extends StatelessWidget {
     ScheduledPostsStore scheduledPostsProvider =
         Provider.of<ScheduledPostsStore>(ctx, listen: false);
 
+    final Random randomizer = Random();
+    DateTime today = DateTime.now().add(Duration(
+      hours: randomizer.nextInt(6),
+    ));
+
     List<PostContent> generated = [];
+
+    generated.add(PostContent(
+      id: "sample-generated-ig-first",
+      platform: SocialMediaPlatforms.instagram,
+      dateTime: today.millisecondsSinceEpoch,
+      caption:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
+      imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+    ));
+    generated.add(PostContent(
+      id: "sample-generated-fb-first",
+      platform: SocialMediaPlatforms.facebook,
+      dateTime: today.millisecondsSinceEpoch,
+      caption:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
+      imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+    ));
+
     for (int idx in List<int>.generate(5, (i) => i)) {
-      DateTime today = DateTime.now().add(Duration(days: idx));
+      DateTime today = DateTime.now().add(Duration(
+        days: idx + 1,
+        hours: randomizer.nextInt(6),
+      ));
       generated.add(PostContent(
-        id: "sample-generated-$idx",
+        id: "sample-generated-ig-$idx",
         platform: SocialMediaPlatforms.instagram,
         dateTime: today.millisecondsSinceEpoch,
         caption:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-        imageUrl: stockImages[stockImages.length - 1 - idx],
+        imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+      ));
+    }
+    for (int idx in List<int>.generate(3, (i) => i)) {
+      DateTime today = DateTime.now().add(Duration(
+        days: idx * 2 + 1,
+        hours: randomizer.nextInt(6),
+      ));
+      generated.add(PostContent(
+        id: "sample-generated-fb-$idx",
+        platform: SocialMediaPlatforms.facebook,
+        dateTime: today.millisecondsSinceEpoch,
+        caption:
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
+        imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
       ));
     }
     scheduledPostsProvider.add(generated);
