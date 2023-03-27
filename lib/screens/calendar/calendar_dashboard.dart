@@ -39,7 +39,7 @@ class CalendarDashboard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const HeroHeading(text: "Calendar Dashboard"),
+              const HeroHeading(text: "Your Calendar"),
               Expanded(
                 child: WidgetOverlays(
                   // loading: _campaignDatesIsLoading || _captionsIsLoading,

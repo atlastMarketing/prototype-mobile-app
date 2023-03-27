@@ -9,6 +9,7 @@ class LayoutNormalPage extends StatelessWidget {
   final String? appBarTitleText;
   final Widget? appBarContent;
   final EdgeInsets? paddingOverwrite;
+  final List<Widget> actionWidgets;
 
   const LayoutNormalPage({
     Key? key,
@@ -19,6 +20,7 @@ class LayoutNormalPage extends StatelessWidget {
     // fancy aesthetic stuff (not necessary)
     // if any of the pages break because of overflows, this is the first thing to turn off.
     this.paddingOverwrite,
+    this.actionWidgets = const [],
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
@@ -50,6 +52,7 @@ class LayoutNormalPage extends StatelessWidget {
               onPressed: handleBack,
             )
           : null,
+      actions: actionWidgets,
       title: titleContent,
     );
   }

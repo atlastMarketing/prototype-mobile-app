@@ -25,7 +25,7 @@ class AnalyticsDashboard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const HeroHeading(text: "Analytics Dashboard"),
+                    const HeroHeading(text: "Your Analytics"),
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.all(100),

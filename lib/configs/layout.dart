@@ -11,3 +11,6 @@ const EdgeInsets pageHorizontalPadding =
 
 const EdgeInsets pagePaddingNoTop =
     EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 40);
+
+const EdgeInsets pagePaddingNoBottom =
+    EdgeInsets.only(top: 0, left: 20, right: 20, bottom: 0);

@@ -10,6 +10,7 @@ class LayoutFullPage extends StatelessWidget {
   final Widget? appBarContent;
   final bool squeezeContents;
   final EdgeInsets? paddingOverwrite;
+  final List<Widget> actionWidgets;
 
   const LayoutFullPage({
     Key? key,
@@ -21,6 +22,7 @@ class LayoutFullPage extends StatelessWidget {
     // if any of the pages break because of overflows, this is the first thing to turn off.
     this.squeezeContents = false,
     this.paddingOverwrite,
+    this.actionWidgets = const [],
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
@@ -52,6 +54,7 @@ class LayoutFullPage extends StatelessWidget {
               onPressed: handleBack,
             )
           : null,
+      actions: actionWidgets,
       title: titleContent,
     );
   }
@@ -68,10 +71,11 @@ class LayoutFullPage extends StatelessWidget {
 
     EdgeInsets padding = paddingOverwrite ?? pagePadding;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: LayoutBuilder(builder:
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(),
+      body: SafeArea(
+        child: LayoutBuilder(builder:
             (BuildContext context, BoxConstraints viewportConstraints) {
           return squeezeContents
               ? SingleChildScrollView(
@@ -87,9 +91,9 @@ class LayoutFullPage extends StatelessWidget {
                 )
               : Padding(padding: padding, child: content);
         }),
-        resizeToAvoidBottomInset: true,
-        extendBody: false,
       ),
+      resizeToAvoidBottomInset: true,
+      extendBody: false,
     );
   }
 }
