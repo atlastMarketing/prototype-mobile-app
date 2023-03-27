@@ -86,7 +86,7 @@ class UserService {
 
       final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
       response = await http.put(
-        Uri.parse('$API_URL/user'),
+        Uri.parse('$API_URL/user/${user.id}'),
         headers: headers,
         body: json.encode(requestBody),
       );
