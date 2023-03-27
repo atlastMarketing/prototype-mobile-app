@@ -76,7 +76,7 @@ class AppText {
     fontWeight: FontWeight.w600,
   );
   static const buttonText = TextStyle(
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
   );
   // body

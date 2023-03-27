@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:info_popup/info_popup.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 
 class HelpPopup extends StatelessWidget {
   final String title;
@@ -9,9 +11,9 @@ class HelpPopup extends StatelessWidget {
   final Widget child;
   final bool highlight;
   final bool down;
-  void Function(InfoPopupController)? handleDismiss;
+  final void Function(InfoPopupController)? handleDismiss;
 
-  HelpPopup({
+  const HelpPopup({
     Key? key,
     this.title = "",
     this.content,
@@ -23,6 +25,9 @@ class HelpPopup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool enabled =
+        Provider.of<UserStore>(context, listen: false).hasHelpPopups;
+    if (!enabled) return child;
     return InfoPopupWidget(
       onControllerCreated: (InfoPopupController controller) =>
           controller.show(),
@@ -31,7 +36,7 @@ class HelpPopup extends StatelessWidget {
       contentMaxWidth: MediaQuery.of(context).size.width - 100,
       customContent: HelpPopupContent(title: title, content: content),
       enableHighlight: highlight,
-      dismissTriggerBehavior: PopupDismissTriggerBehavior.anyWhere,
+      dismissTriggerBehavior: PopupDismissTriggerBehavior.onTapArea,
       child: child,
     );
   }

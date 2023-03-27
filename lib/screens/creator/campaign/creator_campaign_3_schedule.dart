@@ -298,7 +298,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
           child: HelpPopup(
             title: "Choose your campaign!",
             content:
-                "Regenerate new campaigns until you find the right one! You can start editing posts until you confirm a campaign of choice.",
+                "Regenerate new campaigns until you find the right one! You can start editing posts after you confirm a campaign of choice.",
             highlight: false,
             down: true,
             child: CustomButton(
@@ -316,7 +316,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
             disabled: _captionsIsLoading,
             handlePressed: _approveCampaignDates,
             fillColor: AppColors.primary,
-            text: 'Use Campaign',
+            text: 'Confirm Campaign',
           ),
         ),
       ],
@@ -353,6 +353,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                           handleTap: _openEditSinglePost,
                           updatePost: _saveDraftPost,
                           initialDate: firstDate,
+                          enableOnboarding: true,
                           minDateRestriction: DateTime.now(),
                         ),
                       ),
