@@ -11,8 +11,8 @@ class UserStore extends ChangeNotifier {
   String _businessIndustry = "";
   String _businessDescription = "";
   String _businessVoice = "";
-  String _avatarImageUrl = "";
   String _businessUrl = "";
+  String _avatarImageUrl = "";
 
   // TODO: move app logic settings elswhere
   bool _isOnboarded = false;
@@ -31,8 +31,8 @@ class UserStore extends ChangeNotifier {
         businessIndustry: _businessIndustry,
         businessDescription: _businessDescription,
         businessVoice: _businessVoice,
-        avatarImageUrl: _avatarImageUrl,
         businessUrl: _businessUrl,
+        avatarImageUrl: _avatarImageUrl,
       );
 
   /// Setters
@@ -54,8 +54,8 @@ class UserStore extends ChangeNotifier {
     String? businessIndustry,
     String? businessDescription,
     String? businessVoice,
-    String? avatarImageUrl,
     String? businessUrl,
+    String? avatarImageUrl,
   }) {
     _id = id;
     _email = email ?? _email;
@@ -64,8 +64,8 @@ class UserStore extends ChangeNotifier {
     _businessIndustry = businessIndustry ?? _businessIndustry;
     _businessDescription = businessDescription ?? _businessDescription;
     _businessVoice = businessVoice ?? _businessVoice;
-    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
     _businessUrl = businessUrl ?? _businessUrl;
+    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
     notifyListeners();
   }
 
@@ -90,8 +90,8 @@ class UserStore extends ChangeNotifier {
     String? businessIndustry,
     String? businessDescription,
     String? businessVoice,
-    String? avatarImageUrl,
     String? businessUrl,
+    String? avatarImageUrl,
   }) {
     _email = email ?? _email;
     _businessName = businessName ?? _businessName;
@@ -99,8 +99,8 @@ class UserStore extends ChangeNotifier {
     _businessIndustry = businessIndustry ?? _businessIndustry;
     _businessDescription = businessDescription ?? _businessDescription;
     _businessVoice = businessVoice ?? _businessVoice;
-    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
     _businessUrl = businessUrl ?? _businessUrl;
+    _avatarImageUrl = avatarImageUrl ?? _avatarImageUrl;
     notifyListeners();
   }
 }

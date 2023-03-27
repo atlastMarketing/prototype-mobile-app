@@ -1,10 +1,8 @@
-// ((make|create)( \w )?)?( a )?((campaign)|(marketing campaign))
+import 'package:flutter/foundation.dart';
 
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
-import 'package:atlast_mobile_app/constants/unique_char.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/constants/unique_char.dart';
 
 class NERRegexRange {
   int start;

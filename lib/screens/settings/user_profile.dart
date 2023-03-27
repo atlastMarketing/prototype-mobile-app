@@ -10,6 +10,8 @@ import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
+import './user_profile_edit.dart';
+
 class UserProfile extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
@@ -27,6 +29,14 @@ class _UserProfileState extends State<UserProfile> {
     Provider.of<UserStore>(context, listen: false).clear();
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(false);
     Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
+  }
+
+  void _editProfile() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UserProfileEdit(navKey: widget.navKey),
+      ),
+    );
   }
 
   Widget _buildProfile() {
@@ -50,14 +60,25 @@ class _UserProfileState extends State<UserProfile> {
               child:
                   Text(model.data.businessName ?? "", style: AppText.heading),
             ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text(
+                  model.data.businessIndustry ?? "",
+                  textAlign: TextAlign.center,
+                  style: AppText.primaryText,
+                ),
+              ),
+            ),
             SizedBox(
-              width: MediaQuery.of(context).size.width / 2,
+              width: double.infinity,
               child: Text(
-                model.data.businessIndustry ?? "",
+                model.data.businessDescription ?? "",
                 textAlign: TextAlign.center,
                 style: AppText.darkText,
               ),
-            )
+            ),
           ],
         ),
         const Divider(),
@@ -147,7 +168,7 @@ class _UserProfileState extends State<UserProfile> {
             _buildButton(
               icon: Icons.edit,
               text: "Edit Profile",
-              handlePress: () {},
+              handlePress: _editProfile,
             ),
             _buildButton(
               icon: Icons.settings,
