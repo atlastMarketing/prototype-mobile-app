@@ -197,7 +197,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return LayoutNormalPage(
-      paddingOverwrite: pagePaddingNoBottom,
+      paddingOverwrite: pageHorizontalPadding,
       appBarContent: const Text(""),
       content: SingleChildScrollBare(
         child: Column(
