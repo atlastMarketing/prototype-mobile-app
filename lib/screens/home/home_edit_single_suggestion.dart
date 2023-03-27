@@ -1,4 +1,3 @@
-import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +13,8 @@ import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class HomeEditSingleSuggestion extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -87,7 +86,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
     _loadPostData();
   }
 
-  Widget _buildImageUploader() {
+  Widget _buildImage() {
     return _postData.imageUrl != null
         ? AvatarImage(Uri.encodeFull(_postData.imageUrl!))
         : Stack(
@@ -159,20 +158,22 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: _buildImageUploader(),
-              ),
-              CustomFormTextField(
-                controller: _captionController,
-                previewOnly: true,
-                autocorrect: true,
-                vSize: 7,
-              ),
-            ],
+          child: SingleChildScrollBare(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImage(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: CustomFormTextField(
+                    controller: _captionController,
+                    previewOnly: true,
+                    autocorrect: true,
+                    vSize: 7,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Positioned(
@@ -234,7 +235,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutNormalPage(
+    return LayoutFullPage(
       handleBack: _handleBack,
       paddingOverwrite: pagePaddingNoTop,
       content: Column(

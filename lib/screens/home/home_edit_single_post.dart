@@ -12,6 +12,7 @@ import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class HomeEditSinglePost extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -210,17 +211,27 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: _buildImageUploader(),
+              Expanded(
+                child: SingleChildScrollBare(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: _buildImageUploader(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: CustomFormTextField(
+                          controller: _captionController,
+                          previewOnly: !_isEditingCaption,
+                          autocorrect: true,
+                          vSize: 7,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              CustomFormTextField(
-                controller: _captionController,
-                previewOnly: !_isEditingCaption,
-                autocorrect: true,
-                vSize: 7,
-              ),
-              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

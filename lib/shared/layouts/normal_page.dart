@@ -59,26 +59,19 @@ class LayoutNormalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget? appBar = _buildAppBar();
-    double maxHeight = MediaQuery.of(context).size.height;
-    // minus safearea
-    maxHeight -= MediaQuery.of(context).padding.top;
-    maxHeight -= MediaQuery.of(context).padding.bottom;
-    // minus appbar
-    maxHeight -= appBar != null ? appBar.preferredSize.height : 0;
-
     EdgeInsets padding = paddingOverwrite ?? pagePadding;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: LayoutBuilder(builder:
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(),
+      body: SafeArea(
+        child: LayoutBuilder(builder:
             (BuildContext context, BoxConstraints viewportConstraints) {
           return Padding(padding: padding, child: content);
         }),
-        resizeToAvoidBottomInset: true,
-        extendBody: false,
       ),
+      resizeToAvoidBottomInset: true,
+      extendBody: false,
     );
   }
 }
