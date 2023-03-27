@@ -11,7 +11,6 @@ import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
 class HomeEditSinglePost extends StatefulWidget {
@@ -39,11 +38,73 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
   late PostContent _postData;
 
   void _handleBack() {
-    widget.navKey.currentState!.pop();
+    if (_postData.caption == _captionController.text) {
+      widget.navKey.currentState!.pop();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Discard Changes?'),
+          content: const Text(
+              'Are you sure you want to exit? Any unsaved changes will be discarded'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.navKey.currentState!.pop();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _handleSave() {
+    Provider.of<ScheduledPostsStore>(context, listen: false).update(_postData);
     widget.navKey.currentState!.pop();
+  }
+
+  void _handleDelete() {
+    Provider.of<ScheduledPostsStore>(context, listen: false)
+        .remove(_postData.id);
+    widget.navKey.currentState!.pop();
+  }
+
+  void _handleDeleteAttempt() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text(
+              'Are you sure you want to delete this post? You will not be able to retrieve it once it is deleted.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _handleDelete();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _toggleEditState() {
@@ -163,6 +224,22 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed: _handleDeleteAttempt,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.error,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.delete_forever,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
                   ElevatedButton(
                     onPressed: _toggleEditState,
                     style: ElevatedButton.styleFrom(

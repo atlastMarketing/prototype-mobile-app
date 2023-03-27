@@ -46,7 +46,35 @@ class _CreatorCampaignSinglePostEditState
   bool _captionsIsLoading = false;
 
   void _handleBack() {
-    widget.navKey.currentState!.pop();
+    if (widget.postContent.caption == _captionController.text) {
+      widget.navKey.currentState!.pop();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Discard Changes?'),
+          content: const Text(
+              'Are you sure you want to exit? Any unsaved changes will be discarded'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.navKey.currentState!.pop();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _handleSave() {
