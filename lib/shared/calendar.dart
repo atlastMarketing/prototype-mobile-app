@@ -1,12 +1,10 @@
-import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/utils/datetime_utils.dart';
 
 class CustomCalendar extends StatefulWidget {
@@ -63,11 +61,9 @@ class _CustomCalendarState extends State<CustomCalendar> {
     CalendarAppointmentDetails details,
   ) {
     final PostContent currPost = details.appointments.first;
-
     final shouldShowOnboarding = widget.enableOnboarding &&
         !widget.disableInteractions &&
         !_isPopupDismissed &&
-        Provider.of<UserStore>(context, listen: false).hasHelpPopups &&
         _isFirstAppointment(currPost.id);
 
     if ([

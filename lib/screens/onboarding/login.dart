@@ -33,6 +33,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isUserNotFound = false;
+  bool _isLoggingIn = false;
 
   Future<void> _fetchSuggestions(UserModel user) async {
     try {
@@ -54,6 +55,8 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   }
 
   void _handleLoginClick() async {
+    setState(() => _isLoggingIn = true);
+
     UserStore userModelProvider =
         Provider.of<UserStore>(context, listen: false);
 
@@ -61,7 +64,10 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
 
     if (user == null) {
       print("CANNOT LOGIN - USER NOT FOUND!");
-      setState(() => _isUserNotFound = true);
+      setState(() {
+        _isUserNotFound = true;
+        _isLoggingIn = false;
+      });
       return;
     }
 
@@ -80,6 +86,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     await _fetchSuggestions(user);
 
     print("SUCCESSFUL LOGIN FOR USER WITH ID '${user.id}'");
+    setState(() => _isLoggingIn = false);
 
     // check if user onboarded (any missing stuff?)
     if (user.businessName == null ||
@@ -108,6 +115,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   }
 
   void _handleCreateAccount() {
+    if (_isLoggingIn) return;
     widget.navKey.currentState!.pushNamed("/onboarding-1");
   }
 
@@ -152,18 +160,26 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
             "made easy,",
             style: AppText.title.merge(AppText.blackText),
           ),
-          GestureDetector(
-            onDoubleTap: forceLogin,
-            child: GradientText(
-              "atlast",
-              style: AppText.title.merge(AppText.blackText),
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.secondary.withOpacity(0.5),
-                  AppColors.primary,
-                ],
+          Row(
+            children: [
+              GestureDetector(
+                onDoubleTap: forceLogin,
+                child: GradientText(
+                  "atlast",
+                  style: AppText.title.merge(AppText.blackText),
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.secondary.withOpacity(0.5),
+                      AppColors.primary,
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Text(
+                ".",
+                style: AppText.title.merge(AppText.blackText),
+              ),
+            ],
           ),
         ],
       ),
@@ -222,6 +238,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
                 }
               },
               fillColor: AppColors.secondary,
+              isSpinning: _isLoggingIn,
               text: 'Login',
             ),
           ),

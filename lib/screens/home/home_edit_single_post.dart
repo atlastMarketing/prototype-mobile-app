@@ -1,4 +1,3 @@
-import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,47 +6,54 @@ import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
-import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
-import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
-class HomeEditSingleSuggestion extends StatefulWidget {
+class HomeEditSinglePost extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final int suggestionId;
+  final String postId;
+  final List<String> initialCaptions;
 
-  const HomeEditSingleSuggestion({
+  const HomeEditSinglePost({
     Key? key,
     required this.navKey,
-    required this.suggestionId,
+    required this.postId,
+    this.initialCaptions = const [],
   }) : super(key: key);
 
   @override
-  _HomeEditSingleSuggestionState createState() =>
-      _HomeEditSingleSuggestionState();
+  _HomeEditSinglePostState createState() => _HomeEditSinglePostState();
 }
 
-class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
+class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
   final TextEditingController _captionController = TextEditingController();
+  bool _isEditingCaption = false;
 
   bool _isPostLoaded = false;
   bool _isPostNotFound = false;
-  late PostDraft _postData;
+  late PostContent _postData;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
 
-  void _loadPostData() async {
-    List<PostDraft> posts =
-        Provider.of<SuggestedPostsStore>(context, listen: false).suggestions;
+  void _handleSave() {
+    widget.navKey.currentState!.pop();
+  }
 
-    if (widget.suggestionId > posts.length || widget.suggestionId < 0) {
+  void _toggleEditState() {
+    setState(() => _isEditingCaption = !_isEditingCaption);
+  }
+
+  void _loadPostData() async {
+    PostContent? post = Provider.of<ScheduledPostsStore>(context, listen: false)
+        .postById(widget.postId);
+    if (post == null) {
       setState(() {
         _isPostLoaded = true;
         _isPostNotFound = true;
@@ -55,30 +61,11 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
       return;
     }
 
-    PostDraft post = posts[widget.suggestionId];
     _captionController.text = post.caption ?? "";
     setState(() {
       _isPostLoaded = true;
       _postData = post;
     });
-  }
-
-  void _handleCreate() {
-    SuggestedPostsStore suggestedPostsStore =
-        Provider.of<SuggestedPostsStore>(context, listen: false);
-    ScheduledPostsStore scheduledPostsStore =
-        Provider.of<ScheduledPostsStore>(context, listen: false);
-    scheduledPostsStore.add([
-      PostContent(
-        id: "suggested-turned-scheduled-${widget.suggestionId}",
-        platform: _postData.platform,
-        dateTime: _postData.dateTime!,
-        caption: _postData.caption!.trim(),
-        imageUrl: _postData.imageUrl!,
-      )
-    ]);
-    suggestedPostsStore.pop();
-    _handleBack();
   }
 
   @override
@@ -144,7 +131,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
       children: [
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           decoration: const BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.all(
@@ -168,10 +155,52 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
               ),
               CustomFormTextField(
                 controller: _captionController,
-                previewOnly: true,
+                previewOnly: !_isEditingCaption,
                 autocorrect: true,
                 vSize: 7,
               ),
+              const Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _toggleEditState,
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(8),
+                      backgroundColor: AppColors.customize,
+                      // foregroundColor: AppColors.black,
+                    ),
+                    child: _isEditingCaption
+                        ? const Icon(
+                            Icons.save,
+                            color: Colors.white,
+                            size: 25,
+                          )
+                        : const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                  ),
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed: _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.confirm,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
+                ],
+              )
             ],
           ),
         ),
@@ -225,27 +254,14 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutNormalPage(
+    return LayoutFullPage(
       handleBack: _handleBack,
       paddingOverwrite: pagePaddingNoTop,
-      content: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: pageHorizontalPadding,
-            clipBehavior: Clip.none,
-            child: _buildForm(),
-          ),
-          const Spacer(),
-          Container(
-            width: double.infinity,
-            padding: pageHorizontalPadding,
-            child: CustomButton(
-              text: 'Create Scheduled Post',
-              handlePressed: _handleCreate,
-            ),
-          ),
-        ],
+      content: Container(
+        width: double.infinity,
+        padding: pageHorizontalPadding,
+        clipBehavior: Clip.none,
+        child: _buildForm(),
       ),
     );
   }

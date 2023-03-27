@@ -43,7 +43,7 @@ With the Flutter extension installed, a lot of the flutter commands can be acces
 
 ## Build
 ### Building for Android
-- Run the `build.sh` file
+- Run the `build.sh` file to build an output file (`apk`, etc)
 
 Other manual method:
 - Simply connect android device through USB and run `flutter install -d <DEVICE_ID>`
@@ -57,3 +57,8 @@ Additional Refs:
 
 Honestly have never tried it before - can't give good insight into this
 Resource: https://medium.com/front-end-weekly/how-to-test-your-flutter-ios-app-on-your-ios-device-75924bfd75a8
+
+### Generating icons
+```
+flutter pub run flutter_launcher_icons
+```

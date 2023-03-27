@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -165,19 +166,24 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 30),
-            child: CustomFormTextField(
-              controller: _catalystInputController,
-              placeholderText:
-                  "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
-              vSize: 6,
-              autocorrect: true,
-              validator: (String? val) {
-                if (val == null ||
-                    val == "" ||
-                    widget.catalyst.derivedPrompt == "") {
-                  return 'Enter a more detailed description of your campaign!';
-                }
-              },
+            child: HelpPopup(
+              title: "Describe your campaign!",
+              content:
+                  "Using as much detail, describe your campaign (including dates, frequency, platforms, etc). We'll convert everything you type here into meaningful information for your campaign!",
+              child: CustomFormTextField(
+                controller: _catalystInputController,
+                placeholderText:
+                    "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
+                vSize: 6,
+                autocorrect: true,
+                validator: (String? val) {
+                  if (val == null ||
+                      val == "" ||
+                      widget.catalyst.derivedPrompt == "") {
+                    return 'Enter a more detailed description of your campaign!';
+                  }
+                },
+              ),
             ),
           ),
           const Text(
