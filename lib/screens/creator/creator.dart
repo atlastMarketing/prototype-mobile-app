@@ -1,4 +1,3 @@
-import 'package:atlast_mobile_app/screens/creator/campaign/creator_campaign_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
@@ -20,7 +19,8 @@ import 'package:atlast_mobile_app/utils/ner_regex.dart';
 import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_images.dart';
 import 'campaign/creator_campaign_3_schedule.dart';
-import 'social_media_post/creator_social_media_post_1_prompt.dart';
+import 'campaign/creator_campaign_confirm.dart';
+import 'social_media_post/creator_social_media_post_1_catalyst.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
 import 'social_media_post/creator_social_media_post_image.dart';
 
@@ -478,7 +478,7 @@ class _CreatorState extends State<Creator> {
                       saveImageUrl: (String url) =>
                           {setState(() => imageUrl = url)});
                 case "/post-1":
-                  return CreatorSocialMediaPostPrompt(
+                  return CreatorSocialMediaPostCatalyst(
                     navKey: widget.navKey,
                     analyzeCatalyst: _analyzeCatalyst,
                     updateCatalyst: _updateCatalyst,

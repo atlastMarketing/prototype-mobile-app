@@ -14,7 +14,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
-class CreatorSocialMediaPostPrompt extends StatefulWidget {
+class CreatorSocialMediaPostCatalyst extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final Future<void> Function(
     String catalyst, {
@@ -32,7 +32,7 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
   final DateAnnotation? dateAnnotation;
   final SocialMediaPlatformAnnotation? socialMediaPlatformAnnotation;
 
-  const CreatorSocialMediaPostPrompt({
+  const CreatorSocialMediaPostCatalyst({
     Key? key,
     required this.navKey,
     required this.analyzeCatalyst,
@@ -43,17 +43,21 @@ class CreatorSocialMediaPostPrompt extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreatorSocialMediaPostPromptState createState() =>
-      _CreatorSocialMediaPostPromptState();
+  _CreatorSocialMediaPostCatalystState createState() =>
+      _CreatorSocialMediaPostCatalystState();
 }
 
-class _CreatorSocialMediaPostPromptState
-    extends State<CreatorSocialMediaPostPrompt> {
+class _CreatorSocialMediaPostCatalystState
+    extends State<CreatorSocialMediaPostCatalyst> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   String _catalystPrev = "";
   final AnnotatedTextController _catalystInputController =
       AnnotatedTextController();
+  final TextEditingController _dateController = TextEditingController();
+  DateTime? _date;
+  List<SocialMediaPlatforms> _listOfSelectedPlatforms = [];
+  bool _listOfSelectedPlatformsHasError = false;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -71,6 +75,20 @@ class _CreatorSocialMediaPostPromptState
       _catalystInputController.text,
       type: CatalystOutputTypes.singlePost,
     );
+  }
+
+  void _handleChangeSelectedPlatforms(List<dynamic> newList) {
+    widget.updateCatalyst(platforms: newList as List<SocialMediaPlatforms>);
+    setState(() => _listOfSelectedPlatforms = newList);
+  }
+
+  void _handleChangeDate(DateTime date, String formattedDate) {
+    widget.updateCatalyst(startTimestamp: date.millisecondsSinceEpoch);
+    setState(() {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      _dateController.text = formattedDate;
+      _date = date;
+    });
   }
 
   Widget _buildDate() {
