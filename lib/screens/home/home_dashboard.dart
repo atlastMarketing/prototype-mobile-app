@@ -1,5 +1,3 @@
-import 'package:atlast_mobile_app/screens/calendar/calendar_edit_single_post.dart';
-import 'package:atlast_mobile_app/screens/home/home_edit_single_suggestion.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +11,9 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/post_preview.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+
+import './home_edit_single_post.dart';
+import './home_edit_single_suggestion.dart';
 
 class HomeDashboard extends StatelessWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -42,7 +43,7 @@ class HomeDashboard extends StatelessWidget {
 
     Navigator.of(ctx).push(
       MaterialPageRoute(
-        builder: (context) => CalendarEditSinglePost(
+        builder: (context) => HomeEditSinglePost(
           navKey: navKey,
           postId: postId,
         ),

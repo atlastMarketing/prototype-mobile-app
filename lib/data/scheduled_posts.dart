@@ -9,7 +9,8 @@ class ScheduledPostsStore extends ChangeNotifier {
 
   /// Getters
   UnmodifiableListView<PostContent> get posts =>
-      UnmodifiableListView(_posts.values);
+      UnmodifiableListView(_posts.values.toList()
+        ..sort((a, b) => a.dateTime!.compareTo(b.dateTime!)));
 
   PostContent? postById(String postId) => _posts[postId];
 
