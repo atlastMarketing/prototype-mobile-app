@@ -177,7 +177,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
           platform: platform,
           imageUrl: draftCounter > widget.images.length - 1
               ? stockImages[Random().nextInt(stockImages.length - 1)]
-              : widget.images[draftCounter],
+              : widget.images[draftCounter].imageUrl,
         );
       }).toList();
       allDrafts.addAll(newDrafts);
@@ -222,7 +222,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     widget.saveDraftPosts(newPosts);
   }
 
-  void _approveCampaignDates() async {
+  Future<void> _approveCampaignDates() async {
     await _fetchCaptionsForCampaign();
     setState(() {
       _calendarRebuildCount += 1;
@@ -256,7 +256,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
                   text: 'confirm your dates ',
                   style: TextStyle(fontWeight: FontWeight.w700),
                 ),
-                TextSpan(text: 'and start editing single posts?'),
+                TextSpan(text: 'before editing single posts?'),
               ],
             ),
           ),
@@ -265,7 +265,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 setState(() => _userKnowsHowToEdit = true);
-                _approveCampaignDates();
+                await _approveCampaignDates();
                 _openEditSinglePost(postId);
               },
               child: const Text('Yes, confirm dates now'),
