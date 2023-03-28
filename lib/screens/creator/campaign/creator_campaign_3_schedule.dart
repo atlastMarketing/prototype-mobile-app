@@ -7,7 +7,6 @@ import 'package:atlast_mobile_app/constants/stock_images.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
-import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
@@ -67,8 +66,6 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   }
 
   void _handleContinue() {
-    Provider.of<ScheduledPostsStore>(context, listen: false)
-        .add(widget.draftPosts);
     widget.navKey.currentState!.pushNamed("/campaign-confirm");
   }
 

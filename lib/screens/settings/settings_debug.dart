@@ -10,6 +10,7 @@ import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 
@@ -47,6 +48,25 @@ class SettingsDebug extends StatelessWidget {
       );
 
       suggestedPostProvider.addCollections(response);
+      return;
+    } catch (err) {
+      print(err);
+      return;
+    }
+  }
+
+  Future<void> _fetchScheduledPosts(BuildContext ctx) async {
+    try {
+      UserStore userModelProvider = Provider.of<UserStore>(ctx, listen: false);
+      ScheduledPostsStore scheduledPostsProvider =
+          Provider.of<ScheduledPostsStore>(ctx, listen: false);
+
+      final List<PostContent> response =
+          await ContentManagerService.getAllContent(
+        userModelProvider.data.id,
+      );
+
+      scheduledPostsProvider.add(response);
       return;
     } catch (err) {
       print(err);
@@ -169,6 +189,10 @@ class SettingsDebug extends StatelessWidget {
           FilledButton(
             onPressed: () => _fetchSuggestions(context),
             child: const Text("Fetch suggestions (online)"),
+          ),
+          FilledButton(
+            onPressed: () => _fetchScheduledPosts(context),
+            child: const Text("Fetch scheduled posts (online)"),
           ),
           FilledButton(
             onPressed: () => _createSampleSuggestions(context),

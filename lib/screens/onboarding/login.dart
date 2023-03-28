@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/user_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/services/user_service.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
@@ -54,6 +56,22 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     }
   }
 
+  Future<void> _fetchScheduledPosts(UserModel user) async {
+    try {
+      ScheduledPostsStore scheduledPostsStore =
+          Provider.of<ScheduledPostsStore>(context, listen: false);
+
+      final List<PostContent> response =
+          await ContentManagerService.getAllContent(user.id);
+
+      scheduledPostsStore.add(response);
+      return;
+    } catch (err) {
+      print(err);
+      return;
+    }
+  }
+
   void _handleLoginClick() async {
     setState(() => _isLoggingIn = true);
 
@@ -82,6 +100,8 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
       businessUrl: user.businessUrl,
       avatarImageUrl: user.avatarImageUrl,
     );
+
+    await _fetchScheduledPosts(user);
 
     await _fetchSuggestions(user);
 
@@ -120,6 +140,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
   }
 
   void _handleForgotPassword() {
+    if (_isLoggingIn) return;
     widget.navKey.currentState!.pushNamed("/forgot-password");
   }
 

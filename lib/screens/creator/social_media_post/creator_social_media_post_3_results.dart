@@ -51,7 +51,7 @@ class _CreatorSocialMediaPostResultsState
   }
 
   Future<void> _saveContent() async {
-    await ContentManagerService.saveContent(widget.imageUrl);
+    // await ContentManagerService.saveContent(widget.imageUrl);
   }
 
   Future<void> _fetchCaptions(BuildContext ctx) async {
