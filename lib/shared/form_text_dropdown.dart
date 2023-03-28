@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 
 class CustomFormTextDropdown extends StatelessWidget {
-  final String value;
+  final String? value;
   final void Function(dynamic) handleChanged;
   final List<String> items;
   final Color? fillColor;
   final FocusNode? focusNode;
+  final String? Function(String?)? validator;
 
   const CustomFormTextDropdown({
     Key? key,
@@ -16,6 +17,7 @@ class CustomFormTextDropdown extends StatelessWidget {
     required this.items,
     this.fillColor,
     this.focusNode,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -23,6 +25,7 @@ class CustomFormTextDropdown extends StatelessWidget {
     return ButtonTheme(
       alignedDropdown: true,
       child: DropdownButtonFormField(
+        validator: validator,
         focusNode: focusNode,
         menuMaxHeight: 500,
         value: value,

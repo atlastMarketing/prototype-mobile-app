@@ -1,11 +1,11 @@
-import 'package:atlast_mobile_app/data/user.dart';
-import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
@@ -14,11 +14,13 @@ import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 class CreatorSocialMediaPostConfirm extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final List<PostContent> draftPosts;
+  final Function() exit;
 
   const CreatorSocialMediaPostConfirm({
     Key? key,
     required this.navKey,
     required this.draftPosts,
+    required this.exit,
   }) : super(key: key);
 
   @override
@@ -63,6 +65,7 @@ class _CreatorSocialMediaPostConfirmState
     });
     Future.delayed(const Duration(milliseconds: 6000), () {
       widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+      widget.exit();
     });
   }
 

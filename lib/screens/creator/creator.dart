@@ -24,7 +24,7 @@ import 'campaign/creator_campaign_confirm.dart';
 import 'social_media_post/creator_social_media_post_1_catalyst.dart';
 import 'social_media_post/creator_social_media_post_2_image.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
-import 'social_media_post/creator_social_media_post_4_schedule.dart';
+// import 'social_media_post/creator_social_media_post_4_schedule.dart';
 import 'social_media_post/creator_social_media_post_confirm.dart';
 
 class Creator extends StatefulWidget {
@@ -526,6 +526,7 @@ class _CreatorState extends State<Creator> {
                   return CreatorSocialMediaPostConfirm(
                     navKey: widget.navKey,
                     draftPosts: _draftPosts,
+                    exit: _exitCreator,
                   );
                 case "/campaign-1":
                   List<Annotation> textAnnotations = _compileAnnotations();
