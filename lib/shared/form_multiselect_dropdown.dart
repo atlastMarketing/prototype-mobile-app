@@ -42,7 +42,9 @@ class _CustomFormMultiselectDropdownState
         Container(
           margin: const EdgeInsets.only(top: 10.0),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.dark),
+            border: Border.all(
+              color: widget.hasError ? AppColors.error : AppColors.dark,
+            ),
             borderRadius: const BorderRadius.all(
               Radius.circular(10),
             ),
@@ -90,12 +92,15 @@ class _CustomFormMultiselectDropdownState
             ),
           ),
         ),
-        widget.hasError
-            ? Text(
-                widget.validationMsg,
-                style: const TextStyle(color: AppColors.error),
-              )
-            : const SizedBox(height: 0),
+        if (widget.hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(
+              widget.validationMsg,
+              style: AppText.bodySmall.merge(AppText.errorText),
+              textAlign: TextAlign.start,
+            ),
+          ),
       ],
     );
   }

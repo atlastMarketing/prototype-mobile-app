@@ -29,7 +29,7 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
       setState(() => _animationState = 1);
     });
 
-    Future.delayed(const Duration(milliseconds: 5500), () {
+    Future.delayed(const Duration(milliseconds: 3000), () {
       setState(() => _animationState = 2);
     });
     Future.delayed(const Duration(milliseconds: 5000), () {

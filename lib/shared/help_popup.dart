@@ -11,6 +11,7 @@ class HelpPopup extends StatelessWidget {
   final Widget child;
   final bool highlight;
   final bool down;
+  final bool disabled;
   final void Function(InfoPopupController)? handleDismiss;
 
   const HelpPopup({
@@ -20,6 +21,7 @@ class HelpPopup extends StatelessWidget {
     this.highlight = true,
     this.down = false,
     this.handleDismiss,
+    this.disabled = false,
     required this.child,
   }) : super(key: key);
 
@@ -27,7 +29,7 @@ class HelpPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool enabled =
         Provider.of<UserStore>(context, listen: false).hasHelpPopups;
-    if (!enabled) return child;
+    if (!enabled && disabled) return child;
     return InfoPopupWidget(
       onControllerCreated: (InfoPopupController controller) =>
           controller.show(),
@@ -85,13 +87,12 @@ class HelpPopupContent extends StatelessWidget {
               Text(title, style: AppText.bodyBold.merge(AppText.whiteText))
             ],
           ),
-          content != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(content!,
-                      style: AppText.body.merge(AppText.whiteText)),
-                )
-              : const SizedBox.shrink()
+          if (content != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child:
+                  Text(content!, style: AppText.body.merge(AppText.whiteText)),
+            ),
         ],
       ),
     );
