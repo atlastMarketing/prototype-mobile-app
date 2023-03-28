@@ -13,6 +13,7 @@ class CustomFormDatePicker extends StatelessWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final FocusNode? focusNode;
+  final String? Function(String?)? validator;
 
   const CustomFormDatePicker({
     Key? key,
@@ -24,6 +25,7 @@ class CustomFormDatePicker extends StatelessWidget {
     this.startDate,
     this.endDate,
     this.focusNode,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -76,6 +78,7 @@ class CustomFormDatePicker extends StatelessWidget {
           setDate(pickedDate, formattedDate);
         }
       },
+      validator: validator,
     );
   }
 }

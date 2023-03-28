@@ -22,7 +22,7 @@ import 'campaign/creator_campaign_2_images.dart';
 import 'campaign/creator_campaign_3_schedule.dart';
 import 'campaign/creator_campaign_confirm.dart';
 import 'social_media_post/creator_social_media_post_1_catalyst.dart';
-import 'social_media_post/creator_social_media_post_image.dart';
+import 'social_media_post/creator_social_media_post_2_image.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
 import 'social_media_post/creator_social_media_post_4_schedule.dart';
 import 'social_media_post/creator_social_media_post_confirm.dart';
@@ -58,7 +58,6 @@ class _CreatorState extends State<Creator> {
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
-  String? imageUrl;
   List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
   List<PostContent> _draftPosts = [];
 
@@ -72,24 +71,33 @@ class _CreatorState extends State<Creator> {
 
   void _handleInitialContinue() {
     if (_selectedCreatorOptionIdx == 0) {
-      setState(() => _catalystDetails = CatalystBreakdown(
-            catalyst: "",
-            derivedPrompt: "",
-            derivedOutputType: CatalystOutputTypes.singlePost,
-          ));
+      setState(() {
+        _catalystDetails = CatalystBreakdown(
+          catalyst: "",
+          derivedPrompt: "",
+          derivedOutputType: CatalystOutputTypes.singlePost,
+        );
+        _selectedCreatorOptionIdx = -1;
+      });
       // create post
       widget.navKey.currentState!.pushNamed("/post-1");
     } else if (_selectedCreatorOptionIdx == 1) {
-      setState(() => _catalystDetails = CatalystBreakdown(
-            catalyst: "",
-            derivedPrompt: "",
-            derivedOutputType: CatalystOutputTypes.campaign,
-            campaignOutputType: CatalystCampaignOutputTypes.daily,
-          ));
+      setState(() {
+        _catalystDetails = CatalystBreakdown(
+          catalyst: "",
+          derivedPrompt: "",
+          derivedOutputType: CatalystOutputTypes.campaign,
+          campaignOutputType: CatalystCampaignOutputTypes.daily,
+        );
+        _selectedCreatorOptionIdx = -1;
+      });
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");
     } else if (_selectedCreatorOptionIdx == 2) {
       // create ad
+      setState(() {
+        _selectedCreatorOptionIdx = -1;
+      });
       widget.navKey.currentState!.pushNamed("/ad-1");
     }
   }
@@ -490,23 +498,28 @@ class _CreatorState extends State<Creator> {
                     socialMediaPlatformAnnotation:
                         _socialMediaPlatformAnnotations.firstOrNull,
                   );
-                case "/post-image":
+                case "/post-2":
                   return CreatorSocialMediaPostImage(
-                      navKey: widget.navKey,
-                      saveImageUrl: (String url) =>
-                          {setState(() => imageUrl = url)});
-                case "/post-results":
+                    navKey: widget.navKey,
+                    uploadedImage:
+                        _uploadedImages.isNotEmpty ? _uploadedImages[0] : null,
+                    saveImages: _saveUploadedImages,
+                  );
+                // case "/post-3":
+                //   return CreatorSocialMediaPostSchedule(
+                //     navKey: widget.navKey,
+                //     catalyst: _catalystDetails,
+                //     images: _uploadedImages,
+                //     draftPosts: _draftPosts,
+                //     saveDraftPosts: _saveDraftPosts,
+                //   );
+                case "/post-3":
                   return CreatorSocialMediaPostResults(
                     navKey: widget.navKey,
                     catalyst: _catalystDetails,
-                    imageUrl: imageUrl!,
-                  );
-                case "/post-schedule":
-                  return CreatorSocialMediaPostSchedule(
-                    navKey: widget.navKey,
-                    catalyst: _catalystDetails,
-                    images: _uploadedImages,
-                    draftPosts: _draftPosts,
+                    uploadedImageUrl: _uploadedImages.isNotEmpty
+                        ? _uploadedImages[0].imageUrl
+                        : null,
                     saveDraftPosts: _saveDraftPosts,
                   );
                 case "/post-confirm":

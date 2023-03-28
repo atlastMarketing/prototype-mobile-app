@@ -185,7 +185,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                 focusNode: _catalystNode,
                 controller: _catalystInputController,
                 placeholderText:
-                    "Ex. Instagram campaign approaching Valentines day, promoting a discount of \$20 for a dozen roses and free delivery",
+                    "Ex. Instagram campaign from today until next Friday, promoting a discount of \$20 for a dozen roses and free delivery",
                 vSize: 6,
                 autocorrect: true,
                 validator: (String? val) {
@@ -383,6 +383,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
     _campaignSizeController.dispose;
     _startDateController.dispose();
     _endDateController.dispose();
+    _catalystNode.dispose();
     super.dispose();
   }
 }
