@@ -169,7 +169,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
             child: HelpPopup(
               title: "Describe your campaign!",
               content:
-                  "Using as much detail, describe your campaign (including dates, frequency, platforms, etc). We'll convert everything you type here into meaningful information for your campaign!",
+                  "Using as much detail, describe your campaign (including dates, frequency, platforms, etc). We'll convert everything you type here into meaningful information for your campaign!\n\n- Your AI Marketing Assistant",
               child: CustomFormTextField(
                 controller: _catalystInputController,
                 placeholderText:
