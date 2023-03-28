@@ -1,17 +1,18 @@
-import 'package:atlast_mobile_app/configs/layout.dart';
-import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
-import 'package:atlast_mobile_app/shared/avatar_image.dart';
-import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
-import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/avatar_image.dart';
+import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 
 class CreatorCampaignSinglePostEdit extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -195,18 +196,23 @@ class _CreatorCampaignSinglePostEditState
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (!_isEditingCaption)
-                    ElevatedButton(
-                      onPressed: _captionsIsLoading ? null : _refreshCaption,
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(8),
-                        backgroundColor: AppColors.error,
-                        // foregroundColor: AppColors.black,
-                      ),
-                      child: const Icon(
-                        Icons.refresh,
-                        color: Colors.white,
-                        size: 25,
+                    HelpPopup(
+                      title: "Click to regenerate caption",
+                      content:
+                          "Don't like the current caption? That's alright, you can ask our AI to suggest other captions!",
+                      child: ElevatedButton(
+                        onPressed: _captionsIsLoading ? null : _refreshCaption,
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(8),
+                          backgroundColor: AppColors.error,
+                          // foregroundColor: AppColors.black,
+                        ),
+                        child: const Icon(
+                          Icons.refresh,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
                     ),
                   ElevatedButton(
