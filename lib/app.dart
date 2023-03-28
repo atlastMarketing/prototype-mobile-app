@@ -146,39 +146,42 @@ class _AppState extends State<App> with RouteAware {
                     ) ??
                     false;
               },
-              child: Scaffold(
-                // TODO: probably remove the navigator here because we use "pageview" instead
-                body: Navigator(
-                  observers: [rootObserver],
-                  key: rootNavKey,
-                  onGenerateRoute: (RouteSettings settings) {
-                    return MaterialPageRoute(
-                        settings: settings,
-                        builder: (BuildContext context) => PageView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              controller: _pageController,
-                              children: [
-                                Home(
-                                  navKey: _navkeys[RouteEnum.home]!,
-                                  handleCreate: () =>
-                                      _navigateToPage(RouteEnum.creator),
-                                ),
-                                Calendar(
-                                  navKey: _navkeys[RouteEnum.calendar]!,
-                                ),
-                                Analytics(
-                                  navKey: _navkeys[RouteEnum.analytics]!,
-                                ),
-                                Settings(
-                                  navKey: _navkeys[RouteEnum.settings]!,
-                                ),
-                              ],
-                            ));
-                  },
+              child: GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: Scaffold(
+                  // TODO: probably remove the navigator here because we use "pageview" instead
+                  body: Navigator(
+                    observers: [rootObserver],
+                    key: rootNavKey,
+                    onGenerateRoute: (RouteSettings settings) {
+                      return MaterialPageRoute(
+                          settings: settings,
+                          builder: (BuildContext context) => PageView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                controller: _pageController,
+                                children: [
+                                  Home(
+                                    navKey: _navkeys[RouteEnum.home]!,
+                                    handleCreate: () =>
+                                        _navigateToPage(RouteEnum.creator),
+                                  ),
+                                  Calendar(
+                                    navKey: _navkeys[RouteEnum.calendar]!,
+                                  ),
+                                  Analytics(
+                                    navKey: _navkeys[RouteEnum.analytics]!,
+                                  ),
+                                  Settings(
+                                    navKey: _navkeys[RouteEnum.settings]!,
+                                  ),
+                                ],
+                              ));
+                    },
+                  ),
+                  bottomNavigationBar: model.isOnboarded && model.isLoggedIn
+                      ? BottomNavigation(onNavbarTap: _navigateToPage)
+                      : null,
                 ),
-                bottomNavigationBar: model.isOnboarded && model.isLoggedIn
-                    ? BottomNavigation(onNavbarTap: _navigateToPage)
-                    : null,
               ),
             )
           : Onboarding(
