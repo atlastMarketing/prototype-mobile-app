@@ -7,6 +7,7 @@ class CustomFormTextDropdown extends StatelessWidget {
   final void Function(dynamic) handleChanged;
   final List<String> items;
   final Color? fillColor;
+  final FocusNode? focusNode;
 
   const CustomFormTextDropdown({
     Key? key,
@@ -14,6 +15,7 @@ class CustomFormTextDropdown extends StatelessWidget {
     required this.handleChanged,
     required this.items,
     this.fillColor,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -21,6 +23,7 @@ class CustomFormTextDropdown extends StatelessWidget {
     return ButtonTheme(
       alignedDropdown: true,
       child: DropdownButtonFormField(
+        focusNode: focusNode,
         menuMaxHeight: 500,
         value: value,
         onChanged: handleChanged,

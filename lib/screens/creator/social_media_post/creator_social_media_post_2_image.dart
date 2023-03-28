@@ -4,37 +4,38 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
+import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
-import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/image_uploader.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/services/image_uploading_service.dart';
 
-class CreatorCampaignImages extends StatefulWidget {
+class CreatorSocialMediaPostImage extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
-  final List<UploadedImage> images;
+  final UploadedImage? uploadedImage;
   final void Function(List<UploadedImage>) saveImages;
 
-  const CreatorCampaignImages({
+  const CreatorSocialMediaPostImage({
     Key? key,
     required this.navKey,
-    required this.images,
+    required this.uploadedImage,
     required this.saveImages,
   }) : super(key: key);
 
   @override
-  _CreatorCampaignImagesState createState() => _CreatorCampaignImagesState();
+  _CreatorSocialMediaPostImageState createState() =>
+      _CreatorSocialMediaPostImageState();
 }
 
-class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
+class _CreatorSocialMediaPostImageState
+    extends State<CreatorSocialMediaPostImage> {
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-3");
+    widget.navKey.currentState!.pushNamed("/post-3");
   }
 
   void _requestImage() {
@@ -77,28 +78,24 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
 
     File file = File(pickedFile.path);
     String url = await ImageUploadingService.uploadImage(File(pickedFile.path));
-    widget.saveImages([
-      ...widget.images,
-      UploadedImage(
-        image: file,
-        imageUrl: url,
-      )
-    ]);
+    widget.saveImages([UploadedImage(imageUrl: url, image: file)]);
   }
 
-  void _removePicture(int idx) {
-    List<UploadedImage> removed = widget.images;
-    removed.removeAt(idx);
-    widget.saveImages(removed);
+  void _removePicture() {
+    widget.saveImages([]);
   }
 
-  Widget _buildImageItem(int idx, File imageFile) {
+  Widget _buildImageItem() {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
       clipBehavior: Clip.hardEdge,
       child: Stack(
         children: [
-          Image.file(imageFile, width: double.infinity, fit: BoxFit.cover),
+          Image.file(
+            widget.uploadedImage!.image,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
           Positioned(
             right: 5,
             top: 5,
@@ -109,7 +106,7 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                 color: AppColors.error,
                 borderRadius: BorderRadius.circular(30),
                 child: InkWell(
-                  onTap: () => _removePicture(idx),
+                  onTap: () => _removePicture(),
                   child: const Center(
                     child: Icon(
                       Icons.clear,
@@ -126,47 +123,80 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
     );
   }
 
+  Widget _buildImageUploader() {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: 300,
+            child: Text(
+              "Upload an image that will be used for your social media post.",
+              style: AppText.body,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Padding(padding: EdgeInsets.only(bottom: 20)),
+          ImageUploader(
+            handleTap: _requestImage,
+            height: 300,
+            width: 300,
+            iconSize: 50,
+            borderColor: AppColors.primary,
+            iconColor: AppColors.primary,
+          ),
+          const Padding(padding: EdgeInsets.only(bottom: 20)),
+          SizedBox(
+            width: 300,
+            child: RichText(
+              text: TextSpan(
+                style: AppText.body.merge(AppText.blackText),
+                children: const <TextSpan>[
+                  TextSpan(
+                    text: 'Feel free take a couple seconds to take ',
+                    style: AppText.body,
+                  ),
+                  TextSpan(
+                    text: 'real pictures ',
+                    style: AppText.bodyBold,
+                  ),
+                  TextSpan(
+                    text: 'from around your shop.',
+                    style: AppText.body,
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutFullPage(
       handleBack: _handleBack,
-      appBarContent: const AppBarSteps(totalSteps: 3, currStep: 2),
+      appBarContent: const AppBarSteps(totalSteps: 4, currStep: 2),
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const HeroHeading(text: "Upload your media"),
           Expanded(
-            child: GridView.count(
-                crossAxisCount: 3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                children: List.generate(
-                  9,
-                  (idx) => idx < widget.images.length
-                      ? _buildImageItem(idx, widget.images[idx].image)
-                      : idx == 7
-                          ? HelpPopup(
-                              title: "Marketer's tip",
-                              content:
-                                  "Take a couple seconds to take real pictures around your shop – this makes a huge difference.",
-                              highlight: false,
-                              child: ImageUploader(
-                                handleTap: _requestImage,
-                                iconSize: MediaQuery.of(context).size.width / 6,
-                              ),
-                            )
-                          : ImageUploader(
-                              handleTap: _requestImage,
-                              iconSize: MediaQuery.of(context).size.width / 6,
-                            ),
-                )),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 30),
+              child: widget.uploadedImage != null
+                  ? _buildImageItem()
+                  : _buildImageUploader(),
+            ),
           ),
           SizedBox(
             width: double.infinity,
             child: CustomButton(
               handlePressed: _handleContinue,
               fillColor: AppColors.primary,
-              text: 'Generate',
+              text: widget.uploadedImage != null ? 'Continue' : 'Skip',
             ),
           ),
         ],
