@@ -35,6 +35,7 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
   void _handleContinue() {
     Provider.of<UserStore>(context, listen: false)
         .update(email: _emailController.text);
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-2");
   }
 

@@ -357,6 +357,16 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
             width: double.infinity,
             child: CustomButton(
               handlePressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                FocusManager.instance.rootScope.unfocus();
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+
+                print(currentFocus);
+                print(currentFocus.hasPrimaryFocus);
+
                 _formKey.currentState!.save();
                 // Validate returns true if the form is valid, or false otherwise.
                 bool platformsErrorCheck = _listOfSelectedPlatforms.isEmpty;

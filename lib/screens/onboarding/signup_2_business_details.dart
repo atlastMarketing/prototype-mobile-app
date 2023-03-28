@@ -46,6 +46,7 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,
     );
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-3");
   }
 

@@ -39,6 +39,7 @@ class _OnboardingBusinessDescriptionState
     Provider.of<UserStore>(context, listen: false).update(
       businessDescription: _businessDescriptionController.text,
     );
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-4");
   }
 
