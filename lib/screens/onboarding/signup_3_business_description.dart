@@ -6,6 +6,7 @@ import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
@@ -64,17 +65,24 @@ class _OnboardingBusinessDescriptionState
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 20),
-              child: CustomFormTextField(
-                controller: _businessDescriptionController,
-                placeholderText:
-                    "Ex. My flower shop is a family owned business offering a wide variety of plants, florals, and bouquets.",
-                vSize: 10,
-                validator: (String? val) {
-                  if (val == null || val == "") {
-                    return 'Business description cannot be empty!';
-                  }
-                },
-                autocorrect: true,
+              child: HelpPopup(
+                disabled: _businessDescriptionController.text.isNotEmpty,
+                // delayMilliseconds: 5000,
+                title: "Stuck? fret not!",
+                content:
+                    "Feel free to describe your business in any way - the more detailed the better! But don't worry too much - our system will learn more about your business over time.",
+                child: CustomFormTextField(
+                  controller: _businessDescriptionController,
+                  placeholderText:
+                      "Ex. My flower shop is a family owned business offering a wide variety of plants, florals, and bouquets.",
+                  vSize: 10,
+                  validator: (String? val) {
+                    if (val == null || val == "") {
+                      return 'Business description cannot be empty!';
+                    }
+                  },
+                  autocorrect: true,
+                ),
               ),
             ),
           ],

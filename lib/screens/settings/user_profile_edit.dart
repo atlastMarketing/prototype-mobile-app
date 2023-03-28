@@ -206,7 +206,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 10, bottom: 20),
-              child: userData.avatarImageUrl != "" && _uploadedImage != null
+              child: userData.avatarImageUrl != "" || _uploadedImage != null
                   ? _buildImageItem()
                   : ImageUploader(
                       handleTap: _requestImage,

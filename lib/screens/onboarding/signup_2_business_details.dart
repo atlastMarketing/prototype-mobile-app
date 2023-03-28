@@ -52,6 +52,8 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
   @override
   void initState() {
     super.initState();
+    _bNameController.text =
+        Provider.of<UserStore>(context, listen: false).data.businessName ?? "";
     String? initialBType =
         Provider.of<UserStore>(context, listen: false).data.businessType;
     if (initialBType != null && initialBType != "") _bTypeInput = initialBType;

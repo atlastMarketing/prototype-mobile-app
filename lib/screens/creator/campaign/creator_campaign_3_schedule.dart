@@ -337,7 +337,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
           width: double.infinity,
           child: HelpPopup(
             disabled: _campaignDates.isEmpty,
-            title: "Choose your campaign!",
+            title: "Here's a tip!",
             content:
                 "Regenerate new campaigns until you find the right one! Find your best campaign before editing single posts.",
             highlight: false,

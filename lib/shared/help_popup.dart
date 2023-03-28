@@ -13,6 +13,7 @@ class HelpPopup extends StatefulWidget {
   final bool down;
   final bool disabled;
   final void Function(InfoPopupController)? handleDismiss;
+  final int? delayMilliseconds;
 
   const HelpPopup({
     Key? key,
@@ -22,6 +23,7 @@ class HelpPopup extends StatefulWidget {
     this.down = false,
     this.handleDismiss,
     this.disabled = false,
+    this.delayMilliseconds,
     required this.child,
   }) : super(key: key);
 
@@ -31,6 +33,7 @@ class HelpPopup extends StatefulWidget {
 
 class _HelpPopupState extends State<HelpPopup> {
   bool _isClicked = false;
+  bool _isDelayFinished = false;
 
   void _handleDismiss(InfoPopupController ctrl) {
     setState(() => _isClicked = true);
@@ -38,11 +41,24 @@ class _HelpPopupState extends State<HelpPopup> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.delayMilliseconds != null) {
+      Future.delayed(Duration(milliseconds: widget.delayMilliseconds!), () {
+        if (mounted) setState(() => _isDelayFinished = true);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool enabled =
         Provider.of<UserStore>(context, listen: false).hasHelpPopups;
-    if (!enabled && widget.disabled) return widget.child;
+    if (!enabled || widget.disabled) return widget.child;
     if (_isClicked) return widget.child;
+    if (widget.delayMilliseconds != null && !_isDelayFinished) {
+      return widget.child;
+    }
 
     return InfoPopupWidget(
       onControllerCreated: (InfoPopupController controller) =>

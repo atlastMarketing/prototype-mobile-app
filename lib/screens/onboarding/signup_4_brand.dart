@@ -49,7 +49,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
     widget.navKey.currentState!.pushNamed("/onboarding-5");
   }
 
-  void _getImage({ImageSource source = ImageSource.camera}) async {
+  Future<void> _getImage({ImageSource source = ImageSource.camera}) async {
     XFile? pickedFile = await ImagePicker().pickImage(
       source: source,
       maxHeight: 1080,
@@ -61,6 +61,8 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
 
     File file = File(pickedFile.path);
     String url = await ImageUploadingService.uploadImage(File(pickedFile.path));
+    print(file);
+    print(url);
     setState(() => _uploadedImage = UploadedImage(
           image: file,
           imageUrl: url,
@@ -96,6 +98,8 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
   }
 
   Widget _buildImageItem() {
+    print(_uploadedImage);
+    if (_uploadedImage != null) print(_uploadedImage!.imageUrl);
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
@@ -173,7 +177,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
             Padding(
               padding: const EdgeInsets.only(top: 30, bottom: 30),
               child: Center(
-                child: _imageUrl != "" && _uploadedImage != null
+                child: _imageUrl != "" || _uploadedImage != null
                     ? _buildImageItem()
                     : ImageUploader(
                         handleTap: _requestImage,
