@@ -1,3 +1,5 @@
+import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,14 +31,37 @@ class _CreatorSocialMediaPostConfirmState
   int _animationState = 0;
 
   void _doTheWork() async {
-    Future.delayed(const Duration(milliseconds: 500), () {
-      setState(() => _animationState = 1);
-    });
+    ScheduledPostsStore scheduledPostsStore =
+        Provider.of<ScheduledPostsStore>(context, listen: false);
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+    setState(() => _animationState = 1);
 
-    Future.delayed(const Duration(milliseconds: 5500), () {
+    List<PostContent> newPosts = [];
+
+    try {
+      newPosts = await Future.wait(widget.draftPosts.map(
+        (PostContent draft) async {
+          String? id = await ContentManagerService.saveContent(
+            draft.toDraft(),
+            userStore.data,
+          );
+          if (id == null) throw Error();
+          draft.id = id;
+          return draft;
+        },
+      ));
+    } catch (err) {
+      print("FAILED TO SAVE DRAFT POSTS: $err");
+      widget.navKey.currentState!.pop();
+      return;
+    }
+
+    scheduledPostsStore.add(newPosts);
+
+    Future.delayed(const Duration(milliseconds: 3000), () {
       setState(() => _animationState = 2);
     });
-    Future.delayed(const Duration(milliseconds: 5000), () {
+    Future.delayed(const Duration(milliseconds: 6000), () {
       widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
     });
   }
