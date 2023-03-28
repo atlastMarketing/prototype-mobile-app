@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +27,8 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   void _logout() {
+    Provider.of<ScheduledPostsStore>(context, listen: false).removeAll();
+    Provider.of<SuggestedPostsStore>(context, listen: false).removeAll();
     Provider.of<UserStore>(context, listen: false).clear();
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(false);
     Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
