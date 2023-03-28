@@ -12,6 +12,7 @@ class CustomFormDatePicker extends StatelessWidget {
   final DateTime? currDate;
   final DateTime? startDate;
   final DateTime? endDate;
+  final FocusNode? focusNode;
 
   const CustomFormDatePicker({
     Key? key,
@@ -22,6 +23,7 @@ class CustomFormDatePicker extends StatelessWidget {
     this.currDate,
     this.startDate,
     this.endDate,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -30,6 +32,7 @@ class CustomFormDatePicker extends StatelessWidget {
       enabled: !disabled,
       readOnly: true,
       controller: controller,
+      focusNode: focusNode,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20.0,

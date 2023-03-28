@@ -1,3 +1,4 @@
+import 'package:atlast_mobile_app/shared/form_validator.dart';
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
@@ -17,7 +18,7 @@ class CustomFormTextField extends StatelessWidget {
   final int vSize;
   final TextInputType keyboardType;
 
-  const CustomFormTextField({
+  CustomFormTextField({
     Key? key,
     this.disabled = false,
     this.previewOnly = false,
@@ -32,9 +33,12 @@ class CustomFormTextField extends StatelessWidget {
     this.keyboardType = TextInputType.text,
   }) : super(key: key);
 
+  final focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: focusNode,
       enabled: !disabled && !previewOnly,
       controller: controller,
       decoration: InputDecoration(
@@ -75,7 +79,12 @@ class CustomFormTextField extends StatelessWidget {
       autocorrect: autocorrect,
       enableSuggestions: enableSuggestions,
       obscureText: obscureText,
-      validator: validator,
+      validator: validator != null
+          ? CustomFormValidator(
+              validator: validator!,
+              focusNode: focusNode,
+            )
+          : null,
       minLines: vSize,
       maxLines: vSize,
       keyboardType: keyboardType,

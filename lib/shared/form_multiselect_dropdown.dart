@@ -9,6 +9,7 @@ class CustomFormMultiselectDropdown extends StatefulWidget {
   final void Function(List<dynamic>) setListOfSelectedOptions;
   final bool hasError;
   final String validationMsg;
+  final FocusNode? focusNode;
 
   const CustomFormMultiselectDropdown({
     Key? key,
@@ -18,6 +19,7 @@ class CustomFormMultiselectDropdown extends StatefulWidget {
     required this.setListOfSelectedOptions,
     this.hasError = false,
     this.validationMsg = "",
+    this.focusNode,
   }) : super(key: key);
 
   @override
