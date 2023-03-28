@@ -148,7 +148,7 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                           ? HelpPopup(
                               title: "Marketer's tip",
                               content:
-                                  "Take a couple seconds to take real pictures around your shop – this makes a huge difference. ",
+                                  "Take a couple seconds to take real pictures around your shop – this makes a huge difference.\n\n- Your AI Marketing Assistant",
                               highlight: false,
                               child: ImageUploader(
                                 handleTap: _requestImage,

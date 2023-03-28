@@ -14,6 +14,7 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
@@ -21,8 +22,10 @@ import 'campaign/creator_campaign_2_images.dart';
 import 'campaign/creator_campaign_3_schedule.dart';
 import 'campaign/creator_campaign_confirm.dart';
 import 'social_media_post/creator_social_media_post_1_catalyst.dart';
-import 'social_media_post/creator_social_media_post_3_results.dart';
 import 'social_media_post/creator_social_media_post_image.dart';
+import 'social_media_post/creator_social_media_post_3_results.dart';
+import 'social_media_post/creator_social_media_post_4_schedule.dart';
+import 'social_media_post/creator_social_media_post_confirm.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -41,6 +44,8 @@ class _CreatorState extends State<Creator> {
       EntityExtractor(language: EntityExtractorLanguage.english);
 
   final DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
+
+  bool infoPopupDismissed = false;
 
   // ------
   // STATES
@@ -406,44 +411,54 @@ class _CreatorState extends State<Creator> {
       content: Column(
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const HeroHeading(text: "What would you like\nto create?"),
-                _buildCreatorOptionButton(
-                  "Create a Post",
-                  "This generates a single post. Good for one time promotions.",
-                  Icons.campaign,
-                  0,
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreatorOptionButton(
-                  "Create a Campaign",
-                  "This generates and schedules multiple posts belonging to the same campaign.",
-                  Icons.insert_invitation,
-                  1,
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreatorOptionButton(
-                  "Create an Ad",
-                  "Reach more customers with precise targeting and actionable insights.",
-                  Icons.ads_click,
-                  2,
-                ),
-                const Spacer(),
-              ],
-            ),
-          ),
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const HeroHeading(text: "What would you like\nto create?"),
+              _buildCreatorOptionButton(
+                "Create a Post",
+                "This generates a single post. Good for one time promotions.",
+                Icons.campaign,
+                0,
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              infoPopupDismissed
+                  ? _buildCreatorOptionButton(
+                      "Create a Campaign",
+                      "This generates and schedules multiple posts belonging to the same campaign.",
+                      Icons.insert_invitation,
+                      1,
+                    )
+                  : HelpPopup(
+                      title: "Hello!",
+                      content:
+                          "I am your AI Marketing Assistant. I am here to help you use our app to create your social media posts. The more you use this app, the more I learn how to market your business!",
+                      highlight: false,
+                      child: _buildCreatorOptionButton(
+                        "Create a Campaign",
+                        "This generates and schedules multiple posts belonging to the same campaign.",
+                        Icons.insert_invitation,
+                        1,
+                      )),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              _buildCreatorOptionButton(
+                "Create an Ad",
+                "Reach more customers with precise targeting and actionable insights.",
+                Icons.ads_click,
+                2,
+              ),
+              const Spacer(),
+            ],
+          )),
           SizedBox(
-            width: double.infinity,
-            child: CustomButton(
-              disabled: _selectedCreatorOptionIdx < 0 ||
-                  _selectedCreatorOptionIdx > 2,
-              text: 'Continue',
-              handlePressed: _handleInitialContinue,
-            ),
-          ),
+              width: double.infinity,
+              child: CustomButton(
+                disabled: _selectedCreatorOptionIdx < 0 ||
+                    _selectedCreatorOptionIdx > 2,
+                text: 'Continue',
+                handlePressed: _handleInitialContinue,
+              )),
         ],
       ),
     );
@@ -472,11 +487,6 @@ class _CreatorState extends State<Creator> {
           return MaterialPageRoute(
             builder: (context) {
               switch (settings.name) {
-                case "/post-image":
-                  return CreatorSocialMediaPostImage(
-                      navKey: widget.navKey,
-                      saveImageUrl: (String url) =>
-                          {setState(() => imageUrl = url)});
                 case "/post-1":
                   return CreatorSocialMediaPostCatalyst(
                     navKey: widget.navKey,
@@ -487,11 +497,29 @@ class _CreatorState extends State<Creator> {
                     socialMediaPlatformAnnotation:
                         _socialMediaPlatformAnnotations.firstOrNull,
                   );
+                case "/post-image":
+                  return CreatorSocialMediaPostImage(
+                      navKey: widget.navKey,
+                      saveImageUrl: (String url) =>
+                          {setState(() => imageUrl = url)});
                 case "/post-results":
                   return CreatorSocialMediaPostResults(
                     navKey: widget.navKey,
                     catalyst: _catalystDetails,
                     imageUrl: imageUrl!,
+                  );
+                case "/post-schedule":
+                  return CreatorSocialMediaPostSchedule(
+                    navKey: widget.navKey,
+                    catalyst: _catalystDetails,
+                    images: _uploadedImages,
+                    draftPosts: _draftPosts,
+                    saveDraftPosts: _saveDraftPosts,
+                  );
+                case "/post-confirm":
+                  return CreatorSocialMediaPostConfirm(
+                    navKey: widget.navKey,
+                    draftPosts: _draftPosts,
                   );
                 case "/campaign-1":
                   List<Annotation> textAnnotations = _compileAnnotations();

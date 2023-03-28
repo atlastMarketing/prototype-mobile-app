@@ -76,12 +76,12 @@ class _CreatorSocialMediaPostImageState
                 child: _infoPopupDismissed
                     ? Text('Take a Picture for your Post')
                     : HelpPopup(
-                        title: "Describe your campaign!",
+                        title: "Taking a Picture",
                         handleDismiss: (_) {
                           setState(() => _infoPopupDismissed = true);
                         },
                         content:
-                            "To take a good picture, ensure good lighting, clear focus on the product, and use a visually appealing background or setting that complements the product.",
+                            "To take a good picture, ensure good lighting, clear focus on the product, and use a visually appealing background or setting that complements the product.\n\n- Your AI Marketing Assistant",
                         child: Text('Take a Picture for your Post'),
                       ),
               ))

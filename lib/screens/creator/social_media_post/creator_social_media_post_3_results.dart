@@ -76,6 +76,8 @@ class _CreatorSocialMediaPostResultsState
       _captionsRegenerating = false;
       _numCaptionGenerations += 1;
     });
+
+    widget.navKey.currentState!.pushNamed("/post-schedule");
   }
 
   @override
