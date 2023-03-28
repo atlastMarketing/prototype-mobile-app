@@ -11,7 +11,6 @@ class CustomFormMultiDatePicker extends StatelessWidget {
   final DateTimeRange? currDateRange;
   final DateTime? startDate;
   final DateTime? endDate;
-  final FocusNode? focusNode;
   final bool hasError;
   final String validationMsg;
 
@@ -24,7 +23,6 @@ class CustomFormMultiDatePicker extends StatelessWidget {
     this.currDateRange,
     this.startDate,
     this.endDate,
-    this.focusNode,
     this.hasError = false,
     this.validationMsg = "",
   }) : super(key: key);
@@ -59,7 +57,6 @@ class CustomFormMultiDatePicker extends StatelessWidget {
                 enabled: !disabled,
                 readOnly: true,
                 controller: startDateController,
-                focusNode: focusNode,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20.0,
@@ -106,7 +103,6 @@ class CustomFormMultiDatePicker extends StatelessWidget {
                 enabled: !disabled,
                 readOnly: true,
                 controller: endDateController,
-                focusNode: focusNode,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 20.0,
