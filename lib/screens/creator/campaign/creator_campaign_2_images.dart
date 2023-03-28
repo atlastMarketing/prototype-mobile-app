@@ -144,7 +144,7 @@ class _CreatorCampaignImagesState extends State<CreatorCampaignImages> {
                   9,
                   (idx) => idx < widget.images.length
                       ? _buildImageItem(idx, widget.images[idx].image)
-                      : idx == 8
+                      : idx == 7
                           ? HelpPopup(
                               title: "Marketer's tip",
                               content:

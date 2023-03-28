@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 
-class HelpPopup extends StatelessWidget {
+class HelpPopup extends StatefulWidget {
   final String title;
   final String? content;
   final Widget child;
@@ -26,20 +26,35 @@ class HelpPopup extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<HelpPopup> createState() => _HelpPopupState();
+}
+
+class _HelpPopupState extends State<HelpPopup> {
+  bool _isClicked = false;
+
+  void _handleDismiss(InfoPopupController ctrl) {
+    setState(() => _isClicked = true);
+    if (widget.handleDismiss != null) widget.handleDismiss!(ctrl);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool enabled =
         Provider.of<UserStore>(context, listen: false).hasHelpPopups;
-    if (!enabled && disabled) return child;
+    if (!enabled && widget.disabled) return widget.child;
+    if (_isClicked) return widget.child;
+
     return InfoPopupWidget(
       onControllerCreated: (InfoPopupController controller) =>
           controller.show(),
-      onAreaPressed: handleDismiss,
-      arrowTheme: down ? helpPopupArrowThemeDown : helpPopupArrowThemeUp,
+      onAreaPressed: _handleDismiss,
+      arrowTheme: widget.down ? helpPopupArrowThemeDown : helpPopupArrowThemeUp,
       contentMaxWidth: MediaQuery.of(context).size.width - 100,
-      customContent: HelpPopupContent(title: title, content: content),
-      enableHighlight: highlight,
+      customContent:
+          HelpPopupContent(title: widget.title, content: widget.content),
+      enableHighlight: widget.highlight,
       dismissTriggerBehavior: PopupDismissTriggerBehavior.onTapArea,
-      child: child,
+      child: widget.child,
     );
   }
 }
