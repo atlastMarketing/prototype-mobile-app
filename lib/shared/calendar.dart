@@ -45,6 +45,7 @@ class CustomCalendar extends StatefulWidget {
 
 class _CustomCalendarState extends State<CustomCalendar> {
   final CalendarController _calendarController = CalendarController();
+  bool _isPopupDismissed = false;
 
   @override
   void initState() {
@@ -64,6 +65,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
     final PostContent currPost = details.appointments.first;
     final shouldShowOnboarding = widget.enableOnboarding &&
         !widget.disableInteractions &&
+        !_isPopupDismissed &&
         _isFirstAppointment(currPost.id);
 
     if ([
@@ -82,6 +84,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
               title: "Edit me!",
               content:
                   "Hold and drag on any post to schedule on a different day or time. Click on posts to edit.",
+              handleDismiss: (_) => setState(() => _isPopupDismissed = true),
               child: Container(
                 height: details.bounds.width,
                 width: details.bounds.width,

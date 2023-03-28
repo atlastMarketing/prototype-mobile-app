@@ -46,6 +46,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
       businessVoice: _businessVoiceController.text,
       avatarImageUrl: _uploadedImage?.imageUrl ?? _imageUrl,
     );
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-5");
   }
 
@@ -61,8 +62,6 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
 
     File file = File(pickedFile.path);
     String url = await ImageUploadingService.uploadImage(File(pickedFile.path));
-    print(file);
-    print(url);
     setState(() => _uploadedImage = UploadedImage(
           image: file,
           imageUrl: url,
@@ -98,8 +97,6 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
   }
 
   Widget _buildImageItem() {
-    print(_uploadedImage);
-    if (_uploadedImage != null) print(_uploadedImage!.imageUrl);
     return Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
@@ -181,7 +178,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
                     ? _buildImageItem()
                     : ImageUploader(
                         handleTap: _requestImage,
-                        iconSize: MediaQuery.of(context).size.width / 6,
+                        iconSize: 30,
                         height: 120,
                         width: 120,
                       ),

@@ -27,8 +27,6 @@ class HomeDashboard extends StatelessWidget {
   }) : super(key: key);
 
   void _openSuggestedPost(BuildContext ctx, int postId) {
-    print("Opening suggested post with id $postId");
-
     Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (context) => HomeEditSingleSuggestion(
@@ -40,8 +38,6 @@ class HomeDashboard extends StatelessWidget {
   }
 
   void _openUpcomingPost(BuildContext ctx, String postId) {
-    print("Opening upcoming post with id $postId");
-
     navKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => HomeEditSinglePost(

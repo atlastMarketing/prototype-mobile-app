@@ -11,6 +11,7 @@ class LayoutFullPage extends StatelessWidget {
   final bool squeezeContents;
   final EdgeInsets? paddingOverwrite;
   final List<Widget> actionWidgets;
+  final bool hasInputs;
 
   const LayoutFullPage({
     Key? key,
@@ -23,6 +24,7 @@ class LayoutFullPage extends StatelessWidget {
     this.squeezeContents = false,
     this.paddingOverwrite,
     this.actionWidgets = const [],
+    this.hasInputs = false,
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
