@@ -71,29 +71,32 @@ class LayoutFullPage extends StatelessWidget {
 
     EdgeInsets padding = paddingOverwrite ?? pagePadding;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: SafeArea(
-        child: LayoutBuilder(builder:
-            (BuildContext context, BoxConstraints viewportConstraints) {
-          return squeezeContents
-              ? SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: viewportConstraints.maxHeight,
-                      maxHeight: maxHeight,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(),
+        body: SafeArea(
+          child: LayoutBuilder(builder:
+              (BuildContext context, BoxConstraints viewportConstraints) {
+            return squeezeContents
+                ? SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: viewportConstraints.maxHeight,
+                        maxHeight: maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Padding(padding: padding, child: content),
+                      ),
                     ),
-                    child: IntrinsicHeight(
-                      child: Padding(padding: padding, child: content),
-                    ),
-                  ),
-                )
-              : Padding(padding: padding, child: content);
-        }),
+                  )
+                : Padding(padding: padding, child: content);
+          }),
+        ),
+        resizeToAvoidBottomInset: true,
+        extendBody: false,
       ),
-      resizeToAvoidBottomInset: true,
-      extendBody: false,
     );
   }
 }
