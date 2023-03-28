@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
@@ -55,6 +56,9 @@ class _CreatorSocialMediaPostResultsState
       imageUrl: widget.uploadedImageUrl,
     );
     widget.saveDraftPosts([post]);
+
+    // TODO: probably get this out of here
+    Provider.of<ScheduledPostsStore>(context, listen: false).add([post]);
     widget.navKey.currentState!.pushNamed("/post-confirm");
   }
 

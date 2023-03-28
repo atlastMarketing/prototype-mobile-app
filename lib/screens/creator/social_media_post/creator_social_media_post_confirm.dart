@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/animated_check.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
@@ -18,10 +20,12 @@ class CreatorSocialMediaPostConfirm extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreatorSocialMediaPostConfirmState createState() => _CreatorSocialMediaPostConfirmState();
+  _CreatorSocialMediaPostConfirmState createState() =>
+      _CreatorSocialMediaPostConfirmState();
 }
 
-class _CreatorSocialMediaPostConfirmState extends State<CreatorSocialMediaPostConfirm> {
+class _CreatorSocialMediaPostConfirmState
+    extends State<CreatorSocialMediaPostConfirm> {
   int _animationState = 0;
 
   void _doTheWork() async {
