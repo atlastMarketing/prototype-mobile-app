@@ -17,6 +17,7 @@ class CustomFormTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int vSize;
   final TextInputType keyboardType;
+  final FocusNode? focusNode;
 
   CustomFormTextField({
     Key? key,
@@ -31,14 +32,15 @@ class CustomFormTextField extends StatelessWidget {
     this.validator,
     this.vSize = 1,
     this.keyboardType = TextInputType.text,
+    this.focusNode,
   }) : super(key: key);
 
-  final focusNode = FocusNode();
+  final backupFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      focusNode: focusNode,
+      focusNode: focusNode ?? backupFocusNode,
       enabled: !disabled && !previewOnly,
       controller: controller,
       decoration: InputDecoration(
@@ -82,7 +84,7 @@ class CustomFormTextField extends StatelessWidget {
       validator: validator != null
           ? CustomFormValidator(
               validator: validator!,
-              focusNode: focusNode,
+              focusNode: focusNode ?? backupFocusNode,
             )
           : null,
       minLines: vSize,
