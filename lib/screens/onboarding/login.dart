@@ -200,18 +200,17 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
               }
             },
           ),
-          _isUserNotFound
-              ? const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: Text(
-                      "Email is not associated with a user!",
-                      style: AppText.errorText,
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
+          if (_isUserNotFound)
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Text(
+                  "Email is not associated with a user!",
+                  style: AppText.errorText,
+                ),
+              ),
+            ),
           const Padding(padding: EdgeInsets.only(bottom: 10)),
           CustomFormTextField(
             controller: _passwordController,

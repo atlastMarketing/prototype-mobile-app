@@ -235,22 +235,21 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _isEditingCaption
-                      ? const SizedBox.shrink()
-                      : ElevatedButton(
-                          onPressed: _handleDeleteAttempt,
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(8),
-                            backgroundColor: AppColors.error,
-                            // foregroundColor: AppColors.black,
-                          ),
-                          child: const Icon(
-                            Icons.delete_forever,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
+                  if (!_isEditingCaption)
+                    ElevatedButton(
+                      onPressed: _handleDeleteAttempt,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                        backgroundColor: AppColors.error,
+                        // foregroundColor: AppColors.black,
+                      ),
+                      child: const Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                   ElevatedButton(
                     onPressed: _toggleEditState,
                     style: ElevatedButton.styleFrom(
@@ -271,22 +270,21 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
                             size: 25,
                           ),
                   ),
-                  _isEditingCaption
-                      ? const SizedBox.shrink()
-                      : ElevatedButton(
-                          onPressed: _handleSave,
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(8),
-                            backgroundColor: AppColors.confirm,
-                            // foregroundColor: AppColors.black,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
+                  if (!_isEditingCaption)
+                    ElevatedButton(
+                      onPressed: _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                        backgroundColor: AppColors.confirm,
+                        // foregroundColor: AppColors.black,
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                 ],
               )
             ],

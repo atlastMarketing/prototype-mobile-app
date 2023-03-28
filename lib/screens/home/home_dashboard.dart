@@ -257,15 +257,14 @@ class HomeDashboard extends StatelessWidget {
               ),
             ),
           ),
-          hasScheduledPosts
-              ? const SizedBox.shrink()
-              : SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    text: 'Create',
-                    handlePressed: handleCreate,
-                  ),
-                ),
+          if (!hasScheduledPosts)
+            SizedBox(
+              width: double.infinity,
+              child: CustomButton(
+                text: 'Create',
+                handlePressed: handleCreate,
+              ),
+            ),
         ],
       ),
     );

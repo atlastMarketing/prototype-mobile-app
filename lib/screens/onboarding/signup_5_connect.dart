@@ -84,47 +84,39 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
   }
 
   Widget _buildSocialMediaConnections() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: InkWell(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
             onTap: () => setState(() => _instagramActive = !_instagramActive),
             child: Image.asset(
               "assets/images/instagram.png",
               color: _instagramActive ? AppColors.primary : null,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: InkWell(
+          InkWell(
             onTap: () => setState(() => _facebookActive = !_facebookActive),
             child: Image.asset(
               "assets/images/facebook.png",
               color: _facebookActive ? AppColors.primary : null,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: InkWell(
+          InkWell(
             onTap: () => {},
             child: Image.asset(
               "assets/images/linkedin.png",
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: InkWell(
+          InkWell(
             onTap: () => {},
             child: Image.asset(
               "assets/images/twitter.png",
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

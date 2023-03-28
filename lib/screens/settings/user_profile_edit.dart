@@ -271,6 +271,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                     return 'Business description cannot be empty!';
                   }
                 },
+                autocorrect: true,
               ),
             ),
             const Text(
@@ -282,6 +283,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
               child: CustomFormTextField(
                 controller: _bVoiceController,
                 placeholderText: "Ex. Fun, Colourful, Casual, Family-oriented",
+                autocorrect: true,
               ),
             ),
             const Text(

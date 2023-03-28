@@ -74,6 +74,7 @@ class _OnboardingBusinessDescriptionState
                     return 'Business description cannot be empty!';
                   }
                 },
+                autocorrect: true,
               ),
             ),
           ],

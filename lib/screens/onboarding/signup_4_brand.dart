@@ -197,6 +197,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
                   controller: _businessVoiceController,
                   placeholderText:
                       "Ex. Fun, Colourful, Casual, Family-oriented",
+                  autocorrect: true,
                 ),
               ),
             ),
