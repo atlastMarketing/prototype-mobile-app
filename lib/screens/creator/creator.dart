@@ -45,8 +45,6 @@ class _CreatorState extends State<Creator> {
 
   final DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
 
-  bool infoPopupDismissed = false;
-
   // ------
   // STATES
   // ------
@@ -423,24 +421,18 @@ class _CreatorState extends State<Creator> {
                 0,
               ),
               const Padding(padding: EdgeInsets.only(bottom: 20)),
-              infoPopupDismissed
-                  ? _buildCreatorOptionButton(
-                      "Create a Campaign",
-                      "This generates and schedules multiple posts belonging to the same campaign.",
-                      Icons.insert_invitation,
-                      1,
-                    )
-                  : HelpPopup(
-                      title: "Hello!",
-                      content:
-                          "I am your AI Marketing Assistant. I am here to help you use our app to create your social media posts. The more you use this app, the more I learn how to market your business!",
-                      highlight: false,
-                      child: _buildCreatorOptionButton(
-                        "Create a Campaign",
-                        "This generates and schedules multiple posts belonging to the same campaign.",
-                        Icons.insert_invitation,
-                        1,
-                      )),
+              HelpPopup(
+                title: "Hello!",
+                content:
+                    "I am your AI Marketing Assistant. I am here to help you use our app to create your social media posts. The more you use this app, the more I learn how to market your business!",
+                highlight: false,
+                child: _buildCreatorOptionButton(
+                  "Create a Campaign",
+                  "This generates and schedules multiple posts belonging to the same campaign.",
+                  Icons.insert_invitation,
+                  1,
+                ),
+              ),
               const Padding(padding: EdgeInsets.only(bottom: 20)),
               _buildCreatorOptionButton(
                 "Create an Ad",
@@ -452,13 +444,14 @@ class _CreatorState extends State<Creator> {
             ],
           )),
           SizedBox(
-              width: double.infinity,
-              child: CustomButton(
-                disabled: _selectedCreatorOptionIdx < 0 ||
-                    _selectedCreatorOptionIdx > 2,
-                text: 'Continue',
-                handlePressed: _handleInitialContinue,
-              )),
+            width: double.infinity,
+            child: CustomButton(
+              disabled: _selectedCreatorOptionIdx < 0 ||
+                  _selectedCreatorOptionIdx > 2,
+              text: 'Continue',
+              handlePressed: _handleInitialContinue,
+            ),
+          ),
         ],
       ),
     );
