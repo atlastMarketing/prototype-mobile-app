@@ -21,8 +21,10 @@ import 'campaign/creator_campaign_2_images.dart';
 import 'campaign/creator_campaign_3_schedule.dart';
 import 'campaign/creator_campaign_confirm.dart';
 import 'social_media_post/creator_social_media_post_1_catalyst.dart';
-import 'social_media_post/creator_social_media_post_3_results.dart';
 import 'social_media_post/creator_social_media_post_image.dart';
+import 'social_media_post/creator_social_media_post_3_results.dart';
+import 'social_media_post/creator_social_media_post_4_schedule.dart';
+import 'social_media_post/creator_social_media_post_confirm.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -472,11 +474,6 @@ class _CreatorState extends State<Creator> {
           return MaterialPageRoute(
             builder: (context) {
               switch (settings.name) {
-                case "/post-image":
-                  return CreatorSocialMediaPostImage(
-                      navKey: widget.navKey,
-                      saveImageUrl: (String url) =>
-                          {setState(() => imageUrl = url)});
                 case "/post-1":
                   return CreatorSocialMediaPostCatalyst(
                     navKey: widget.navKey,
@@ -487,11 +484,29 @@ class _CreatorState extends State<Creator> {
                     socialMediaPlatformAnnotation:
                         _socialMediaPlatformAnnotations.firstOrNull,
                   );
+                case "/post-image":
+                  return CreatorSocialMediaPostImage(
+                      navKey: widget.navKey,
+                      saveImageUrl: (String url) =>
+                          {setState(() => imageUrl = url)});
                 case "/post-results":
                   return CreatorSocialMediaPostResults(
                     navKey: widget.navKey,
                     catalyst: _catalystDetails,
                     imageUrl: imageUrl!,
+                  );
+                case "/post-schedule":
+                  return CreatorSocialMediaPostSchedule(
+                    navKey: widget.navKey,
+                    catalyst: _catalystDetails,
+                    images: _uploadedImages,
+                    draftPosts: _draftPosts,
+                    saveDraftPosts: _saveDraftPosts,
+                  );
+                case "/post-confirm":
+                  return CreatorSocialMediaPostConfirm(
+                    navKey: widget.navKey,
+                    draftPosts: _draftPosts,
                   );
                 case "/campaign-1":
                   List<Annotation> textAnnotations = _compileAnnotations();
