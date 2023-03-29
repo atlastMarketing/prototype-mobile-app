@@ -197,6 +197,7 @@ class _CreatorCampaignSinglePostEditState
                 children: [
                   if (!_isEditingCaption)
                     HelpPopup(
+                      down: true,
                       title: "Click to regenerate caption",
                       content:
                           "Don't like the current caption? That's alright, you can ask our AI to suggest other captions!",

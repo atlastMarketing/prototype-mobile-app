@@ -14,11 +14,13 @@ import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 class CreatorCampaignConfirm extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final List<PostContent> draftPosts;
+  final Function() exit;
 
   const CreatorCampaignConfirm({
     Key? key,
     required this.navKey,
     required this.draftPosts,
+    required this.exit,
   }) : super(key: key);
 
   @override
@@ -60,6 +62,7 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
     });
     Future.delayed(const Duration(milliseconds: 6000), () {
       widget.navKey.currentState!.popUntil((Route r) => r.isFirst);
+      widget.exit();
     });
   }
 

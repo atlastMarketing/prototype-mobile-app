@@ -555,6 +555,7 @@ class _CreatorState extends State<Creator> {
                   return CreatorCampaignConfirm(
                     navKey: widget.navKey,
                     draftPosts: _draftPosts,
+                    exit: _exitCreator,
                   );
                 case "/ad-1":
                   return const SamplePage();
