@@ -71,8 +71,8 @@ class _OnboardingConfirmState extends State<OnboardingConfirm> {
     // if creating new account
     else {
       setState(() => _animationState = 1);
-      String id = await UserService.createAccount(userModelProvider.data);
-      if (id == "") {
+      String? id = await UserService.createAccount(userModelProvider.data);
+      if (id == null) {
         setState(() => _isError = true);
         return;
       }

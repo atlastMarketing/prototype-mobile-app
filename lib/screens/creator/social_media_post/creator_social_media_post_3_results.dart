@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
-// import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
@@ -57,8 +55,6 @@ class _CreatorSocialMediaPostResultsState
     );
     widget.saveDraftPosts([post]);
 
-    // TODO: probably get this out of here
-    Provider.of<ScheduledPostsStore>(context, listen: false).add([post]);
     widget.navKey.currentState!.pushNamed("/post-confirm");
   }
 

@@ -7,6 +7,7 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
@@ -37,6 +38,7 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
   bool _isPostLoaded = false;
   bool _isPostNotFound = false;
   late PostContent _postData;
+  bool _isPostSaving = false;
 
   void _handleBack() {
     if (_postData.caption == _captionController.text) {
@@ -70,14 +72,21 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
     );
   }
 
-  void _handleSave() {
+  Future<void> _handleSave() async {
+    setState(() => _isPostSaving = true);
+    _postData.caption = _captionController.text;
     Provider.of<ScheduledPostsStore>(context, listen: false).update(_postData);
+    await ContentManagerService.updateContent(_postData);
+    setState(() => _isPostSaving = false);
     widget.navKey.currentState!.pop();
   }
 
-  void _handleDelete() {
+  Future<void> _handleDelete() async {
+    setState(() => _isPostSaving = true);
     Provider.of<ScheduledPostsStore>(context, listen: false)
         .remove(_postData.id);
+    await ContentManagerService.deleteContent(_postData.id);
+    setState(() => _isPostSaving = false);
     widget.navKey.currentState!.pop();
   }
 
@@ -237,7 +246,7 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
                 children: [
                   if (!_isEditingCaption)
                     ElevatedButton(
-                      onPressed: _handleDeleteAttempt,
+                      onPressed: _isPostSaving ? null : _handleDeleteAttempt,
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(8),
@@ -251,7 +260,7 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
                       ),
                     ),
                   ElevatedButton(
-                    onPressed: _toggleEditState,
+                    onPressed: _isPostSaving ? null : _toggleEditState,
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(8),
@@ -272,7 +281,7 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
                   ),
                   if (!_isEditingCaption)
                     ElevatedButton(
-                      onPressed: _handleSave,
+                      onPressed: _isPostSaving ? null : _handleSave,
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(8),
@@ -343,6 +352,13 @@ class _CalendarEditSinglePostState extends State<CalendarEditSinglePost> {
             ),
           ]),
         ),
+        if (_isPostSaving)
+          Positioned.fill(
+            child: Container(
+              color: AppColors.light.withOpacity(0.5),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          ),
       ],
     );
   }

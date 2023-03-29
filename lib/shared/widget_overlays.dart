@@ -74,7 +74,7 @@ class WidgetOverlays extends StatelessWidget {
             ),
           if (errorText != null)
             Container(
-              padding: EdgeInsets.all(50),
+              padding: const EdgeInsets.all(50),
               color: AppColors.dark.withOpacity(0.5),
               child: Center(
                 child: Text(
