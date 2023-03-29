@@ -1,4 +1,3 @@
-import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +7,16 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/data/suggested_posts.dart';
+import 'package:atlast_mobile_app/data/user.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class HomeEditSingleSuggestion extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -38,6 +39,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
   bool _isPostLoaded = false;
   bool _isPostNotFound = false;
   late PostDraft _postData;
+  bool _isPostSaving = false;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -63,21 +65,36 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
     });
   }
 
-  void _handleCreate() {
+  Future<void> _handleCreate() async {
     SuggestedPostsStore suggestedPostsStore =
         Provider.of<SuggestedPostsStore>(context, listen: false);
     ScheduledPostsStore scheduledPostsStore =
         Provider.of<ScheduledPostsStore>(context, listen: false);
+    UserStore userStore = Provider.of<UserStore>(context, listen: false);
+
+    setState(() => _isPostSaving = true);
+
+    String? id =
+        await ContentManagerService.saveContent(_postData, userStore.data);
+
+    // if (id == null) {
+    // setState(() => _isPostSaving = false);
+    // return;
+    // }
+    id ??= "suggested-turned-scheduled-${widget.suggestionId}";
+
     scheduledPostsStore.add([
       PostContent(
-        id: "suggested-turned-scheduled-${widget.suggestionId}",
+        id: id,
         platform: _postData.platform,
         dateTime: _postData.dateTime!,
         caption: _postData.caption!.trim(),
         imageUrl: _postData.imageUrl!,
       )
     ]);
+
     suggestedPostsStore.pop();
+    setState(() => _isPostSaving = false);
     _handleBack();
   }
 
@@ -87,7 +104,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
     _loadPostData();
   }
 
-  Widget _buildImageUploader() {
+  Widget _buildImage() {
     return _postData.imageUrl != null
         ? AvatarImage(Uri.encodeFull(_postData.imageUrl!))
         : Stack(
@@ -159,20 +176,22 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: _buildImageUploader(),
-              ),
-              CustomFormTextField(
-                controller: _captionController,
-                previewOnly: true,
-                autocorrect: true,
-                vSize: 7,
-              ),
-            ],
+          child: SingleChildScrollBare(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImage(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: CustomFormTextField(
+                    controller: _captionController,
+                    previewOnly: true,
+                    autocorrect: true,
+                    vSize: 7,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Positioned(
@@ -211,21 +230,37 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
             ),
           ),
         ),
-        // TODO: replace with platform icons
         Positioned(
-          top: 30,
-          left: 120,
-          child: Text(
-            socialMediaPlatformsOptions[_postData.platform]!,
-          ),
+          top: 5,
+          right: 20,
+          child: Row(children: [
+            Text(
+              socialMediaPlatformsOptions[_postData.platform]!,
+              style: AppText.bodyBold.merge(AppText.darkText),
+            ),
+            const Padding(padding: EdgeInsets.only(right: 5)),
+            Image.asset(
+              socialMediaPlatformsImageUrls[_postData.platform]!,
+              width: 14,
+              height: 14,
+              color: AppColors.dark,
+            ),
+          ]),
         ),
+        if (_isPostSaving)
+          Positioned.fill(
+            child: Container(
+              color: AppColors.light.withOpacity(0.5),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          )
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutNormalPage(
+    return LayoutFullPage(
       handleBack: _handleBack,
       paddingOverwrite: pagePaddingNoTop,
       content: Column(
@@ -241,6 +276,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
             width: double.infinity,
             padding: pageHorizontalPadding,
             child: CustomButton(
+              disabled: _isPostSaving,
               text: 'Create Scheduled Post',
               handlePressed: _handleCreate,
             ),

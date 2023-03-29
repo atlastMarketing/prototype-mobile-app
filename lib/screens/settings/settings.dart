@@ -1,6 +1,7 @@
+import 'package:atlast_mobile_app/screens/settings/user_profile.dart';
 import 'package:flutter/material.dart';
 
-import 'settings_dashboard.dart';
+import 'settings_debug.dart';
 
 class Settings extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -25,8 +26,10 @@ class _SettingsState extends State<Settings> {
         return MaterialPageRoute(
           builder: (context) {
             switch (settings.name) {
+              case "/debug":
+                return SettingsDebug(navKey: widget.navKey);
               default:
-                return SettingsDashboard(navKey: widget.navKey);
+                return UserProfile(navKey: widget.navKey);
             }
           },
         );

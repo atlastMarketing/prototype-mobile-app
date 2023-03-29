@@ -9,6 +9,7 @@ class LayoutNormalPage extends StatelessWidget {
   final String? appBarTitleText;
   final Widget? appBarContent;
   final EdgeInsets? paddingOverwrite;
+  final List<Widget> actionWidgets;
 
   const LayoutNormalPage({
     Key? key,
@@ -19,6 +20,7 @@ class LayoutNormalPage extends StatelessWidget {
     // fancy aesthetic stuff (not necessary)
     // if any of the pages break because of overflows, this is the first thing to turn off.
     this.paddingOverwrite,
+    this.actionWidgets = const [],
   }) : super(key: key);
 
   PreferredSizeWidget? _buildAppBar() {
@@ -50,32 +52,26 @@ class LayoutNormalPage extends StatelessWidget {
               onPressed: handleBack,
             )
           : null,
+      actions: actionWidgets,
       title: titleContent,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget? appBar = _buildAppBar();
-    double maxHeight = MediaQuery.of(context).size.height;
-    // minus safearea
-    maxHeight -= MediaQuery.of(context).padding.top;
-    maxHeight -= MediaQuery.of(context).padding.bottom;
-    // minus appbar
-    maxHeight -= appBar != null ? appBar.preferredSize.height : 0;
-
     EdgeInsets padding = paddingOverwrite ?? pagePadding;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: LayoutBuilder(builder:
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(),
+      body: SafeArea(
+        child: LayoutBuilder(builder:
             (BuildContext context, BoxConstraints viewportConstraints) {
           return Padding(padding: padding, child: content);
         }),
-        resizeToAvoidBottomInset: true,
-        extendBody: false,
       ),
+      resizeToAvoidBottomInset: true,
+      extendBody: false,
     );
   }
 }

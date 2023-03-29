@@ -65,7 +65,7 @@ const Map<RouteEnum, RouteData> routes = {
     key: RouteEnum.settings,
     route: '/settings',
     label: 'Settings',
-    icon: Icons.settings,
+    icon: Icons.person,
     stackOrder: 3,
     navbarIdentifier: 4,
   ),

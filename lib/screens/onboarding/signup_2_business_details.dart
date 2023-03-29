@@ -46,12 +46,15 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
       businessType: _bTypeInput,
       businessIndustry: _bIndustryInput,
     );
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-3");
   }
 
   @override
   void initState() {
     super.initState();
+    _bNameController.text =
+        Provider.of<UserStore>(context, listen: false).data.businessName ?? "";
     String? initialBType =
         Provider.of<UserStore>(context, listen: false).data.businessType;
     if (initialBType != null && initialBType != "") _bTypeInput = initialBType;

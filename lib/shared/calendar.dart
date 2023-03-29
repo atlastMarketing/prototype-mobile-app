@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
@@ -73,6 +75,10 @@ class _CustomCalendarState extends State<CustomCalendar> {
       CalendarView.timelineWorkWeek,
       CalendarView.timelineMonth,
     ].contains(_calendarController.view)) {
+      double bottomPosition = 0;
+      if (details.bounds.height > details.bounds.width) {
+        bottomPosition = details.bounds.height / 2.5;
+      }
       return shouldShowOnboarding
           ? HelpPopup(
               title: "Edit me!",
@@ -83,11 +89,24 @@ class _CustomCalendarState extends State<CustomCalendar> {
                 height: details.bounds.width,
                 width: details.bounds.width,
                 color: Colors.transparent,
-                child: AvatarImage(
-                  currPost.imageUrl ?? "",
-                  width: details.bounds.width,
-                  height: details.bounds.width,
-                  borderRadius: 0,
+                child: Stack(
+                  children: [
+                    AvatarImage(
+                      currPost.imageUrl ?? "",
+                      width: details.bounds.width,
+                      height: details.bounds.width,
+                      borderRadius: 0,
+                    ),
+                    Positioned(
+                      bottom: bottomPosition,
+                      right: 0,
+                      child: Image.asset(
+                        socialMediaPlatformsImageUrls[currPost.platform]!,
+                        width: details.bounds.width / 3,
+                        height: details.bounds.width / 3,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             )
@@ -95,11 +114,24 @@ class _CustomCalendarState extends State<CustomCalendar> {
               height: details.bounds.width,
               width: details.bounds.width,
               color: Colors.transparent,
-              child: AvatarImage(
-                currPost.imageUrl ?? "",
-                width: details.bounds.width,
-                height: details.bounds.width,
-                borderRadius: 0,
+              child: Stack(
+                children: [
+                  AvatarImage(
+                    currPost.imageUrl ?? "",
+                    width: details.bounds.width,
+                    height: details.bounds.width,
+                    borderRadius: 0,
+                  ),
+                  Positioned(
+                    bottom: bottomPosition,
+                    right: 0,
+                    child: Image.asset(
+                      socialMediaPlatformsImageUrls[currPost.platform]!,
+                      width: details.bounds.width / 3,
+                      height: details.bounds.width / 3,
+                    ),
+                  ),
+                ],
               ),
             );
     }
@@ -112,16 +144,24 @@ class _CustomCalendarState extends State<CustomCalendar> {
         height: details.bounds.height,
         width: details.bounds.width,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
           child: Row(
             children: [
               AvatarImage(
                 currPost.imageUrl ?? "",
-                width: details.bounds.height - 4,
-                height: details.bounds.height - 4,
-                fit: BoxFit.contain,
+                width: details.bounds.height - 8,
+                height: details.bounds.height - 8,
+                fit: BoxFit.cover,
                 borderRadius: 0,
               ),
+              const Padding(padding: EdgeInsets.only(right: 10)),
+              Image.asset(
+                socialMediaPlatformsImageUrls[currPost.platform]!,
+                width: 20,
+                height: 20,
+                color: AppColors.white,
+              ),
+              const Padding(padding: EdgeInsets.only(right: 5)),
               Flexible(
                 child: Text(
                   currPost.caption ?? "",
@@ -137,15 +177,55 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
     return SizedBox(
       width: double.infinity,
-      child: Text(
-        currPost.caption ?? "",
-        style: AppText.bodySmall,
+      child: Row(
+        children: [
+          AvatarImage(
+            currPost.imageUrl ?? "",
+            width: details.bounds.height - 8,
+            height: details.bounds.height - 8,
+            fit: BoxFit.cover,
+            borderRadius: 0,
+          ),
+          const Padding(padding: EdgeInsets.only(right: 10)),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Image.asset(
+                      socialMediaPlatformsImageUrls[currPost.platform]!,
+                      width: 10,
+                      height: 10,
+                      color: AppColors.black,
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 5)),
+                    Text(
+                      "${describeEnum(currPost.platform)} post",
+                      style: AppText.bodySmallBold,
+                    ),
+                  ],
+                ),
+                Text(
+                  currPost.caption ?? "",
+                  style: AppText.bodySmall,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
   void _handleTap(CalendarTapDetails details) {
     dynamic appointments = details.appointments;
+    if (details.targetElement == CalendarElement.calendarCell &&
+        _calendarController.view == CalendarView.month) {
+      return;
+    }
 
     if (appointments != null && widget.handleTap != null) {
       PostContent appointment = appointments.first;

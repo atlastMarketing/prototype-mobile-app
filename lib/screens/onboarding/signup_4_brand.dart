@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:info_popup/info_popup.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -47,10 +46,11 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
       businessVoice: _businessVoiceController.text,
       avatarImageUrl: _uploadedImage?.imageUrl ?? _imageUrl,
     );
+    FocusManager.instance.primaryFocus?.unfocus();
     widget.navKey.currentState!.pushNamed("/onboarding-5");
   }
 
-  void _getImage({ImageSource source = ImageSource.camera}) async {
+  Future<void> _getImage({ImageSource source = ImageSource.camera}) async {
     XFile? pickedFile = await ImagePicker().pickImage(
       source: source,
       maxHeight: 1080,
@@ -174,11 +174,11 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
             Padding(
               padding: const EdgeInsets.only(top: 30, bottom: 30),
               child: Center(
-                child: _imageUrl != "" && _uploadedImage != null
+                child: _imageUrl != "" || _uploadedImage != null
                     ? _buildImageItem()
                     : ImageUploader(
                         handleTap: _requestImage,
-                        iconSize: MediaQuery.of(context).size.width / 6,
+                        iconSize: 30,
                         height: 120,
                         width: 120,
                       ),
@@ -198,6 +198,7 @@ class _OnboardingBrandingState extends State<OnboardingBranding> {
                   controller: _businessVoiceController,
                   placeholderText:
                       "Ex. Fun, Colourful, Casual, Family-oriented",
+                  autocorrect: true,
                 ),
               ),
             ),

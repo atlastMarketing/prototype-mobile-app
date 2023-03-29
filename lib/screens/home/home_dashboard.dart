@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
@@ -9,7 +10,7 @@ import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/post_preview.dart';
-import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 import './home_edit_single_post.dart';
@@ -26,8 +27,6 @@ class HomeDashboard extends StatelessWidget {
   }) : super(key: key);
 
   void _openSuggestedPost(BuildContext ctx, int postId) {
-    print("Opening suggested post with id $postId");
-
     Navigator.of(ctx).push(
       MaterialPageRoute(
         builder: (context) => HomeEditSingleSuggestion(
@@ -39,9 +38,7 @@ class HomeDashboard extends StatelessWidget {
   }
 
   void _openUpcomingPost(BuildContext ctx, String postId) {
-    print("Opening upcoming post with id $postId");
-
-    Navigator.of(ctx).push(
+    navKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => HomeEditSinglePost(
           navKey: navKey,
@@ -233,7 +230,12 @@ class HomeDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutFullPage(
+    final bool hasScheduledPosts =
+        Provider.of<ScheduledPostsStore>(context, listen: false)
+            .posts
+            .isNotEmpty;
+    return LayoutNormalPage(
+      paddingOverwrite: hasScheduledPosts ? pagePaddingNoBottom : null,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -251,17 +253,14 @@ class HomeDashboard extends StatelessWidget {
               ),
             ),
           ),
-          Consumer<ScheduledPostsStore>(
-            builder: (context, model, child) => model.posts.isEmpty
-                ? SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      text: 'Create',
-                      handlePressed: handleCreate,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
+          if (!hasScheduledPosts)
+            SizedBox(
+              width: double.infinity,
+              child: CustomButton(
+                text: 'Create',
+                handlePressed: handleCreate,
+              ),
+            ),
         ],
       ),
     );

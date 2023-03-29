@@ -53,7 +53,7 @@ class UserService {
     }
   }
 
-  static Future<String> createAccount(UserModel user) async {
+  static Future<String?> createAccount(UserModel user) async {
     http.Response? response;
 
     try {
@@ -72,7 +72,7 @@ class UserService {
       return responseBody['_id'];
     } catch (err) {
       printAPIError(response, err);
-      return "";
+      return null;
     }
   }
 
@@ -86,7 +86,7 @@ class UserService {
 
       final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
       response = await http.put(
-        Uri.parse('$API_URL/user'),
+        Uri.parse('$API_URL/user/${user.id}'),
         headers: headers,
         body: json.encode(requestBody),
       );

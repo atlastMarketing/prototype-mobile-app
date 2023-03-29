@@ -1,4 +1,3 @@
-import 'package:atlast_mobile_app/screens/creator/campaign/creator_campaign_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:google_mlkit_entity_extraction/google_mlkit_entity_extraction.dart';
@@ -15,14 +14,18 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/sample_page.dart';
+import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/utils/ner_regex.dart';
 
 import 'campaign/creator_campaign_1_catalyst.dart';
 import 'campaign/creator_campaign_2_images.dart';
 import 'campaign/creator_campaign_3_schedule.dart';
-import 'social_media_post/creator_social_media_post_1_prompt.dart';
+import 'campaign/creator_campaign_confirm.dart';
+import 'social_media_post/creator_social_media_post_1_catalyst.dart';
+import 'social_media_post/creator_social_media_post_2_image.dart';
 import 'social_media_post/creator_social_media_post_3_results.dart';
-import 'social_media_post/creator_social_media_post_image.dart';
+// import 'social_media_post/creator_social_media_post_4_schedule.dart';
+import 'social_media_post/creator_social_media_post_confirm.dart';
 
 class Creator extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -55,7 +58,6 @@ class _CreatorState extends State<Creator> {
   // prompt analysis - annotations
   List<DateAnnotation> _dateAnnotations = [];
   List<SocialMediaPlatformAnnotation> _socialMediaPlatformAnnotations = [];
-  String? imageUrl;
   List<CampaignOutputTypeAnnotation> _campaignOutputTypeAnnotations = [];
   List<PostContent> _draftPosts = [];
 
@@ -69,24 +71,33 @@ class _CreatorState extends State<Creator> {
 
   void _handleInitialContinue() {
     if (_selectedCreatorOptionIdx == 0) {
-      setState(() => _catalystDetails = CatalystBreakdown(
-            catalyst: "",
-            derivedPrompt: "",
-            derivedOutputType: CatalystOutputTypes.singlePost,
-          ));
+      setState(() {
+        _catalystDetails = CatalystBreakdown(
+          catalyst: "",
+          derivedPrompt: "",
+          derivedOutputType: CatalystOutputTypes.singlePost,
+        );
+        _selectedCreatorOptionIdx = -1;
+      });
       // create post
       widget.navKey.currentState!.pushNamed("/post-1");
     } else if (_selectedCreatorOptionIdx == 1) {
-      setState(() => _catalystDetails = CatalystBreakdown(
-            catalyst: "",
-            derivedPrompt: "",
-            derivedOutputType: CatalystOutputTypes.campaign,
-            campaignOutputType: CatalystCampaignOutputTypes.daily,
-          ));
+      setState(() {
+        _catalystDetails = CatalystBreakdown(
+          catalyst: "",
+          derivedPrompt: "",
+          derivedOutputType: CatalystOutputTypes.campaign,
+          campaignOutputType: CatalystCampaignOutputTypes.daily,
+        );
+        _selectedCreatorOptionIdx = -1;
+      });
       // create campaign
       widget.navKey.currentState!.pushNamed("/campaign-1");
     } else if (_selectedCreatorOptionIdx == 2) {
       // create ad
+      setState(() {
+        _selectedCreatorOptionIdx = -1;
+      });
       widget.navKey.currentState!.pushNamed("/ad-1");
     }
   }
@@ -406,35 +417,40 @@ class _CreatorState extends State<Creator> {
       content: Column(
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const HeroHeading(text: "What would you like\nto create?"),
-                _buildCreatorOptionButton(
-                  "Create a Post",
-                  "This generates a single post. Good for one time promotions.",
-                  Icons.campaign,
-                  0,
-                ),
-                const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreatorOptionButton(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const HeroHeading(text: "What would you like\nto create?"),
+              _buildCreatorOptionButton(
+                "Create a Post",
+                "This generates a single post. Good for one time promotions.",
+                Icons.campaign,
+                0,
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              HelpPopup(
+                title: "Hello!",
+                content:
+                    "I am your AI Marketing Assistant. I am here to help you use our app to create your social media posts. The more you use this app, the more I learn how to market your business!",
+                highlight: false,
+                child: _buildCreatorOptionButton(
                   "Create a Campaign",
                   "This generates and schedules multiple posts belonging to the same campaign.",
                   Icons.insert_invitation,
                   1,
                 ),
-                const Padding(padding: EdgeInsets.only(bottom: 20)),
-                _buildCreatorOptionButton(
-                  "Create an Ad",
-                  "Reach more customers with precise targeting and actionable insights.",
-                  Icons.ads_click,
-                  2,
-                ),
-                const Spacer(),
-              ],
-            ),
-          ),
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+              _buildCreatorOptionButton(
+                "Create an Ad",
+                "Reach more customers with precise targeting and actionable insights.",
+                Icons.ads_click,
+                2,
+              ),
+              const Spacer(),
+            ],
+          )),
           SizedBox(
             width: double.infinity,
             child: CustomButton(
@@ -465,73 +481,90 @@ class _CreatorState extends State<Creator> {
 
         return true;
       },
-      child: Scaffold(
-        body: Navigator(
-          key: widget.navKey,
-          initialRoute: '/',
-          onGenerateRoute: (settings) {
-            return MaterialPageRoute(
-              builder: (context) {
-                switch (settings.name) {
-                  case "/post-image":
-                    return CreatorSocialMediaPostImage(
-                        navKey: widget.navKey,
-                        saveImageUrl: (String url) =>
-                            {setState(() => imageUrl = url)});
-                  case "/post-1":
-                    return CreatorSocialMediaPostPrompt(
-                      navKey: widget.navKey,
-                      analyzeCatalyst: _analyzeCatalyst,
-                      updateCatalyst: _updateCatalyst,
-                      catalyst: _catalystDetails,
-                      dateAnnotation: _dateAnnotations.firstOrNull,
-                      socialMediaPlatformAnnotation:
-                          _socialMediaPlatformAnnotations.firstOrNull,
-                    );
-                  case "/post-results":
-                    return CreatorSocialMediaPostResults(
-                      navKey: widget.navKey,
-                      catalyst: _catalystDetails,
-                      imageUrl: imageUrl!,
-                    );
-                  case "/campaign-1":
-                    List<Annotation> textAnnotations = _compileAnnotations();
-                    return CreatorCampaignCatalyst(
-                      navKey: widget.navKey,
-                      analyzeCatalyst: _analyzeCatalyst,
-                      updateCatalyst: _updateCatalyst,
-                      catalyst: _catalystDetails,
-                      annotations: textAnnotations,
-                    );
-                  case "/campaign-2":
-                    return CreatorCampaignImages(
-                      navKey: widget.navKey,
-                      images: _uploadedImages,
-                      saveImages: _saveUploadedImages,
-                    );
-                  case "/campaign-3":
-                    return CreatorCampaignSchedule(
-                      navKey: widget.navKey,
-                      catalyst: _catalystDetails,
-                      images: _uploadedImages,
-                      draftPosts: _draftPosts,
-                      saveDraftPosts: _saveDraftPosts,
-                    );
-                  case "/campaign-confirm":
-                    return CreatorCampaignConfirm(
-                      navKey: widget.navKey,
-                      draftPosts: _draftPosts,
-                    );
-                  case "/ad-1":
-                    return const SamplePage();
-                  default:
-                    return _buildCreatorOptions();
-                }
-              },
-            );
-          },
-        ),
-        extendBody: false,
+      child: Navigator(
+        key: widget.navKey,
+        initialRoute: '/',
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) {
+              switch (settings.name) {
+                case "/post-1":
+                  return CreatorSocialMediaPostCatalyst(
+                    navKey: widget.navKey,
+                    analyzeCatalyst: _analyzeCatalyst,
+                    updateCatalyst: _updateCatalyst,
+                    catalyst: _catalystDetails,
+                    dateAnnotation: _dateAnnotations.firstOrNull,
+                    socialMediaPlatformAnnotation:
+                        _socialMediaPlatformAnnotations.firstOrNull,
+                  );
+                case "/post-2":
+                  return CreatorSocialMediaPostImage(
+                    navKey: widget.navKey,
+                    uploadedImage:
+                        _uploadedImages.isNotEmpty ? _uploadedImages[0] : null,
+                    saveImages: _saveUploadedImages,
+                  );
+                // case "/post-3":
+                //   return CreatorSocialMediaPostSchedule(
+                //     navKey: widget.navKey,
+                //     catalyst: _catalystDetails,
+                //     images: _uploadedImages,
+                //     draftPosts: _draftPosts,
+                //     saveDraftPosts: _saveDraftPosts,
+                //   );
+                case "/post-3":
+                  return CreatorSocialMediaPostResults(
+                    navKey: widget.navKey,
+                    catalyst: _catalystDetails,
+                    uploadedImageUrl: _uploadedImages.isNotEmpty
+                        ? _uploadedImages[0].imageUrl
+                        : null,
+                    saveDraftPosts: _saveDraftPosts,
+                  );
+                case "/post-confirm":
+                  return CreatorSocialMediaPostConfirm(
+                    navKey: widget.navKey,
+                    draftPosts: _draftPosts,
+                    exit: _exitCreator,
+                  );
+                case "/campaign-1":
+                  List<Annotation> textAnnotations = _compileAnnotations();
+                  return CreatorCampaignCatalyst(
+                    navKey: widget.navKey,
+                    analyzeCatalyst: _analyzeCatalyst,
+                    updateCatalyst: _updateCatalyst,
+                    catalyst: _catalystDetails,
+                    annotations: textAnnotations,
+                  );
+                case "/campaign-2":
+                  return CreatorCampaignImages(
+                    navKey: widget.navKey,
+                    images: _uploadedImages,
+                    saveImages: _saveUploadedImages,
+                  );
+                case "/campaign-3":
+                  return CreatorCampaignSchedule(
+                    navKey: widget.navKey,
+                    catalyst: _catalystDetails,
+                    images: _uploadedImages,
+                    draftPosts: _draftPosts,
+                    saveDraftPosts: _saveDraftPosts,
+                  );
+                case "/campaign-confirm":
+                  return CreatorCampaignConfirm(
+                    navKey: widget.navKey,
+                    draftPosts: _draftPosts,
+                    exit: _exitCreator,
+                  );
+                case "/ad-1":
+                  return const SamplePage();
+                default:
+                  return _buildCreatorOptions();
+              }
+            },
+          );
+        },
       ),
     );
   }

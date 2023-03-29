@@ -7,6 +7,7 @@ import 'package:atlast_mobile_app/constants/stock_images.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/catalyst_model.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/models/image_model.dart';
@@ -21,16 +22,16 @@ import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/widget_overlays.dart';
 
-import './creator_campaign_single_post_edit.dart';
+import './creator_social_media_post_single_post_edit.dart';
 
-class CreatorCampaignSchedule extends StatefulWidget {
+class CreatorSocialMediaPostSchedule extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final CatalystBreakdown catalyst;
   final List<UploadedImage> images;
   final List<PostContent> draftPosts;
   final void Function(List<PostContent>) saveDraftPosts;
 
-  const CreatorCampaignSchedule({
+  const CreatorSocialMediaPostSchedule({
     Key? key,
     required this.navKey,
     required this.catalyst,
@@ -40,11 +41,11 @@ class CreatorCampaignSchedule extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreatorCampaignScheduleState createState() =>
-      _CreatorCampaignScheduleState();
+  _CreatorSocialMediaPostScheduleState createState() =>
+      _CreatorSocialMediaPostScheduleState();
 }
 
-class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
+class _CreatorSocialMediaPostScheduleState extends State<CreatorSocialMediaPostSchedule> {
   // state and status
   bool _campaignDatesFetched = false;
   bool _campaignDatesIsLoading = false;
@@ -58,15 +59,15 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
 
   // misc
   final MAX_CAPTION_REQUESTS_AT_ONCE = 5;
-  bool _userKnowsHowToEdit = false;
-  int _calendarRebuildCount = 0; // hack for rebuilding calendar on demand
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
   }
 
   void _handleContinue() {
-    widget.navKey.currentState!.pushNamed("/campaign-confirm");
+    Provider.of<ScheduledPostsStore>(context, listen: false)
+        .add(widget.draftPosts);
+    widget.navKey.currentState!.pushNamed("/post-confirm");
   }
 
   Future<List<int>> _fetchCampaignSetForPlatform(
@@ -154,6 +155,12 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   Future<void> _fetchCampaignDates() async {
     setState(() => _campaignDatesIsLoading = true);
 
+    // TODO: get real images
+    List<String> listOfImageUrls = [
+      ...widget.images.map((i) => i.imageUrl).toList(),
+      ...stockImages
+    ];
+
     List<int> allDates = [];
     List<int> newDates = [];
     List<PostContent> allDrafts = [];
@@ -172,9 +179,8 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
           dateTime: e,
           caption: "",
           platform: platform,
-          imageUrl: draftCounter > widget.images.length - 1
-              ? stockImages[Random().nextInt(stockImages.length - 1)]
-              : widget.images[draftCounter].imageUrl,
+          imageUrl:
+              listOfImageUrls[Random().nextInt(listOfImageUrls.length - 1)],
         );
       }).toList();
       allDrafts.addAll(newDrafts);
@@ -192,6 +198,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
 
   Future<void> _fetchCaptionsForCampaign({
     SocialMediaPlatforms? platform,
+    required int numCaptions,
   }) async {
     setState(() => _captionsIsLoading = true);
 
@@ -204,7 +211,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       generationNum: 0,
       catalyst: widget.catalyst.catalyst,
       // TODO: remove this cap
-      numOptions: min(MAX_CAPTION_REQUESTS_AT_ONCE, widget.draftPosts.length),
+      numOptions: min(MAX_CAPTION_REQUESTS_AT_ONCE, numCaptions),
     );
 
     setState(() {
@@ -219,12 +226,9 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     widget.saveDraftPosts(newPosts);
   }
 
-  Future<void> _approveCampaignDates() async {
-    await _fetchCaptionsForCampaign();
-    setState(() {
-      _calendarRebuildCount += 1;
-      _campaignDatesApproved = true;
-    });
+  void _approveCampaignDates() async {
+    await _fetchCaptionsForCampaign(numCaptions: widget.draftPosts.length);
+    setState(() => _campaignDatesApproved = true);
   }
 
   void _saveDraftPost(String postId, PostContent newContent) {
@@ -234,59 +238,13 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     widget.saveDraftPosts(newPosts);
   }
 
-  void _promptForApproval(postId) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Approve your campaign first?'),
-          content: RichText(
-            text: TextSpan(
-              style: AppText.body.merge(AppText.blackText),
-              children: const <TextSpan>[
-                TextSpan(
-                  text:
-                      'You haven\'t confirmed your campaign\'s dates yet. Do you want to ',
-                ),
-                TextSpan(
-                  text: 'confirm your dates ',
-                  style: TextStyle(fontWeight: FontWeight.w700),
-                ),
-                TextSpan(text: 'before editing single posts?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                setState(() => _userKnowsHowToEdit = true);
-                await _approveCampaignDates();
-                _openEditSinglePost(postId);
-              },
-              child: const Text('Yes, confirm dates now'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('No, let me stay'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _openEditSinglePost(String postId) {
-    if (!_campaignDatesApproved) {
-      _promptForApproval(postId);
-      return;
-    }
+    if (!_campaignDatesApproved) return;
 
     int postIdDraft = int.parse(postId);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => CreatorCampaignSinglePostEdit(
+        builder: (context) => CreatorSocialMediaPostSinglePostEdit(
           navKey: widget.navKey,
           postContent: widget.draftPosts[postIdDraft],
           saveChanges: _saveDraftPost,
@@ -297,15 +255,11 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     );
   }
 
-  void startWorkflow() async {
-    await _fetchCampaignDates();
-    // await _fetchCaptionsForCampaign();
-  }
-
   @override
   void initState() {
     super.initState();
-    startWorkflow();
+
+    _fetchCampaignDates();
   }
 
   Widget _buildLoadingAnims() {
@@ -316,7 +270,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
         children: [
           const AnimatedLoadingDots(size: 75),
           AnimatedBlinkText(
-            text: "Generating your campaign",
+            text: "Preparing content for scheduling",
             textStyle: AppText.bodyBold
                 .merge(const TextStyle(color: AppColors.primary)),
             width: 200,
@@ -327,37 +281,12 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
     );
   }
 
-  Widget _buildRegenerationAndApprovalButtons() {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: HelpPopup(
-            disabled: _campaignDates.isEmpty,
-            title: "Here's a tip!",
-            content:
-                "Regenerate new campaigns until you find the right one! Find your best campaign before editing single posts.",
-            highlight: false,
-            down: true,
-            child: CustomButton(
-              disabled: _campaignDates.isEmpty || _captionsIsLoading,
-              handlePressed: _fetchCampaignDates,
-              fillColor: AppColors.error,
-              text: 'Regenerate Campaign',
-            ),
-          ),
-        ),
-        const Padding(padding: EdgeInsets.only(bottom: 10)),
-        SizedBox(
-          width: double.infinity,
-          child: CustomButton(
-            disabled: _campaignDates.isEmpty || _captionsIsLoading,
-            handlePressed: _approveCampaignDates,
-            fillColor: AppColors.primary,
-            text: 'Confirm Campaign',
-          ),
-        ),
-      ],
+  Widget _buildNoCampaignDates() {
+    return Center(
+      child: Text(
+        "Dates could not be generated. Please retry.",
+        style: AppText.heading.merge(const TextStyle(color: AppColors.primary)),
+      ),
     );
   }
 
@@ -369,54 +298,45 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
       content: () {
         if (!_campaignDatesFetched) return _buildLoadingAnims();
 
-        DateTime firstDate = DateTime.now();
+        DateTime? firstDate = DateTime.fromMillisecondsSinceEpoch(
+            widget.draftPosts.first.dateTime!);
 
-        if (widget.draftPosts.isNotEmpty) {
-          firstDate = DateTime.fromMillisecondsSinceEpoch(
-              widget.draftPosts.first.dateTime!);
-        }
-// No campaign dates generated. Please retry with different date range.
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const HeroHeading(text: "Posting Schedule"),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: WidgetOverlays(
-                  // disabled: !_campaignDatesApproved,
-                  loading: _campaignDatesIsLoading || _captionsIsLoading,
-                  errorText: _campaignDates.isEmpty
-                      ? "No campaign dates generated. Please retry with different date range."
-                      : null,
-                  child: CustomCalendar(
-                    key: ValueKey(_calendarRebuildCount),
-                    disableSelection: true,
-                    // disableInteractions: !_campaignDatesApproved,
-                    allowDragAndDrop: true,
-                    posts: widget.draftPosts,
-                    handleTap: _openEditSinglePost,
-                    updatePost: _saveDraftPost,
-                    initialDate: firstDate,
-                    enableOnboarding:
-                        _campaignDatesApproved && !_userKnowsHowToEdit,
-                    minDateRestriction: DateTime.now(),
-                  ),
-                ),
-              ),
-            ),
-            _campaignDatesApproved
-                ? SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      handlePressed: _handleContinue,
-                      fillColor: AppColors.primary,
-                      text: 'Schedule Campaign',
+        return _campaignDates.isNotEmpty
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const HeroHeading(text: "Posting Schedule"),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: WidgetOverlays(
+                        disabled: !_campaignDatesApproved,
+                        loading: _campaignDatesIsLoading || _captionsIsLoading,
+                        child: CustomCalendar(
+                          disableSelection: true,
+                          disableInteractions: !_campaignDatesApproved,
+                          allowDragAndDrop: true,
+                          posts: widget.draftPosts,
+                          handleTap: _openEditSinglePost,
+                          updatePost: _saveDraftPost,
+                          initialDate: firstDate,
+                          enableOnboarding: true,
+                          minDateRestriction: DateTime.now(),
+                        ),
+                      ),
                     ),
-                  )
-                : _buildRegenerationAndApprovalButtons(),
-          ],
-        );
+                  ),
+                  SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            handlePressed: _handleContinue,
+                            fillColor: AppColors.primary,
+                            text: 'Schedule Post',
+                          ),
+                        )
+                ],
+              )
+            : _buildNoCampaignDates();
       }(),
     );
   }

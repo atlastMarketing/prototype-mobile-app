@@ -5,11 +5,13 @@ class WidgetOverlays extends StatelessWidget {
   final bool disabled;
   final bool loading;
   final Widget child;
+  final String? errorText;
   const WidgetOverlays({
     Key? key,
     this.disabled = false,
     this.loading = false,
     required this.child,
+    this.errorText,
   }) : super(key: key);
 
   @override
@@ -64,13 +66,24 @@ class WidgetOverlays extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          loading
-              ? Container(
-                  color: AppColors.dark.withOpacity(0.2),
-                  child: const Center(child: CircularProgressIndicator()),
-                )
-              : const SizedBox.shrink(),
           child,
+          if (loading)
+            Container(
+              color: AppColors.dark.withOpacity(0.2),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          if (errorText != null)
+            Container(
+              padding: const EdgeInsets.all(50),
+              color: AppColors.dark.withOpacity(0.5),
+              child: Center(
+                child: Text(
+                  errorText!,
+                  style: AppText.primaryText.merge(AppText.subheading),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
         ],
       ),
     );

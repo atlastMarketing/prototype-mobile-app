@@ -5,13 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 
-class HelpPopup extends StatelessWidget {
+class HelpPopup extends StatefulWidget {
   final String title;
   final String? content;
   final Widget child;
   final bool highlight;
   final bool down;
+  final bool disabled;
   final void Function(InfoPopupController)? handleDismiss;
+  final int? delayMilliseconds;
 
   const HelpPopup({
     Key? key,
@@ -20,24 +22,55 @@ class HelpPopup extends StatelessWidget {
     this.highlight = true,
     this.down = false,
     this.handleDismiss,
+    this.disabled = false,
+    this.delayMilliseconds,
     required this.child,
   }) : super(key: key);
+
+  @override
+  State<HelpPopup> createState() => _HelpPopupState();
+}
+
+class _HelpPopupState extends State<HelpPopup> {
+  bool _isClicked = false;
+  bool _isDelayFinished = false;
+
+  void _handleDismiss(InfoPopupController ctrl) {
+    setState(() => _isClicked = true);
+    if (widget.handleDismiss != null) widget.handleDismiss!(ctrl);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.delayMilliseconds != null) {
+      Future.delayed(Duration(milliseconds: widget.delayMilliseconds!), () {
+        if (mounted) setState(() => _isDelayFinished = true);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool enabled =
         Provider.of<UserStore>(context, listen: false).hasHelpPopups;
-    if (!enabled) return child;
+    if (!enabled || widget.disabled) return widget.child;
+    if (_isClicked) return widget.child;
+    if (widget.delayMilliseconds != null && !_isDelayFinished) {
+      return widget.child;
+    }
+
     return InfoPopupWidget(
       onControllerCreated: (InfoPopupController controller) =>
           controller.show(),
-      onAreaPressed: handleDismiss,
-      arrowTheme: down ? helpPopupArrowThemeDown : helpPopupArrowThemeUp,
+      onAreaPressed: _handleDismiss,
+      arrowTheme: widget.down ? helpPopupArrowThemeDown : helpPopupArrowThemeUp,
       contentMaxWidth: MediaQuery.of(context).size.width - 100,
-      customContent: HelpPopupContent(title: title, content: content),
-      enableHighlight: highlight,
+      customContent:
+          HelpPopupContent(title: widget.title, content: widget.content),
+      enableHighlight: widget.highlight,
       dismissTriggerBehavior: PopupDismissTriggerBehavior.onTapArea,
-      child: child,
+      child: widget.child,
     );
   }
 }
@@ -85,13 +118,12 @@ class HelpPopupContent extends StatelessWidget {
               Text(title, style: AppText.bodyBold.merge(AppText.whiteText))
             ],
           ),
-          content != null
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(content!,
-                      style: AppText.body.merge(AppText.whiteText)),
-                )
-              : const SizedBox.shrink()
+          if (content != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child:
+                  Text(content!, style: AppText.body.merge(AppText.whiteText)),
+            ),
         ],
       ),
     );

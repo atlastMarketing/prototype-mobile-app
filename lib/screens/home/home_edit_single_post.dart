@@ -7,12 +7,13 @@ import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/models/content_model.dart';
+import 'package:atlast_mobile_app/services/content_manager_service.dart';
 import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 
 class HomeEditSinglePost extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
@@ -37,13 +38,83 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
   bool _isPostLoaded = false;
   bool _isPostNotFound = false;
   late PostContent _postData;
+  bool _isPostSaving = false;
 
   void _handleBack() {
+    if (_postData.caption == _captionController.text) {
+      widget.navKey.currentState!.pop();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Discard Changes?'),
+          content: const Text(
+              'Are you sure you want to exit? Any unsaved changes will be discarded'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.navKey.currentState!.pop();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _handleSave() async {
+    setState(() => _isPostSaving = true);
+    _postData.caption = _captionController.text;
+    Provider.of<ScheduledPostsStore>(context, listen: false).update(_postData);
+    await ContentManagerService.updateContent(_postData);
+    setState(() => _isPostSaving = false);
     widget.navKey.currentState!.pop();
   }
 
-  void _handleSave() {
+  Future<void> _handleDelete() async {
+    setState(() => _isPostSaving = true);
+    Provider.of<ScheduledPostsStore>(context, listen: false)
+        .remove(_postData.id);
+    await ContentManagerService.deleteContent(_postData.id);
+    setState(() => _isPostSaving = false);
     widget.navKey.currentState!.pop();
+  }
+
+  void _handleDeleteAttempt() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text(
+              'Are you sure you want to delete this post? You will not be able to retrieve it once it is deleted.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _handleDelete();
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _toggleEditState() {
@@ -149,22 +220,47 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: _buildImageUploader(),
+              Expanded(
+                child: SingleChildScrollBare(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: _buildImageUploader(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: CustomFormTextField(
+                          controller: _captionController,
+                          previewOnly: !_isEditingCaption,
+                          autocorrect: true,
+                          vSize: 7,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              CustomFormTextField(
-                controller: _captionController,
-                previewOnly: !_isEditingCaption,
-                autocorrect: true,
-                vSize: 7,
-              ),
-              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (!_isEditingCaption)
+                    ElevatedButton(
+                      onPressed: _isPostSaving ? null : _handleDeleteAttempt,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                        backgroundColor: AppColors.error,
+                        // foregroundColor: AppColors.black,
+                      ),
+                      child: const Icon(
+                        Icons.delete_forever,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                   ElevatedButton(
-                    onPressed: _toggleEditState,
+                    onPressed: _isPostSaving ? null : _toggleEditState,
                     style: ElevatedButton.styleFrom(
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(8),
@@ -183,22 +279,21 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
                             size: 25,
                           ),
                   ),
-                  _isEditingCaption
-                      ? const SizedBox.shrink()
-                      : ElevatedButton(
-                          onPressed: _handleSave,
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: const EdgeInsets.all(8),
-                            backgroundColor: AppColors.confirm,
-                            // foregroundColor: AppColors.black,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                        ),
+                  if (!_isEditingCaption)
+                    ElevatedButton(
+                      onPressed: _isPostSaving ? null : _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(8),
+                        backgroundColor: AppColors.confirm,
+                        // foregroundColor: AppColors.black,
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
                 ],
               )
             ],
@@ -240,14 +335,30 @@ class _HomeEditSinglePostState extends State<HomeEditSinglePost> {
             ),
           ),
         ),
-        // TODO: replace with platform icons
         Positioned(
-          top: 30,
-          left: 120,
-          child: Text(
-            socialMediaPlatformsOptions[_postData.platform]!,
-          ),
+          top: 5,
+          right: 20,
+          child: Row(children: [
+            Text(
+              socialMediaPlatformsOptions[_postData.platform]!,
+              style: AppText.bodyBold.merge(AppText.darkText),
+            ),
+            const Padding(padding: EdgeInsets.only(right: 5)),
+            Image.asset(
+              socialMediaPlatformsImageUrls[_postData.platform]!,
+              width: 14,
+              height: 14,
+              color: AppColors.dark,
+            ),
+          ]),
         ),
+        if (_isPostSaving)
+          Positioned.fill(
+            child: Container(
+              color: AppColors.light.withOpacity(0.5),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          )
       ],
     );
   }

@@ -11,12 +11,12 @@ import 'package:atlast_mobile_app/shared/animated_loading_dots.dart';
 import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 
-class CreatorCampaignConfirm extends StatefulWidget {
+class CreatorSocialMediaPostConfirm extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final List<PostContent> draftPosts;
   final Function() exit;
 
-  const CreatorCampaignConfirm({
+  const CreatorSocialMediaPostConfirm({
     Key? key,
     required this.navKey,
     required this.draftPosts,
@@ -24,10 +24,12 @@ class CreatorCampaignConfirm extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreatorCampaignConfirmState createState() => _CreatorCampaignConfirmState();
+  _CreatorSocialMediaPostConfirmState createState() =>
+      _CreatorSocialMediaPostConfirmState();
 }
 
-class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
+class _CreatorSocialMediaPostConfirmState
+    extends State<CreatorSocialMediaPostConfirm> {
   int _animationState = 0;
 
   void _doTheWork() async {
@@ -39,16 +41,17 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
     List<PostContent> newPosts = [];
 
     try {
-      newPosts =
-          await Future.wait(widget.draftPosts.map((PostContent draft) async {
-        String? id = await ContentManagerService.saveContent(
-          draft.toDraft(),
-          userStore.data,
-        );
-        if (id == null) throw Error();
-        draft.id = id;
-        return draft;
-      }));
+      newPosts = await Future.wait(widget.draftPosts.map(
+        (PostContent draft) async {
+          String? id = await ContentManagerService.saveContent(
+            draft.toDraft(),
+            userStore.data,
+          );
+          if (id == null) throw Error();
+          draft.id = id;
+          return draft;
+        },
+      ));
     } catch (err) {
       print("FAILED TO SAVE DRAFT POSTS: $err");
       widget.navKey.currentState!.pop();
@@ -81,7 +84,7 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
           children: [
             const AnimatedLoadingDots(size: 75),
             AnimatedBlinkText(
-              text: "Saving your campaign",
+              text: "Saving your post",
               textStyle: AppText.bodyBold
                   .merge(const TextStyle(color: AppColors.primary)),
               width: 200,

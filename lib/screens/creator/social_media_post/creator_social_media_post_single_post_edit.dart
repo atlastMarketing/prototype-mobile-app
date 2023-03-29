@@ -1,27 +1,26 @@
+import 'package:atlast_mobile_app/configs/layout.dart';
+import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
+import 'package:atlast_mobile_app/shared/avatar_image.dart';
+import 'package:atlast_mobile_app/shared/form_text_field.dart';
+import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
-import 'package:atlast_mobile_app/constants/social_media_platforms.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+import 'package:atlast_mobile_app/models/content_model.dart';
 import 'package:atlast_mobile_app/services/generator_service.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
-import 'package:atlast_mobile_app/shared/avatar_image.dart';
-import 'package:atlast_mobile_app/shared/form_text_field.dart';
-import 'package:atlast_mobile_app/shared/help_popup.dart';
-import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
-import 'package:atlast_mobile_app/models/content_model.dart';
 
-class CreatorCampaignSinglePostEdit extends StatefulWidget {
+class CreatorSocialMediaPostSinglePostEdit extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
   final PostContent postContent;
   final void Function(String a, PostContent b) saveChanges;
   final String prompt;
   final List<String> initialCaptions;
 
-  const CreatorCampaignSinglePostEdit({
+  const CreatorSocialMediaPostSinglePostEdit({
     Key? key,
     required this.navKey,
     required this.postContent,
@@ -31,12 +30,12 @@ class CreatorCampaignSinglePostEdit extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreatorCampaignSinglePostEditState createState() =>
-      _CreatorCampaignSinglePostEditState();
+  _CreatorSocialMediaPostSinglePostEditState createState() =>
+      _CreatorSocialMediaPostSinglePostEditState();
 }
 
-class _CreatorCampaignSinglePostEditState
-    extends State<CreatorCampaignSinglePostEdit> {
+class _CreatorSocialMediaPostSinglePostEditState
+    extends State<CreatorSocialMediaPostSinglePostEdit> {
   final TextEditingController _captionController = TextEditingController();
   bool _isEditingCaption = false;
   String _imageUrl = "";
@@ -195,27 +194,23 @@ class _CreatorCampaignSinglePostEditState
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (!_isEditingCaption)
-                    HelpPopup(
-                      down: true,
-                      title: "Click to regenerate caption",
-                      content:
-                          "Don't like the current caption? That's alright, you can ask our AI to suggest other captions!",
-                      child: ElevatedButton(
-                        onPressed: _captionsIsLoading ? null : _refreshCaption,
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(8),
-                          backgroundColor: AppColors.error,
-                          // foregroundColor: AppColors.black,
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed:
+                              _captionsIsLoading ? null : _refreshCaption,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.error,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.refresh,
+                            color: Colors.white,
+                            size: 25,
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.refresh,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                      ),
-                    ),
                   ElevatedButton(
                     onPressed: _toggleEditState,
                     style: ElevatedButton.styleFrom(
@@ -236,21 +231,22 @@ class _CreatorCampaignSinglePostEditState
                             size: 25,
                           ),
                   ),
-                  if (!_isEditingCaption)
-                    ElevatedButton(
-                      onPressed: _handleSave,
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(8),
-                        backgroundColor: AppColors.confirm,
-                        // foregroundColor: AppColors.black,
-                      ),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 25,
-                      ),
-                    ),
+                  _isEditingCaption
+                      ? const SizedBox.shrink()
+                      : ElevatedButton(
+                          onPressed: _handleSave,
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(8),
+                            backgroundColor: AppColors.confirm,
+                            // foregroundColor: AppColors.black,
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 25,
+                          ),
+                        ),
                 ],
               )
             ],
