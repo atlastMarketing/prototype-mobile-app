@@ -6,6 +6,7 @@
 # This script automates the process of generating the `--dart-define` string based on a `.env` file
 # Script accepts following arguments:
 #   $1 - environment [dev|staging|prod]
+#   #2 - optional web tag [web]
 
 # check that all required arguments exist
 if [ -z "$1" ]; then
@@ -27,5 +28,9 @@ while IFS= read -r env_var
 do
   DART_DEFINES="$DART_DEFINES--dart-define=$env_var "
 done < "$INPUT"
+
+if [ "$2" == "web" ]; then
+  DART_DEFINES="$DART_DEFINES--dart-define=WEB_MODE=true "
+fi
 
 echo "$DART_DEFINES"

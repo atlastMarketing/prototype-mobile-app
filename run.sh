@@ -4,6 +4,8 @@
 #   on a selected device and using a specified environment
 # Script accepts following arguments:
 #   $1 - build environment [dev|staging|prod]
+#   #2 - optional device
+#   #3 - optional web tag [web]
 
 RUN_ENV="${1:-dev}"
 if [ -z "$1" ]; then
@@ -23,7 +25,7 @@ else
 fi
 
 # generate `DART_DEFINES` for the given build environment
-DART_DEFINES=$(scripts/generate_dart_defines.sh $RUN_ENV)
+DART_DEFINES=$(scripts/generate_dart_defines.sh $RUN_ENV $3)
 
 if [ $? -ne 0 ]; then
   echo -e "Failed to generate DART_DEFINE"
