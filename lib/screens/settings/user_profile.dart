@@ -31,7 +31,7 @@ class _UserProfileState extends State<UserProfile> {
     Provider.of<SuggestedPostsStore>(context, listen: false).removeAll();
     Provider.of<UserStore>(context, listen: false).clear();
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(false);
-    Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
+    // Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
   }
 
   void _editProfile(BuildContext ctx) {

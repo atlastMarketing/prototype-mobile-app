@@ -146,7 +146,7 @@ class _OnboardingConnectState extends State<OnboardingConnect> {
                 }
               },
               fillColor: AppColors.primary,
-              text: 'Continue',
+              text: 'Finish',
             ),
           ),
         ],
