@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/data/user.dart';
 
+// ignore: constant_identifier_names
+const bool WEB_MODE =
+    String.fromEnvironment('WEB_MODE', defaultValue: '') != "";
+
 class HelpPopup extends StatefulWidget {
   final String title;
   final String? content;
@@ -52,9 +56,10 @@ class _HelpPopupState extends State<HelpPopup> {
 
   @override
   Widget build(BuildContext context) {
+    print("WEB_MODE: $WEB_MODE");
     final bool enabled =
         Provider.of<UserStore>(context, listen: false).hasHelpPopups;
-    if (!enabled || widget.disabled) return widget.child;
+    if (WEB_MODE || !enabled || widget.disabled) return widget.child;
     if (_isClicked) return widget.child;
     if (widget.delayMilliseconds != null && !_isDelayFinished) {
       return widget.child;
