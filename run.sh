@@ -4,20 +4,22 @@
 #   on a selected device and using a specified environment
 # Script accepts following arguments:
 #   $1 - build environment [dev|staging|prod]
+#   $2 - flutter app environment [dev|release]
+#   $3 - name of device to run on
 
 RUN_ENV="${1:-dev}"
 if [ -z "$1" ]; then
   echo -e "Running using default 'dev' environment"
 fi
 
-if [ "$1" == "prod" ]; then
+if [ "${2:-dev}" == "release" ]; then
   OPTIONS="--release"
 else
   OPTIONS=""
 fi
 
-if [ "$2" ]; then
-    RUN_DEVICE="-d $2"
+if [ "$3" ]; then
+    RUN_DEVICE="-d $3"
 else
     RUN_DEVICE=""
 fi
