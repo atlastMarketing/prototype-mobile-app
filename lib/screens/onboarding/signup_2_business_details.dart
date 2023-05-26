@@ -29,8 +29,8 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bNameController = TextEditingController();
-  String _bTypeInput = businessTypes[0];
-  String _bIndustryInput = businessIndustries[0];
+  String _bTypeInput = BUSINESS_TYPES[0];
+  String _bIndustryInput = BUSINESS_INDUSTRIES[0];
 
   void _setBTypeInput(dynamic val) => setState(() => _bTypeInput = val);
 
@@ -86,6 +86,7 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
                   if (val == null || val == "") {
                     return 'Business name cannot be empty!';
                   }
+                  return null;
                 },
               ),
             ),
@@ -98,7 +99,7 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
               child: CustomFormTextDropdown(
                 value: _bTypeInput,
                 handleChanged: _setBTypeInput,
-                items: businessTypes,
+                items: BUSINESS_TYPES,
               ),
             ),
             const Text(
@@ -110,7 +111,7 @@ class _OnboardingBusinessDetailsState extends State<OnboardingBusinessDetails> {
               child: CustomFormTextDropdown(
                 value: _bIndustryInput,
                 handleChanged: _setBIndustryInput,
-                items: businessIndustries,
+                items: BUSINESS_INDUSTRIES,
               ),
             ),
           ],

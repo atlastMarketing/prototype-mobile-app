@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// TODO: REFACTOR PROPERLY
 import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/constants/stock_images.dart';
 import 'package:atlast_mobile_app/constants/catalyst_output_types.dart';
@@ -17,7 +18,6 @@ import 'package:atlast_mobile_app/shared/animated_text_blinking.dart';
 import 'package:atlast_mobile_app/shared/app_bar_steps.dart';
 import 'package:atlast_mobile_app/shared/button.dart';
 import 'package:atlast_mobile_app/shared/calendar.dart';
-import 'package:atlast_mobile_app/shared/help_popup.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 import 'package:atlast_mobile_app/shared/layouts/full_page.dart';
 import 'package:atlast_mobile_app/shared/widget_overlays.dart';
@@ -45,7 +45,11 @@ class CreatorSocialMediaPostSchedule extends StatefulWidget {
       _CreatorSocialMediaPostScheduleState();
 }
 
-class _CreatorSocialMediaPostScheduleState extends State<CreatorSocialMediaPostSchedule> {
+// ignore: constant_identifier_names
+const MAX_CAPTION_REQUESTS_AT_ONCE = 5;
+
+class _CreatorSocialMediaPostScheduleState
+    extends State<CreatorSocialMediaPostSchedule> {
   // state and status
   bool _campaignDatesFetched = false;
   bool _campaignDatesIsLoading = false;
@@ -56,9 +60,6 @@ class _CreatorSocialMediaPostScheduleState extends State<CreatorSocialMediaPostS
 
   // generated stuff
   List<String> _generatedCaptions = [];
-
-  // misc
-  final MAX_CAPTION_REQUESTS_AT_ONCE = 5;
 
   void _handleBack() {
     widget.navKey.currentState!.pop();
@@ -158,7 +159,7 @@ class _CreatorSocialMediaPostScheduleState extends State<CreatorSocialMediaPostS
     // TODO: get real images
     List<String> listOfImageUrls = [
       ...widget.images.map((i) => i.imageUrl).toList(),
-      ...stockImages
+      ...STOCK_IMAGES
     ];
 
     List<int> allDates = [];
@@ -327,13 +328,13 @@ class _CreatorSocialMediaPostScheduleState extends State<CreatorSocialMediaPostS
                     ),
                   ),
                   SizedBox(
-                          width: double.infinity,
-                          child: CustomButton(
-                            handlePressed: _handleContinue,
-                            fillColor: AppColors.primary,
-                            text: 'Schedule Post',
-                          ),
-                        )
+                    width: double.infinity,
+                    child: CustomButton(
+                      handlePressed: _handleContinue,
+                      fillColor: AppColors.primary,
+                      text: 'Schedule Post',
+                    ),
+                  )
                 ],
               )
             : _buildNoCampaignDates();

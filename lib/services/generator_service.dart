@@ -242,7 +242,7 @@ class GeneratorService {
 
       for (dynamic collection in collections) {
         final String imageUrl =
-            stockImages[randomizer.nextInt(stockImages.length - 1)];
+            STOCK_IMAGES[randomizer.nextInt(STOCK_IMAGES.length - 1)];
         for (Map<String, dynamic> choice in collection['choices']) {
           extractedCollections.add(PostDraft(
             platform: platform,

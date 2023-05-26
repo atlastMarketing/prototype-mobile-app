@@ -39,11 +39,12 @@ class Creator extends StatefulWidget {
   _CreatorState createState() => _CreatorState();
 }
 
+// ignore: constant_identifier_names
+const DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
+
 class _CreatorState extends State<Creator> {
   final entityExtractor =
       EntityExtractor(language: EntityExtractorLanguage.english);
-
-  final DEFAULT_CAMPAIGN_OUTPUT_TYPE = CatalystCampaignOutputTypes.daily;
 
   // ------
   // STATES

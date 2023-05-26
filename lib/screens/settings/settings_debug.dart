@@ -86,7 +86,7 @@ class SettingsDebug extends StatelessWidget {
         dateTime: today.millisecondsSinceEpoch,
         caption:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-        imageUrl: stockImages[idx],
+        imageUrl: STOCK_IMAGES[idx],
       ));
     }
     suggestedPostsProvider.addCollections(generated);
@@ -109,7 +109,7 @@ class SettingsDebug extends StatelessWidget {
       dateTime: today.millisecondsSinceEpoch,
       caption:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-      imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+      imageUrl: STOCK_IMAGES[randomizer.nextInt(STOCK_IMAGES.length)],
     ));
     generated.add(PostContent(
       id: "sample-generated-fb-first",
@@ -117,7 +117,7 @@ class SettingsDebug extends StatelessWidget {
       dateTime: today.millisecondsSinceEpoch,
       caption:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-      imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+      imageUrl: STOCK_IMAGES[randomizer.nextInt(STOCK_IMAGES.length)],
     ));
 
     for (int idx in List<int>.generate(5, (i) => i)) {
@@ -131,7 +131,7 @@ class SettingsDebug extends StatelessWidget {
         dateTime: today.millisecondsSinceEpoch,
         caption:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-        imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+        imageUrl: STOCK_IMAGES[randomizer.nextInt(STOCK_IMAGES.length)],
       ));
     }
     for (int idx in List<int>.generate(3, (i) => i)) {
@@ -145,7 +145,7 @@ class SettingsDebug extends StatelessWidget {
         dateTime: today.millisecondsSinceEpoch,
         caption:
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis at tellus at urna condimentum mattis pellentesque id.",
-        imageUrl: stockImages[randomizer.nextInt(stockImages.length)],
+        imageUrl: STOCK_IMAGES[randomizer.nextInt(STOCK_IMAGES.length)],
       ));
     }
     scheduledPostsProvider.add(generated);

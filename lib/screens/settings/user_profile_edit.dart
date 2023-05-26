@@ -37,8 +37,8 @@ class _UserProfileEditState extends State<UserProfileEdit> {
   // form variables
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bNameController = TextEditingController();
-  String _bTypeInput = businessTypes[0];
-  String _bIndustryInput = businessIndustries[0];
+  String _bTypeInput = BUSINESS_TYPES[0];
+  String _bIndustryInput = BUSINESS_INDUSTRIES[0];
   final TextEditingController _bDescriptionController = TextEditingController();
   final TextEditingController _bVoiceController = TextEditingController();
   final TextEditingController _bUrlController = TextEditingController();
@@ -228,6 +228,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                   if (val == null || val == "") {
                     return 'Business name cannot be empty!';
                   }
+                  return null;
                 },
               ),
             ),
@@ -240,7 +241,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
               child: CustomFormTextDropdown(
                 value: _bTypeInput,
                 handleChanged: _setBTypeInput,
-                items: businessTypes,
+                items: BUSINESS_TYPES,
               ),
             ),
             const Text(
@@ -252,7 +253,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
               child: CustomFormTextDropdown(
                 value: _bIndustryInput,
                 handleChanged: _setBIndustryInput,
-                items: businessIndustries,
+                items: BUSINESS_INDUSTRIES,
               ),
             ),
             const Text(
@@ -270,6 +271,7 @@ class _UserProfileEditState extends State<UserProfileEdit> {
                   if (val == null || val == "") {
                     return 'Business description cannot be empty!';
                   }
+                  return null;
                 },
                 autocorrect: true,
               ),

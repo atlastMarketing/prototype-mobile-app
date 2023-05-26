@@ -17,23 +17,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late String data;
-
-  Future<void> _getData() async {
-    // SampleService serviceWorker = SampleService();
-    // await serviceWorker.getData();
-
-    setState(() {
-      data = 'results here';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // lazy loading
     return WillPopScope(
       onWillPop: () async {
-        print("POP!");
         if (widget.navKey.currentState != null &&
             widget.navKey.currentState!.canPop()) {
           // widget.navKey.currentState!.pop();

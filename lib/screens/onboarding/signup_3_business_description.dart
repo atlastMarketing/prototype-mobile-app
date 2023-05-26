@@ -81,6 +81,7 @@ class _OnboardingBusinessDescriptionState
                     if (val == null || val == "") {
                       return 'Business description cannot be empty!';
                     }
+                    return null;
                   },
                   autocorrect: true,
                 ),

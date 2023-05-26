@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
 import 'package:atlast_mobile_app/shared/calendar.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';

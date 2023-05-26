@@ -44,6 +44,9 @@ class CreatorCampaignSchedule extends StatefulWidget {
       _CreatorCampaignScheduleState();
 }
 
+// ignore: constant_identifier_names
+const MAX_CAPTION_REQUESTS_AT_ONCE = 5;
+
 class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   // state and status
   bool _campaignDatesFetched = false;
@@ -57,7 +60,6 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
   List<String> _generatedCaptions = [];
 
   // misc
-  final MAX_CAPTION_REQUESTS_AT_ONCE = 5;
   bool _userKnowsHowToEdit = false;
   int _calendarRebuildCount = 0; // hack for rebuilding calendar on demand
 
@@ -173,7 +175,7 @@ class _CreatorCampaignScheduleState extends State<CreatorCampaignSchedule> {
           caption: "",
           platform: platform,
           imageUrl: draftCounter > widget.images.length - 1
-              ? stockImages[Random().nextInt(stockImages.length - 1)]
+              ? STOCK_IMAGES[Random().nextInt(STOCK_IMAGES.length - 1)]
               : widget.images[draftCounter].imageUrl,
         );
       }).toList();

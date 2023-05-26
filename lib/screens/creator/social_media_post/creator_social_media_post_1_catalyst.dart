@@ -175,6 +175,7 @@ class _CreatorSocialMediaPostCatalystState
                     widget.catalyst.derivedPrompt == "") {
                   return 'Enter a more detailed description of your campaign!';
                 }
+                return null;
               },
             ),
           ),
@@ -200,6 +201,7 @@ class _CreatorSocialMediaPostCatalystState
                       if (val == null || val == "") {
                         return "Must select a platform!";
                       }
+                      return null;
                     },
                   ),
                 ),
@@ -229,6 +231,7 @@ class _CreatorSocialMediaPostCatalystState
                       if (val == null || val == "") {
                         return "Post date cannot be empty!";
                       }
+                      return null;
                     },
                   ),
                 ),
