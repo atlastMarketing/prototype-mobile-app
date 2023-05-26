@@ -14,4 +14,9 @@ class MainNavigationStore extends ChangeNotifier {
     _currRoute = newIdx;
     notifyListeners();
   }
+
+  void resetNav() {
+    _currRoute = RouteEnum.home;
+    notifyListeners();
+  }
 }

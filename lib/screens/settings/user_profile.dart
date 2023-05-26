@@ -1,12 +1,14 @@
-import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:atlast_mobile_app/configs/layout.dart';
 import 'package:atlast_mobile_app/configs/theme.dart';
+import 'package:atlast_mobile_app/data/main_navigation.dart';
 import 'package:atlast_mobile_app/data/scheduled_posts.dart';
+import 'package:atlast_mobile_app/data/suggested_posts.dart';
 import 'package:atlast_mobile_app/data/user.dart';
+
 import 'package:atlast_mobile_app/shared/avatar_image.dart';
 import 'package:atlast_mobile_app/shared/layouts/normal_page.dart';
 import 'package:atlast_mobile_app/shared/layouts/single_child_scroll_bare.dart';
@@ -32,6 +34,7 @@ class _UserProfileState extends State<UserProfile> {
     Provider.of<UserStore>(context, listen: false).clear();
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(false);
     // Provider.of<UserStore>(context, listen: false).setHasHelpPopups(true);
+    Provider.of<MainNavigationStore>(context, listen: false).resetNav();
   }
 
   void _editProfile(BuildContext ctx) {
