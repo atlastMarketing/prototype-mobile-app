@@ -93,7 +93,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
       )
     ]);
 
-    suggestedPostsStore.pop();
+    suggestedPostsStore.remove(widget.suggestionId);
     setState(() => _isPostSaving = false);
     _handleBack();
   }
@@ -277,7 +277,7 @@ class _HomeEditSingleSuggestionState extends State<HomeEditSingleSuggestion> {
             padding: pageHorizontalPadding,
             child: CustomButton(
               disabled: _isPostSaving,
-              text: 'Create Scheduled Post',
+              text: 'Use Suggested Post',
               handlePressed: _handleCreate,
             ),
           ),

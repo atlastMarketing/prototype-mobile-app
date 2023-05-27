@@ -127,9 +127,9 @@ class HomeDashboard extends StatelessWidget {
               ],
             ),
           ),
-          model.posts.isNotEmpty
+          model.upcomingPosts.isNotEmpty
               ? Column(
-                  children: model.posts.take(5).map((post) {
+                  children: model.upcomingPosts.take(5).map((post) {
                     DateTime? dt = post.dateTime != null
                         ? DateTime.fromMillisecondsSinceEpoch(post.dateTime!)
                         : null;
@@ -230,12 +230,11 @@ class HomeDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasScheduledPosts =
-        Provider.of<ScheduledPostsStore>(context, listen: false)
-            .posts
-            .isNotEmpty;
+    final bool hasUpcomingPosts =
+        Provider.of<ScheduledPostsStore>(context, listen: true)
+            .hasUpcomingPosts;
     return LayoutNormalPage(
-      paddingOverwrite: hasScheduledPosts ? pagePaddingNoBottom : null,
+      paddingOverwrite: hasUpcomingPosts ? pagePaddingNoBottom : null,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -253,7 +252,7 @@ class HomeDashboard extends StatelessWidget {
               ),
             ),
           ),
-          if (!hasScheduledPosts)
+          if (!hasUpcomingPosts)
             SizedBox(
               width: double.infinity,
               child: CustomButton(
