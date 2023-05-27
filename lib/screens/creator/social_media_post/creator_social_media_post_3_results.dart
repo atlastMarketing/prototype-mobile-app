@@ -161,8 +161,9 @@ class _CreatorSocialMediaPostResultsState
   }
 
   Widget _buildResults() {
-    if (_captionsRegenerating)
+    if (_captionsRegenerating) {
       return const Center(child: AnimatedLoadingDots(size: 75));
+    }
     return ListView.separated(
       physics: const ClampingScrollPhysics(),
       itemCount: _captions.length,

@@ -162,10 +162,6 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
     Provider.of<UserStore>(context, listen: false).setIsOnboarded(true);
   }
 
-  void _resetErrorStates() {
-    if (_isUserNotFound == true) (() => _isUserNotFound = false);
-  }
-
   Widget _buildHeroWidget() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -219,6 +215,7 @@ class _OnboardingLoginState extends State<OnboardingLogin> {
               if (!isValidEmail(val)) {
                 return 'Enter a valid email!';
               }
+              return null;
             },
           ),
           if (_isUserNotFound)

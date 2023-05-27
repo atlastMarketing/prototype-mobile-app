@@ -17,8 +17,8 @@ class SuggestedPostsStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  void pop() {
-    _collections.removeAt(0);
+  void remove(int postIdx) {
+    _collections.removeAt(postIdx);
     notifyListeners();
   }
 

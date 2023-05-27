@@ -13,7 +13,7 @@ import 'package:atlast_mobile_app/utils/form_validations.dart';
 class OnboardingEmail extends StatefulWidget {
   final GlobalKey<NavigatorState> navKey;
 
-  OnboardingEmail({
+  const OnboardingEmail({
     Key? key,
     required this.navKey,
   }) : super(key: key);
@@ -65,6 +65,7 @@ class _OnboardingEmailState extends State<OnboardingEmail> {
                 if (!isValidEmail(val)) {
                   return 'Enter a valid email!';
                 }
+                return null;
               },
             ),
           ),

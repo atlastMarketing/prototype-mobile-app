@@ -194,6 +194,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                       widget.catalyst.derivedPrompt == "") {
                     return 'Enter a more detailed description of your campaign!';
                   }
+                  return null;
                 },
               ),
             ),
@@ -301,6 +302,7 @@ class _CreatorCampaignCatalystState extends State<CreatorCampaignCatalyst> {
                         if (val != null && val != "" && int.parse(val) <= 0) {
                           return 'Maximum number of posts must be greater than zero';
                         }
+                        return null;
                       },
                     ),
                   ),

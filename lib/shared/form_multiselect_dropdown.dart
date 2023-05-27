@@ -107,12 +107,12 @@ class _CustomFormMultiselectDropdownState
 }
 
 class _ViewItem extends StatelessWidget {
-  dynamic value;
-  String display;
-  bool itemSelected;
+  final dynamic value;
+  final String display;
+  final bool itemSelected;
   final Function(dynamic) selected;
 
-  _ViewItem({
+  const _ViewItem({
     required this.value,
     required this.display,
     required this.itemSelected,

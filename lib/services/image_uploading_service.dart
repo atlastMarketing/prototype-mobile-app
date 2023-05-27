@@ -23,6 +23,6 @@ class ImageUploadingService {
     var result = await http.Response.fromStream(response)
         .then((value) => jsonDecode(value.body));
     var data = result["data"];
-    return "https://i.imgur.com/" + data["id"] + ".jpeg";
+    return "https://i.imgur.com/${data['id']}.jpeg";
   }
 }

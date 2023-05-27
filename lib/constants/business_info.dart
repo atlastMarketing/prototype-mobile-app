@@ -1,4 +1,5 @@
-List<String> businessTypes = [
+// ignore_for_file: constant_identifier_names
+const List<String> BUSINESS_TYPES = [
   "Physical Products",
   "Digital Products",
   "Services",
@@ -25,7 +26,7 @@ List<String> businessTypes = [
 //   "Retail Trade",
 //   "Manufacturing",
 // ];
-List<String> businessIndustries = [
+const List<String> BUSINESS_INDUSTRIES = [
   "Professional, Scientific, and Technical Services",
   // "Agriculture, Forestry, Fishing, and Hunting",
   // "Mining, Quarrying, and Oil and Gas Extraction",

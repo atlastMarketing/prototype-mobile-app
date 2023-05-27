@@ -50,7 +50,6 @@ class _CreatorCampaignConfirmState extends State<CreatorCampaignConfirm> {
         return draft;
       }));
     } catch (err) {
-      print("FAILED TO SAVE DRAFT POSTS: $err");
       widget.navKey.currentState!.pop();
       return;
     }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:atlast_mobile_app/configs/layout.dart';
-import 'package:atlast_mobile_app/configs/theme.dart';
 import 'package:atlast_mobile_app/shared/hero_heading.dart';
 
 class AnalyticsDashboard extends StatelessWidget {

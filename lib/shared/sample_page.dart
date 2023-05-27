@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:atlast_mobile_app/configs/theme.dart';
-
 class SamplePage extends StatelessWidget {
   const SamplePage({Key? key}) : super(key: key);
 

@@ -12,6 +12,18 @@ class ScheduledPostsStore extends ChangeNotifier {
       UnmodifiableListView(_posts.values.toList()
         ..sort((a, b) => a.dateTime!.compareTo(b.dateTime!)));
 
+  bool get hasUpcomingPosts => _posts.values
+      .where((p) => (p.dateTime != null &&
+          p.dateTime! > DateTime.now().millisecondsSinceEpoch))
+      .isNotEmpty;
+
+  UnmodifiableListView<PostContent> get upcomingPosts =>
+      UnmodifiableListView(_posts.values
+          .where((p) => (p.dateTime != null &&
+              p.dateTime! > DateTime.now().millisecondsSinceEpoch))
+          .toList()
+        ..sort((a, b) => a.dateTime!.compareTo(b.dateTime!)));
+
   PostContent? postById(String postId) => _posts[postId];
 
   /// Setters
