@@ -46,14 +46,17 @@ class _CreatorSocialMediaPostResultsState
   }
 
   void _handleContinue() {
-    PostContent post = PostContent(
-      id: "new-single-post",
-      platform: widget.catalyst.derivedPlatforms[0],
-      dateTime: widget.catalyst.derivedPostTimestamps[0],
-      caption: _captions[_selectedCaptionIdx],
-      imageUrl: widget.uploadedImageUrl,
-    );
-    widget.saveDraftPosts([post]);
+    List<PostContent> posts = widget.catalyst.derivedPlatforms
+        .toList()
+        .map((platform) => PostContent(
+              id: "new-single-post",
+              platform: platform,
+              dateTime: widget.catalyst.derivedPostTimestamps[0],
+              caption: _captions[_selectedCaptionIdx],
+              imageUrl: widget.uploadedImageUrl,
+            ))
+        .toList();
+    widget.saveDraftPosts(posts);
 
     widget.navKey.currentState!.pushNamed("/post-confirm");
   }

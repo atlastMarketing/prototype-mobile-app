@@ -496,8 +496,8 @@ class _CreatorState extends State<Creator> {
                     updateCatalyst: _updateCatalyst,
                     catalyst: _catalystDetails,
                     dateAnnotation: _dateAnnotations.firstOrNull,
-                    socialMediaPlatformAnnotation:
-                        _socialMediaPlatformAnnotations.firstOrNull,
+                    socialMediaPlatformAnnotations:
+                        _socialMediaPlatformAnnotations,
                   );
                 case "/post-2":
                   return CreatorSocialMediaPostImage(
